@@ -1,24 +1,69 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <LangVersion>11.0</LangVersion>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <!-- netstandard 2.0 doesn't contain nullable annotations for BCL, so we want to export
-         annotations for our consumers, but no warnings for our code. Warnings will be
-         emitted by netstandard2.1 target -->
-    <Nullable Condition="'$(TargetFramework)' == 'netstandard2.0'">annotations</Nullable>
-    <Nullable Condition="'$(TargetFramework)' == 'netstandard2.1'">enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>11.0</LangVersion>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<Nullable Condition="'$(TargetFramework)' == 'netstandard2.0'">annotations</Nullable>
+		<Nullable Condition="'$(TargetFramework)' == 'netstandard2.1'">enable</Nullable>
+		<CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netstandard2.1'">true</CopyLocalLockFileAssemblies>
+		<CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netstandard2.0'">true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18" />
+	</ItemGroup>
 
-  <PropertyGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<MergedOutputPath>bin\$(Configuration)\netstandard2.0\Merged\</MergedOutputPath>
+	</PropertyGroup>
+	
+	
+	<Target Name="CopySixLaborsFonts" AfterTargets="Build">
+		<!-- Path to the fonts in the SixLabors.Fonts package -->
+		<ItemGroup>
+			<FontFiles Include="$(UserProfile)\.nuget\packages\sixlabors.fonts\1.0.0\**\*.ttf" />
+		</ItemGroup>
+		<!-- Copy font files to the output directory -->
+		<Copy SourceFiles="@(FontFiles)" DestinationFolder="bin\$(Configuration)\netstandard2.1\" SkipUnchangedFiles="true" />
+	</Target>
+	
+	
+	
+	
+	
+	<Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<ItemGroup>
+			<InputAssemblies Include="$(OutputPath)*.dll" />
+			<InputAssemblies Remove="$(TargetPath)" />		
+		</ItemGroup>
+		<ILRepack MainAssembly="$(TargetFileName)" OutputAssembly="$(MergedOutputPath)$(TargetFileName)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" Internalize="true" Parallel="true" XmlDocumentation="true">
+		</ILRepack>
+	</Target>
+
+	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<MergedOutputPath>bin\$(Configuration)\netstandard2.1\Merged\</MergedOutputPath>
+	</PropertyGroup>
+	<Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<ItemGroup>
+			<InputAssemblies Include="$(OutputPath)*.dll" />
+			<InputAssemblies Remove="$(TargetPath)" />
+		</ItemGroup>
+		<ILRepack MainAssembly="$(TargetFileName)" OutputAssembly="$(MergedOutputPath)$(TargetFileName)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" Internalize="true" Parallel="true" XmlDocumentation="true">
+		</ILRepack>
+	</Target>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+
+	<PropertyGroup>
     <NoWarn>$(NoWarn);NU1605;CS1591</NoWarn>
   </PropertyGroup>
-
+	<ItemGroup>
+		<InputAssemblies Include="$(OutputPath)CallaghanDev.XML.dll" />
+	</ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Bold.ttf" />
     <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-BoldItalic.ttf" />
@@ -40,10 +85,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="RBush" Version="3.2.0" />
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0" />
-    <!-- Pre-6.0.0 System.IO.Packaging has a race condition https://github.com/dotnet/runtime/issues/43012 -->
     <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -1,44 +1,147 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CallaghanDev.Utilities.Extensions;
+using CallaghanDev.XML.Excel;
+using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
+using ILGPU;
+using ILGPU.Runtime;
+using ILGPU.Algorithms;
 
 namespace CallaghanDev.Utilities.MathTools
 {
-    public class ExpandableMatrix<T>
+    // TODO: Create thread safe collection data structures that allow indexing of ulong index length Namely: ulongList<T> and ulongConcurrentDictionary<(ulong, ulong), T>
+    public class Matrix<T> : IMatrix<T>
     {
-        private Dictionary<(int, int), T> matrix;
+        ParallelOptions options;
+        ConcurrentDictionary<(ulong, ulong), T> Data;
 
-        public ExpandableMatrix()
+        private int _MaxDegreeOfParallelism;
+        public int MaxDegreeOfParallelism
         {
-            matrix = new Dictionary<(int, int), T>();
+            get { return _MaxDegreeOfParallelism; }
+            set
+            {
+                _MaxDegreeOfParallelism = value;
+
+                options = new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = this.MaxDegreeOfParallelism
+                };
+            }
         }
 
-        public T GetElement(int row, int col)
+        public Matrix()
         {
-            return matrix.TryGetValue((row, col), out T value) ? value : default(T);
+            Data = new ConcurrentDictionary<(ulong, ulong), T>();
+            MaxDegreeOfParallelism = Environment.ProcessorCount;
         }
 
-        public void SetElement(int row, int col, T value)
+        public T this[ulong Row, ulong Column]
         {
-            matrix[(row, col)] = value;
+            get
+            {
+                return GetElement(Row, Column);
+            }
+            set
+            {
+                SetElement(Row, Column, value);
+            }
         }
 
-        public (int Rows, int Columns) GetSize()
+        #region Private Helpers
+        private T GetElement(ulong row, ulong col)
         {
-            if (matrix.Count == 0)
+            return Data.TryGetValue((row, col), out T value) ? value : default(T);
+        }
+        private void SetElement(ulong row, ulong col, T value)
+        {
+            if (Data.ContainsKey((row, col)))
+            {
+                Data[(row, col)] = value;
+            }
+            else
+            {
+                Data.TryAdd((row, col), value);
+            }
+        }
+        public (ulong Rows, ulong Columns) GetSize()
+        {
+            if (Data.Count == 0)
             {
                 return (0, 0);
             }
 
-            int maxRow = matrix.Keys.Max(k => k.Item1);
-            int maxCol = matrix.Keys.Max(k => k.Item2);
+            ulong maxRow = Data.Keys.Max(k => k.Item1);
+            ulong maxCol = Data.Keys.Max(k => k.Item2);
 
             // Size is max index + 1 as matrix indices are 0-based
             return (maxRow + 1, maxCol + 1);
         }
-        public ExpandableMatrix<T> Multiply(ExpandableMatrix<T> other)
+        #endregion
+
+        #region Matrix Size and Structure
+        public ulong RowCount()
+        {
+
+            if (Data.Count == 0)
+            {
+                return 0;
+            }
+            ulong maxRow = Data.Keys.Max(k => k.Item1);
+
+            // Size is max index + 1 as matrix indices are 0-based
+            return maxRow + 1;
+        }
+        public ulong ColumnCount()
+        {
+
+            if (Data.Count == 0)
+            {
+                return 0;
+            }
+
+            ulong maxCol = Data.Keys.Max(k => k.Item2);
+
+            // Size is max index + 1 as matrix indices are 0-based
+            return maxCol + 1;
+        }
+        public bool IsSquare()
+        {
+            return (this.ColumnCount() == this.RowCount());
+        }
+        public bool IsOrthogonal()
+        {
+            return (this.IsSquare() && this * this.Transpose() == Identity(this.RowCount()));
+        }
+        public bool IsDiagonal()
+        {
+            Matrix<T> Zeros = new Matrix<T>();
+
+            for (ulong r = 0; r < this.RowCount(); r++)
+            {
+                for (ulong c = 0; c < this.ColumnCount(); c++)
+                {
+                    Zeros[r, c] = (dynamic)0;
+                }
+            }
+
+            Matrix<T> DiagVector = this.DiagVector();
+            Matrix<T> DiagOfMatrix = Diag(DiagVector);
+
+            return (this.Clone() - DiagOfMatrix == Zeros);
+        }
+        public bool IsUnitary()
+        {
+            if (!this.IsSquare())
+                return false;
+
+            return (this.Transpose() * this == Identity(RowCount()));
+        }
+        #endregion
+
+        #region Matrix Operations
+        public Matrix<T> DotProduct(Matrix<T> other)
         {
             var (rowsA, colsA) = this.GetSize();
             var (rowsB, colsB) = other.GetSize();
@@ -48,14 +151,14 @@ namespace CallaghanDev.Utilities.MathTools
                 throw new InvalidOperationException("Matrix dimensions are not compatible for multiplication.");
             }
 
-            ExpandableMatrix<T> result = new ExpandableMatrix<T>();
+            Matrix<T> result = new Matrix<T>();
 
-            for (int i = 0; i < rowsA; i++)
+            ParallelExtensions.For(0, rowsA, options, i =>
             {
-                for (int j = 0; j < colsB; j++)
+                for (uint j = 0; j < colsB; j++)
                 {
                     dynamic sum = default(T);
-                    for (int k = 0; k < colsA; k++)
+                    for (uint k = 0; k < colsA; k++)
                     {
                         dynamic valA = this.GetElement(i, k);
                         dynamic valB = other.GetElement(k, j);
@@ -63,11 +166,11 @@ namespace CallaghanDev.Utilities.MathTools
                     }
                     result.SetElement(i, j, sum);
                 }
-            }
+            });
 
             return result;
         }
-        public ExpandableMatrix<T> Add(ExpandableMatrix<T> other)
+        public Matrix<T> Add(Matrix<T> other)
         {
             var (rowsThis, colsThis) = this.GetSize();
             var (rowsOther, colsOther) = other.GetSize();
@@ -77,21 +180,21 @@ namespace CallaghanDev.Utilities.MathTools
                 throw new InvalidOperationException("Matrices dimensions do not match for addition.");
             }
 
-            ExpandableMatrix<T> result = new ExpandableMatrix<T>();
+            Matrix<T> result = new Matrix<T>();
 
-            for (int i = 0; i < rowsThis; i++)
+            ParallelExtensions.For(0, rowsThis, options, i =>
             {
-                for (int j = 0; j < colsThis; j++)
+                for (uint j = 0; j < colsThis; j++)
                 {
                     dynamic valueThis = this.GetElement(i, j);
                     dynamic valueOther = other.GetElement(i, j);
                     result.SetElement(i, j, valueThis + valueOther);
                 }
-            }
+            });
 
             return result;
         }
-        public ExpandableMatrix<T> Subtract(ExpandableMatrix<T> other)
+        public Matrix<T> Subtract(Matrix<T> other)
         {
             var (rowsThis, colsThis) = this.GetSize();
             var (rowsOther, colsOther) = other.GetSize();
@@ -101,53 +204,177 @@ namespace CallaghanDev.Utilities.MathTools
                 throw new InvalidOperationException("Matrices dimensions do not match for subtraction.");
             }
 
-            ExpandableMatrix<T> result = new ExpandableMatrix<T>();
+            Matrix<T> result = new Matrix<T>();
 
-            for (int i = 0; i < rowsThis; i++)
+            ParallelExtensions.For(0, rowsThis, options, i =>
             {
-                for (int j = 0; j < colsThis; j++)
+                for (uint j = 0; j < colsThis; j++)
                 {
                     dynamic valueThis = this.GetElement(i, j);
                     dynamic valueOther = other.GetElement(i, j);
                     result.SetElement(i, j, valueThis - valueOther);
                 }
-            }
+            });
 
             return result;
         }
-        public ExpandableMatrix<T> MultiplyScalar(T scalar)
+        public Matrix<T> MultiplyScalar(T scalar)
         {
             var (rows, cols) = this.GetSize();
-            ExpandableMatrix<T> result = new ExpandableMatrix<T>();
+            Matrix<T> result = new Matrix<T>();
 
-            for (int i = 0; i < rows; i++)
+            ParallelExtensions.For(0, rows, options, i =>
             {
-                for (int j = 0; j < cols; j++)
+                for (uint j = 0; j < cols; j++)
                 {
                     dynamic value = this.GetElement(i, j);
                     result.SetElement(i, j, value * scalar);
                 }
-            }
+            });
 
             return result;
         }
-        public ExpandableMatrix<T> Transpose()
+        public Matrix<T> Transpose()
         {
             var (rows, cols) = this.GetSize();
-            ExpandableMatrix<T> transposedMatrix = new ExpandableMatrix<T>();
+            Matrix<T> transposedMatrix = new Matrix<T>();
 
-            for (int i = 0; i < rows; i++)
+            ParallelExtensions.For(0, cols, options, j =>
             {
-                for (int j = 0; j < cols; j++)
+                for (uint i = 0; i < rows; i++)
                 {
                     T value = this.GetElement(i, j);
                     transposedMatrix.SetElement(j, i, value);
                 }
-            }
+            });
 
             return transposedMatrix;
         }
+        public Matrix<T> AddScalar(T scalar)
+        {
+            var (rows, cols) = this.GetSize();
 
+            Matrix<T> result = new Matrix<T>();
+
+            ParallelExtensions.For(0, rows, options, i =>
+            {
+                for (uint j = 0; j < cols; j++)
+                {
+                    dynamic sum = default(T);
+                    for (uint k = 0; k < cols; k++)
+                    {
+                        dynamic valA = this.GetElement(i, k);
+                        sum += valA + scalar;
+                    }
+                    result.SetElement(i, j, sum);
+                }
+            });
+            return result;
+        }
+        public Matrix<T> Diag(Matrix<T> diag_vector)
+        {
+            ulong dim = RowCount();
+
+            if (dim == 0)
+                throw new ArgumentException("diag_vector must be 0x(N-1) or N-1x0");
+
+            Matrix<T> M = new Matrix<T>();
+
+            for (ulong i = 0; i < dim; i++)
+            {
+                M[i, i] = diag_vector[i, 0];
+            }
+
+            return M;
+
+        }
+        public Matrix<T> Inverse()
+        {
+            if (!this.IsSquare())
+                throw new InvalidOperationException("Cannot invert non-square matrix.");
+
+            dynamic det = this.Determinant();
+
+            if (det == 0)
+            {
+                throw new InvalidOperationException("Cannot invert matrix with determinant of zero.");
+            }
+
+            ulong n = this.ColumnCount();
+
+            if (n == 1)
+            {
+                Matrix<T> singleElementMatrix = new Matrix<T>();
+                singleElementMatrix[0, 0] = (1 / det);
+
+                return singleElementMatrix;
+            }
+
+            if (this.IsDiagonal())
+            {
+                Matrix<T> d = this.DiagVector();
+
+                ParallelExtensions.For(0, n, options, i =>
+                {
+                    d[i, 0] = (dynamic)1 / d[i, 0];
+                });
+                return Diag(d);
+            }
+
+            Matrix<T> buf = new Matrix<T>();
+
+            ParallelExtensions.For(0, n, options, i => 
+            {
+                for (ulong j = 0; j < n; j++)
+                {
+                    dynamic sign = (int)Math.Pow(-1, (i + j + 1));
+                    dynamic minorDeterminant = this.Minor((ulong)i, j).Determinant();
+                    buf[(ulong)j, (ulong)i] = sign * minorDeterminant;
+                }
+            });
+            return buf.MultiplyScalar((dynamic)1 / det);
+        }
+        public Matrix<T> DiagVector()
+        {
+            if (!this.IsSquare())
+                throw new InvalidOperationException("Cannot get diagonal of non-square matrix.");
+
+            Matrix<T> v = new Matrix<T>();
+
+            ulong RowCount = this.RowCount();
+
+            ParallelExtensions.For(0, RowCount, options, i =>
+            {
+                v[i, 0] = this[i, i];
+            });
+            return v;
+        }
+        public T Trace()
+        {
+            if (!this.IsSquare())
+                throw new InvalidOperationException("Cannot calc trace of non-square matrix.");
+
+            dynamic temp = 0;
+            for (ulong i = 0; i < this.RowCount(); i++)
+            {
+                temp += this[i, i];
+            }
+            return temp;
+        }
+        public Matrix<T> Conjugate()
+        {
+            Matrix<T> M = new Matrix<T>();
+
+            for (ulong i = 1; i <= RowCount(); i++)
+            {
+                for (ulong j = 1; j <= ColumnCount(); j++)
+                {
+                    M[i, j] = this[i, j];
+                }
+            }
+
+            return M;
+        }
         public T Determinant()
         {
             var (rows, cols) = this.GetSize();
@@ -211,8 +438,7 @@ namespace CallaghanDev.Utilities.MathTools
                 return CalculateDeterminant(this, rows);
             }
         }
-
-        private T CalculateDeterminant(ExpandableMatrix<T> matrix, int size)
+        private T CalculateDeterminant(Matrix<T> matrix, ulong size)
         {
             if (size == 1)
             {
@@ -220,92 +446,446 @@ namespace CallaghanDev.Utilities.MathTools
             }
 
             dynamic determinant = default(T);
+            object lockObj = new object();
 
-            for (int i = 0; i < size; i++)
+            ParallelExtensions.For(0, size, options, i =>
             {
-                ExpandableMatrix<T> subMatrix = CreateSubMatrix(matrix, size, 0, i);
+                Matrix<T> subMatrix = Minor(0, i);
                 dynamic element = matrix.GetElement(0, i);
-                determinant += element * CalculateDeterminant(subMatrix, size - 1) * ((i % 2 == 1) ? -1 : 1);
-            }
+                dynamic cofactor = element * CalculateDeterminant(subMatrix, size - 1) * ((i % 2 == 1) ? -1 : 1);
+
+                lock (lockObj)
+                {
+                    determinant += cofactor;
+                }
+            });
 
             return determinant;
         }
-
-        private ExpandableMatrix<T> CreateSubMatrix(ExpandableMatrix<T> originalMatrix, int size, int excludingRow, int excludingCol)
+        public Matrix<T> Power(int exponent)
         {
-            ExpandableMatrix<T> subMatrix = new ExpandableMatrix<T>();
-            int subi = 0;
+            var (rows, cols) = this.GetSize();
 
-            for (int i = 0; i < size; i++)
+            Matrix<T> result = this.Clone();
+
+            for (int iexp = 1; iexp < exponent; iexp++)
+            {
+                result = result.DotProduct(this);
+            }
+            return result;
+        }
+        #endregion
+
+        #region Operator Overloads
+        public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
+        {
+            return a.DotProduct(b);
+        }
+        public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b)
+        {
+            return a.Add(b);
+        }
+        public static Matrix<T> operator -(Matrix<T> a, Matrix<T> b)
+        {
+            return a.Subtract(b);
+        }
+        public static Matrix<T> operator *(Matrix<T> a, T b)
+        {
+            return a.MultiplyScalar(b);
+        }
+        public static Matrix<T> operator +(Matrix<T> a, T b)
+        {
+            return a.AddScalar(b);
+        }
+        #endregion
+
+        #region Utility Methods
+        private Matrix<T> Minor(ulong excludingRow, ulong excludingCol)
+        {
+            ulong size = RowCount();
+
+            Matrix<T> subMatrix = new Matrix<T>();
+
+            ParallelExtensions.For(0, size, options, (i) =>
             {
                 if (i == excludingRow)
-                    continue;
+                    return; // Equivalent to 'continue' in a regular for-loop.
 
-                int subj = 0;
-                for (int j = 0; j < size; j++)
+                ulong subi = i > excludingRow ? i - 1 : i; // Adjust subi index if rows above excludingRow were skipped.
+                ulong subj = 0;
+
+                for (ulong j = 0; j < size; j++)
                 {
                     if (j == excludingCol)
                         continue;
 
-                    subMatrix.SetElement(subi, subj, originalMatrix.GetElement(i, j));
+                    subMatrix.SetElement(subi, subj, this.GetElement(i, j));
                     subj++;
                 }
-                subi++;
-            }
+            });
 
             return subMatrix;
         }
-
-        // Method for calculating inverse (only for square matrices)
-        public ExpandableMatrix<T> Inverse()
+        public Matrix<T> Identity(ulong n)
         {
-            throw new NotImplementedException();
+            Matrix<T> result = new Matrix<T>(); // Assuming Matrix<T> has a constructor that initializes the matrix size
+            for (ulong i = 0; i < n; i++)
+            {
+                for (ulong j = 0; j < n; j++)
+                {
+                    result[i, j] = (i == j) ? (dynamic)1 : (dynamic)0; // Using dynamic to assume T can be an integer or any numeric type
+                }
+            }
+            return result;
+        }
+        public Matrix<T> Clone()
+        {
+            var clone = new Matrix<T>();
+
+            List<KeyValuePair<(ulong, ulong), T>> elements = new List<KeyValuePair<(ulong, ulong), T>>(Data);
+
+            ParallelExtensions.For(0, (ulong)this.Data.Count, options, i =>
+            {
+                KeyValuePair<(ulong, ulong), T> Element;
+
+                lock (elements)
+                {
+                    Element = elements[(int)i];
+                }
+                clone.SetElement(Element.Key.Item1, Element.Key.Item2, Element.Value);
+            });
+
+            return clone;
+        }
+        private void DeleteRow(ulong rowIndex)
+        {
+            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
+
+            foreach (var key in Data.Keys)
+            {
+                if (key.Item1 > rowIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1 - 1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+                if (key.Item1 < rowIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+            }
+            this.Data = Temp_matrixData;
+        }
+        private void DeleteColumn(ulong columnIndex)
+        {
+            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
+
+            foreach (var key in Data.Keys)
+            {
+                if (key.Item2 > columnIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2 - 1), Data[(key.Item1, key.Item2)]);
+                }
+                if (key.Item2 < columnIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+            }
+            this.Data = Temp_matrixData;
+        }
+        private void InsertEmptyRow(ulong rowIndex)
+        {
+            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
+
+            foreach (var key in Data.Keys)
+            {
+                if (key.Item1 == rowIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), default(T));
+                }
+                if (key.Item1 > rowIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1 + 1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+                if (key.Item1 < rowIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+            }
+            this.Data = Temp_matrixData;
+        }
+        private void InsertEmptyColumn(ulong columnIndex)
+        {
+            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
+
+            foreach (var key in Data.Keys)
+            {
+                if (key.Item2 == columnIndex) 
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), default(T));
+                }
+                if (key.Item2 > columnIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2 + 1), Data[(key.Item1, key.Item2)]);
+                }
+                if (key.Item2 < columnIndex)
+                {
+                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                }
+            }
+            this.Data = Temp_matrixData;
+        }
+        public static Matrix<int> RandomIntMatrix(ulong RowCount, ulong ColumnCount)
+        {
+            ParallelOptions _options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+            Matrix<int> M = new Matrix<int>();
+
+            ParallelExtensions.For(0, RowCount, _options, r =>
+            {
+                Random rnd = new Random();
+                for (ulong c = 0; c < ColumnCount; c++)
+                {
+                    M[r, c] = rnd.Next();
+                }
+            });
+
+            return M;
+        }
+        public static Matrix<int> RandomBoxIntMatrix(ulong RowCount, ulong ColumnCount)
+        {
+            ParallelOptions _options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+            Matrix<int> M = new Matrix<int>();
+
+            ParallelExtensions.For(0, RowCount, _options, r =>
+            {
+                Random rnd = new Random();
+                for (ulong c = 0; c < ColumnCount; c++)
+                {
+                    M[r, c] = rnd.Next();
+                }
+            });
+
+            return M;
         }
 
-        // Method for calculating trace (only for square matrices)
-        public T Trace()
+        public static Matrix<T> InitializeBoxMatrix(ulong RowCount, ulong ColumnCount)
         {
-            throw new NotImplementedException();
+            ParallelOptions _options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+            Matrix<T> M = new Matrix<T>();
+
+            ParallelExtensions.For(0, RowCount, _options, r =>
+            {
+                for (ulong c = 0; c < ColumnCount; c++)
+                {
+                    M[r, c] = default(T);
+                }
+            });
+
+            return M;
         }
+        #endregion
 
-        // Method for calculating rank
-        public int Rank()
+        #region Serialization
+        public void ExportToFile(string filePath)
         {
-            throw new NotImplementedException();
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+            string json = JsonConvert.SerializeObject(Data, settings);
+            File.WriteAllText(filePath, json);
         }
-
-        // Methods for eigenvalues and eigenvectors are typically complex and require specialized libraries
-
-        // Method for LU Decomposition
-        public (ExpandableMatrix<T> L, ExpandableMatrix<T> U) LUDecomposition()
+        public static Matrix<T> LoadFromFile(string filePath)
         {
-            throw new NotImplementedException();
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+            string json = File.ReadAllText(filePath);
+
+            // Initially deserialize to dictionary with string keys to manually handle tuple conversion
+            var tempMatrixData = JsonConvert.DeserializeObject< Dictionary<string, double>>(json, settings);
+
+            Matrix<T> Temp_matrix = new Matrix<T>();
+            try
+            {
+                foreach (var key in tempMatrixData.Keys)
+                {
+                    var parts = key.Trim('(', ')').Split(',');
+                    // Attempt to convert the value to the type T
+                    T value = ChangeType<T>(tempMatrixData[key]);
+
+                    Temp_matrix[ulong.Parse(parts[0]), ulong.Parse(parts[1])] = value;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+            return Temp_matrix;
         }
-
-        // Method for QR Decomposition
-        public (ExpandableMatrix<T> Q, ExpandableMatrix<T> R) QRDecomposition()
+        private static T ChangeType<T>(object value)
         {
-            throw new NotImplementedException();
+            // Check if the value is already of type T
+            if (value is T variable)
+                return variable;
+
+            // Handle the case where T is nullable
+            Type conversionType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+            // Convert the value to type T
+            return (T)Convert.ChangeType(value, conversionType, CultureInfo.InvariantCulture);
         }
-
-        // Method for Singular Value Decomposition
-        public (ExpandableMatrix<T> U, ExpandableMatrix<T> S, ExpandableMatrix<T> V) SingularValueDecomposition()
+        public static Matrix<T> LoadFromExcel(string filePath, string sheetName)
         {
-            throw new NotImplementedException();
+            Matrix<T> ExcelMatrix = new Matrix<T>();
+            try
+            {
+                using (var workbook = new XLWorkbook(filePath))
+                {
+                    var worksheet = workbook.Worksheet(sheetName);
+
+                    var rows = worksheet.RangeUsed().RowsUsed();
+                    foreach (var row in rows)
+                    {
+                        var cells = row.CellsUsed();
+                        foreach (var cell in cells)
+                        {
+                            ulong rowNumber = (ulong)(cell.Address.RowNumber - 1); // Convert back to 0-based index
+                            ulong columnNumber = (ulong)(cell.Address.ColumnNumber - 1); // Convert back to 0-based index
+
+                            ExcelMatrix[rowNumber, columnNumber] = ChangeType<T>((string)cell.Value);
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+      
+            return ExcelMatrix;
         }
-
-        // Method for Gaussian Elimination (Row Reduction)
-        public ExpandableMatrix<T> GaussianElimination()
+        public void ExportToExcel(string filePath, string MatrixName)
         {
-            throw new NotImplementedException();
+            ulong maxItemR = Data.Keys.Max(key => key.Item1);
+            ulong maxItemC = Data.Keys.Max(key => key.Item2);
+
+            if (maxItemC > 16384 || maxItemR > 1048576)
+            {
+                throw new System.Exception("Matrix is too large to export to excel");
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add(MatrixName);
+
+                foreach (var cell in Data)
+                {
+                    if (Data.ContainsKey((cell.Key.Item1 , cell.Key.Item2 )))
+                    {
+                        worksheet.Cell((int)cell.Key.Item1 + 1, (int)cell.Key.Item2 + 1).Value = cell.Value != null ? cell.Value.ToString() : default(T)?.ToString() ?? string.Empty;
+                    }
+                    else
+                    {
+                        worksheet.Cell((int)cell.Key.Item1 + 1, (int)cell.Key.Item2 + 1).Value = 0;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(Path.GetExtension(filePath)))
+                {
+                    filePath += ".xlsx";
+                }
+
+                workbook.SaveAs(filePath);
+            }
         }
+        #endregion
 
-        // Method for raising a matrix to a power
-        public ExpandableMatrix<T> Power(int exponent)
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            if (Data == null || !Data.Any())
+                return "The matrix is empty.";
+
+            var stringBuilder = new StringBuilder();
+            var maxRow = Data.Keys.Max(k => k.Item1);
+            var maxCol = Data.Keys.Max(k => k.Item2);
+            int cellWidth = Data.Values.Max(v => v.ToString().Length) + 2; // Find maximum value width for alignment
+
+            // Top border
+            stringBuilder.AppendLine("┌" + string.Join("", Enumerable.Repeat($"─{new string('─', cellWidth)}┬", (int)maxCol)) + $"─{new string('─', cellWidth)}┐");
+
+            for (ulong row = 0; row <= maxRow; row++)
+            {
+                stringBuilder.Append("│ "); // Left border for each row
+
+                for (ulong col = 0; col <= maxCol; col++)
+                {
+                    if (Data.TryGetValue((row, col), out T value))
+                        stringBuilder.Append($"{value}".PadRight(cellWidth)); // Align for better readability
+                    else
+                        stringBuilder.Append(new string(' ', cellWidth)); // Placeholder for missing values
+
+                    stringBuilder.Append("│ "); // Separator or right border
+                }
+
+                stringBuilder.AppendLine(); // Newline for the next row
+
+                // Separator between rows or bottom border
+                if (row < maxRow)
+                    stringBuilder.AppendLine("├" + string.Join("", Enumerable.Repeat($"─{new string('─', cellWidth)}┼", (int)maxCol)) + $"─{new string('─', cellWidth)}┤");
+                else
+                    stringBuilder.AppendLine("└" + string.Join("", Enumerable.Repeat($"─{new string('─', cellWidth)}┴", (int)maxCol)) + $"─{new string('─', cellWidth)}┘");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 
+    public interface IMatrix<T>
+    {
+        public int MaxDegreeOfParallelism { get; set; }
 
+        public T this[ulong Row, ulong Column] { get; set; }
+
+        #region Matrix Size and Structure
+        public ulong RowCount();
+        public ulong ColumnCount();
+        public bool IsSquare();
+        public bool IsOrthogonal();
+        public bool IsDiagonal();
+        public bool IsUnitary();
+        #endregion
+
+        #region Matrix Operations
+        public Matrix<T> DotProduct(Matrix<T> other);
+        public Matrix<T> Add(Matrix<T> other);
+        public Matrix<T> Subtract(Matrix<T> other);
+        public Matrix<T> MultiplyScalar(T scalar);
+        public Matrix<T> Transpose();
+        public Matrix<T> AddScalar(T scalar);
+        public Matrix<T> Diag(Matrix<T> diag_vector);
+        public Matrix<T> Inverse();
+        public Matrix<T> DiagVector();
+        public T Trace();
+        public Matrix<T> Conjugate();
+        public T Determinant();
+        public Matrix<T> Power(int exponent);
+        #endregion
+
+    }
 }

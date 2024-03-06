@@ -7,7 +7,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System.Threading;
 using Newtonsoft.Json;
-using OpenQA.Selenium.DevTools.V119.CSS;
 using CallaghanDev.Utilities.String;
 
 namespace CallaghanDev.Utilities.Web

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 
 namespace CallaghanDev.XML.Extensions
 {
@@ -62,5 +63,65 @@ namespace CallaghanDev.XML.Extensions
                 workbook.SaveAs(filePath);
             }
         }
+        public static void ExportJsonToExcel(string jsonString, string filePath)
+        {
+            // Ensure the file path ends with the .xlsx extension
+            if (string.IsNullOrWhiteSpace(Path.GetExtension(filePath)))
+            {
+                filePath += ".xlsx";
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Data");
+
+                // Parse the JSON string using System.Text.Json
+                var jsonDocument = JsonDocument.Parse(jsonString);
+                var objects = jsonDocument.RootElement.EnumerateArray();
+
+                // Initialize a list to store all unique column names
+                var columnNames = new HashSet<string>();
+
+                // Retrieve all keys from the JSON objects
+                if (objects.Any())
+                {
+                    foreach (var obj in objects)
+                    {
+                        foreach (var prop in obj.EnumerateObject())
+                        {
+                            columnNames.Add(prop.Name);
+                        }
+                    }
+
+                    int column = 1;
+                    // Create header row with column names
+                    foreach (var columnName in columnNames)
+                    {
+                        worksheet.Cell(1, column++).Value = columnName;
+                    }
+
+                    int row = 2;
+                    // Insert data rows
+                    foreach (var obj in objects)
+                    {
+                        column = 1;
+                        foreach (var columnName in columnNames)
+                        {
+                            if (obj.TryGetProperty(columnName, out var value))
+                            {
+                                worksheet.Cell(row, column).Value = value.ToString();
+                            }
+                            column++;
+                        }
+                        row++;
+                    }
+                }
+
+                // Save the workbook to the specified file path
+                workbook.SaveAs(filePath);
+            }
+        }
+
+
     }
 }

@@ -2,13 +2,24 @@
 
 	<PropertyGroup>
 		<LangVersion>11.0</LangVersion>
-		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
 		<Nullable Condition="'$(TargetFramework)' == 'netstandard2.0'">annotations</Nullable>
 		<Nullable Condition="'$(TargetFramework)' == 'netstandard2.1'">enable</Nullable>
+		<Nullable Condition="'$(TargetFramework)' == 'net8.0'">enable</Nullable>
 		<CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netstandard2.1'">true</CopyLocalLockFileAssemblies>
 		<CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netstandard2.0'">true</CopyLocalLockFileAssemblies>
+		<CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'net8.0'">true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
+	<Target Name="CopySixLaborsFonts" AfterTargets="Build">
+		<ItemGroup>
+			<FontFiles Include="$(UserProfile)\.nuget\packages\sixlabors.fonts\1.0.0\**\*.ttf" />
+		</ItemGroup>
+		<Copy SourceFiles="@(FontFiles)" DestinationFolder="bin\$(Configuration)\netstandard2.1\" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(FontFiles)" DestinationFolder="bin\$(Configuration)\net8.0\" SkipUnchangedFiles="true" />
+	</Target>
+	
+	
 	<ItemGroup>
 		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18" />
 	</ItemGroup>
@@ -16,25 +27,10 @@
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<MergedOutputPath>bin\$(Configuration)\netstandard2.0\Merged\</MergedOutputPath>
 	</PropertyGroup>
-	
-	
-	<Target Name="CopySixLaborsFonts" AfterTargets="Build">
-		<!-- Path to the fonts in the SixLabors.Fonts package -->
-		<ItemGroup>
-			<FontFiles Include="$(UserProfile)\.nuget\packages\sixlabors.fonts\1.0.0\**\*.ttf" />
-		</ItemGroup>
-		<!-- Copy font files to the output directory -->
-		<Copy SourceFiles="@(FontFiles)" DestinationFolder="bin\$(Configuration)\netstandard2.1\" SkipUnchangedFiles="true" />
-	</Target>
-	
-	
-	
-	
-	
 	<Target Name="ILRepack" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<ItemGroup>
 			<InputAssemblies Include="$(OutputPath)*.dll" />
-			<InputAssemblies Remove="$(TargetPath)" />		
+			<InputAssemblies Remove="$(TargetPath)" />
 		</ItemGroup>
 		<ILRepack MainAssembly="$(TargetFileName)" OutputAssembly="$(MergedOutputPath)$(TargetFileName)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" Internalize="true" Parallel="true" XmlDocumentation="true">
 		</ILRepack>
@@ -51,47 +47,48 @@
 		<ILRepack MainAssembly="$(TargetFileName)" OutputAssembly="$(MergedOutputPath)$(TargetFileName)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" Internalize="true" Parallel="true" XmlDocumentation="true">
 		</ILRepack>
 	</Target>
-
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PublishSingleFile>true</PublishSingleFile>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
-
 	<PropertyGroup>
-    <NoWarn>$(NoWarn);NU1605;CS1591</NoWarn>
-  </PropertyGroup>
+		<NoWarn>$(NoWarn);NU1605;CS1591;CS8601</NoWarn>
+	</PropertyGroup>
 	<ItemGroup>
 		<InputAssemblies Include="$(OutputPath)CallaghanDev.XML.dll" />
 	</ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Bold.ttf" />
-    <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-BoldItalic.ttf" />
-    <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Italic.ttf" />
-    <EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Regular.ttf" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Bold.ttf" />
+		<EmbeddedResource Include="Graphics\Fonts\CarlitoBare-BoldItalic.ttf" />
+		<EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Italic.ttf" />
+		<EmbeddedResource Include="Graphics\Fonts\CarlitoBare-Regular.ttf" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ClosedXML.Parser" Version="1.2.0" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="[2.16.0,3.0.0)" />
-    <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
-    <PackageReference Include="Fody" Version="6.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Janitor.Fody" Version="1.9.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Polyfill" Version="1.29.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="SixLabors.Fonts" Version="1.0.0" />
-    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ClosedXML.Parser" Version="1.2.0" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="[2.16.0,3.0.0)" />
+		<PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
+		<PackageReference Include="Fody" Version="6.3.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Janitor.Fody" Version="1.9.0" PrivateAssets="all" />
+		<PackageReference Include="Polyfill" Version="1.29.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SixLabors.Fonts" Version="1.0.0" />
+		<PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+		<PackageReference Include="System.Text.Json" Version="4.7.2" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Buffers" Version="4.5.1" />
+		<PackageReference Include="System.Memory" Version="4.5.4" />
+	</ItemGroup>
+
 </Project>

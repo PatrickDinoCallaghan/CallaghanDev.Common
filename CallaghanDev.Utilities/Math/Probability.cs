@@ -39,7 +39,20 @@ namespace CallaghanDev.Utilities.MathTools
                 EuropeanDecimal,
                 MoneyLine,
             }
+            public static double Combinations(int n, int k)
+            {
+                return Factorial(n) / (Factorial(k) * Factorial(n - k));
+            }
 
+            public static double Factorial(int n)
+            {
+                double result = 1;
+                for (int i = 2; i <= n; i++)
+                {
+                    result *= i;
+                }
+                return result;
+            }
 
             public static Format GetFormat(string InOdds)
             {

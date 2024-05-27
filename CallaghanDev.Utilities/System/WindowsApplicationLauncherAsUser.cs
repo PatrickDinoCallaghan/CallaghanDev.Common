@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security;
 
-namespace CallaghanDev.Utilities.System_
+namespace CallaghanDev.Utilities.SystemTools
 {
     public class WindowsApplicationLauncherAsUser
     {

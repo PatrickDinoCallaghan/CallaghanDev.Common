@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CallaghanDev.Utilities.Code
 {
-    public class FileHelper
+    public class CsFileHelper
     {
         public StringBuilder ConvertCsFileToStringBuilder(string path)
         {

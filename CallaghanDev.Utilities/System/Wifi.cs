@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace CallaghanDev.Utilities.System_
+namespace CallaghanDev.Utilities.SystemTools
 {
     public static class Wifi
     {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CallaghanDev.Utilities.Code
 {
-    public class MSToMySQL
+    public class MSSQLToMySQL
     {
         public string GenScript(string connectionString)
         {

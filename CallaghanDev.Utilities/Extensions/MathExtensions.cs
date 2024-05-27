@@ -9,6 +9,51 @@ namespace CallaghanDev.Utilities.MathTools
 {
     public static class MathExtensions
     {
+        public static bool WithinRange(this double Value, double Min, double Max)
+        {
+            if ((Value - Min) * (Max - Value) >= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static bool CheckValueIsWithinRangeOfValue(this double Value, double checkvalue, double tolerance)
+        {
+            if (tolerance == 1)
+            {
+                return true;
+            }
+            double MinMax = System.Math.Abs(Value * tolerance);
+
+            return WithinRange(checkvalue, Value - MinMax, Value + MinMax);
+
+        }
+
+        public static int AbsoluteValue(this int inint)
+        {
+            return inint * inint ^ 1 / 2;
+        }
+        public static long AbsoluteValue(this long inint)
+        {
+            return inint * inint ^ 1 / 2;
+        }
+        public static TimeSpan AbsoluteValue(this TimeSpan InSpan)
+        {
+            TimeSpan BlankTimespan = new TimeSpan();
+
+            if (InSpan < BlankTimespan)
+            {
+                return -InSpan;
+            }
+            else
+            {
+                return InSpan;
+            }
+        }
+
         public static decimal Sq(this decimal value)
         {
             return value * value;
@@ -140,7 +185,7 @@ namespace CallaghanDev.Utilities.MathTools
 
         public static int Round(this int value)
         {
-            return (int)Math.Round((double)value);
+            return (int)System.Math.Round((double)value);
         }
 
         public static long Sqrt(this long value)

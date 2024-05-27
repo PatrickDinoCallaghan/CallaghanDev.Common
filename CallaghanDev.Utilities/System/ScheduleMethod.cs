@@ -2,7 +2,7 @@
 using System.Timers;
 
 
-namespace CallaghanDev.Winforms.Controls
+namespace CallaghanDev.Utilities.SystemTools
 {
     /// <summary>
     /// Allows the program to schedule a method at a given time

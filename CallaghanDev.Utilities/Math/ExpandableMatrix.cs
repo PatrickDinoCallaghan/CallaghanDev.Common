@@ -7,19 +7,28 @@ using System.Text;
 using ILGPU;
 using ILGPU.Runtime;
 using ILGPU.Algorithms;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using CallaghanDev.Utilities.GPU;
+using System.Collections.Generic;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Office.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 namespace CallaghanDev.Utilities.MathTools
 {
-    // TODO: Create thread safe collection data structures that allow indexing of ulong index length Namely: ulongList<T> and ulongConcurrentDictionary<(ulong, ulong), T>
-    public class Matrix<T> : IMatrix<T>
+    public class Matrix<T> : IMatrix<T>, IEnumerable<KeyValuePair<MatrixKey, T>>
     {
         ParallelOptions options;
-        ConcurrentDictionary<(ulong, ulong), T> Data;
+        ConcurrentDictionary<MatrixKey, T> Data;
 
         private int _MaxDegreeOfParallelism;
         public int MaxDegreeOfParallelism
         {
-            get { return _MaxDegreeOfParallelism; }
+            get 
+            { 
+                return _MaxDegreeOfParallelism; 
+            }
             set
             {
                 _MaxDegreeOfParallelism = value;
@@ -31,13 +40,14 @@ namespace CallaghanDev.Utilities.MathTools
             }
         }
 
+
         public Matrix()
         {
-            Data = new ConcurrentDictionary<(ulong, ulong), T>();
+            Data = new ConcurrentDictionary<MatrixKey, T>();
             MaxDegreeOfParallelism = Environment.ProcessorCount;
         }
 
-        public T this[ulong Row, ulong Column]
+        public T this[int Row, int Column]
         {
             get
             {
@@ -48,63 +58,75 @@ namespace CallaghanDev.Utilities.MathTools
                 SetElement(Row, Column, value);
             }
         }
+    
+        public T[] Column(int Index)
+        {
+            return  Data.Where(kvp => kvp.Key.Column == Index)
+               .Select(kvp => kvp.Value).ToArray();
+        }
+        public T[] Row(int Index)
+        {
+            return Data.Where(kvp => kvp.Key.Row == Index)
+               .Select(kvp => kvp.Value).ToArray();
+        }
 
         #region Private Helpers
-        private T GetElement(ulong row, ulong col)
+        private T GetElement(int row, int col)
         {
-            return Data.TryGetValue((row, col), out T value) ? value : default(T);
+            return Data.TryGetValue(new MatrixKey(row, col), out T value) ? value : default(T);
         }
-        private void SetElement(ulong row, ulong col, T value)
+
+        private void SetElement(int row, int column, T value)
         {
-            if (Data.ContainsKey((row, col)))
+            MatrixKey key = new MatrixKey(row, column);
+
+            if (Data.ContainsKey(key))
             {
-                Data[(row, col)] = value;
+                Data[key] = value;
             }
             else
             {
-                Data.TryAdd((row, col), value);
+                if (Data.TryAdd(key, value))
+                {
+                    if (key.Column >= _ColumnCount)
+                    {
+                        _ColumnCount = key.Column + 1;
+                    }
+                    if (key.Row >= _RowCount)
+                    {
+                        //_RowCount = Data.Keys.Max(k => k.Row) + 1;
+                        _RowCount = key.Row + 1;
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Failed to add the new value.");
+                }
             }
         }
-        public (ulong Rows, ulong Columns) GetSize()
+
+        public (int Rows, int Columns) GetSize()
         {
             if (Data.Count == 0)
             {
                 return (0, 0);
             }
-
-            ulong maxRow = Data.Keys.Max(k => k.Item1);
-            ulong maxCol = Data.Keys.Max(k => k.Item2);
-
             // Size is max index + 1 as matrix indices are 0-based
-            return (maxRow + 1, maxCol + 1);
+            return (RowCount(), ColumnCount());
         }
         #endregion
 
         #region Matrix Size and Structure
-        public ulong RowCount()
+
+        private int _RowCount = 0;
+        private int _ColumnCount = 0;
+        public int RowCount()
         {
-
-            if (Data.Count == 0)
-            {
-                return 0;
-            }
-            ulong maxRow = Data.Keys.Max(k => k.Item1);
-
-            // Size is max index + 1 as matrix indices are 0-based
-            return maxRow + 1;
+            return _RowCount;
         }
-        public ulong ColumnCount()
+        public int ColumnCount()
         {
-
-            if (Data.Count == 0)
-            {
-                return 0;
-            }
-
-            ulong maxCol = Data.Keys.Max(k => k.Item2);
-
-            // Size is max index + 1 as matrix indices are 0-based
-            return maxCol + 1;
+            return _ColumnCount;
         }
         public bool IsSquare()
         {
@@ -118,9 +140,9 @@ namespace CallaghanDev.Utilities.MathTools
         {
             Matrix<T> Zeros = new Matrix<T>();
 
-            for (ulong r = 0; r < this.RowCount(); r++)
+            for (int r = 0; r < this.RowCount(); r++)
             {
-                for (ulong c = 0; c < this.ColumnCount(); c++)
+                for (int c = 0; c < this.ColumnCount(); c++)
                 {
                     Zeros[r, c] = (dynamic)0;
                 }
@@ -140,7 +162,7 @@ namespace CallaghanDev.Utilities.MathTools
         }
         #endregion
 
-        #region Matrix Operations
+        #region Matrix Operations CPU
         public Matrix<T> DotProduct(Matrix<T> other)
         {
             var (rowsA, colsA) = this.GetSize();
@@ -155,10 +177,10 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, rowsA, options, i =>
             {
-                for (uint j = 0; j < colsB; j++)
+                for (int j = 0; j < colsB; j++)
                 {
                     dynamic sum = default(T);
-                    for (uint k = 0; k < colsA; k++)
+                    for (int k = 0; k < colsA; k++)
                     {
                         dynamic valA = this.GetElement(i, k);
                         dynamic valB = other.GetElement(k, j);
@@ -184,7 +206,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, rowsThis, options, i =>
             {
-                for (uint j = 0; j < colsThis; j++)
+                for (int j = 0; j < colsThis; j++)
                 {
                     dynamic valueThis = this.GetElement(i, j);
                     dynamic valueOther = other.GetElement(i, j);
@@ -208,7 +230,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, rowsThis, options, i =>
             {
-                for (uint j = 0; j < colsThis; j++)
+                for (int j = 0; j < colsThis; j++)
                 {
                     dynamic valueThis = this.GetElement(i, j);
                     dynamic valueOther = other.GetElement(i, j);
@@ -225,7 +247,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, rows, options, i =>
             {
-                for (uint j = 0; j < cols; j++)
+                for (int j = 0; j < cols; j++)
                 {
                     dynamic value = this.GetElement(i, j);
                     result.SetElement(i, j, value * scalar);
@@ -241,7 +263,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, cols, options, j =>
             {
-                for (uint i = 0; i < rows; i++)
+                for (int i = 0; i < rows; i++)
                 {
                     T value = this.GetElement(i, j);
                     transposedMatrix.SetElement(j, i, value);
@@ -258,10 +280,10 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, rows, options, i =>
             {
-                for (uint j = 0; j < cols; j++)
+                for (int j = 0; j < cols; j++)
                 {
                     dynamic sum = default(T);
-                    for (uint k = 0; k < cols; k++)
+                    for (int k = 0; k < cols; k++)
                     {
                         dynamic valA = this.GetElement(i, k);
                         sum += valA + scalar;
@@ -273,14 +295,14 @@ namespace CallaghanDev.Utilities.MathTools
         }
         public Matrix<T> Diag(Matrix<T> diag_vector)
         {
-            ulong dim = RowCount();
+            int dim = RowCount();
 
             if (dim == 0)
                 throw new ArgumentException("diag_vector must be 0x(N-1) or N-1x0");
 
             Matrix<T> M = new Matrix<T>();
 
-            for (ulong i = 0; i < dim; i++)
+            for (int i = 0; i < dim; i++)
             {
                 M[i, i] = diag_vector[i, 0];
             }
@@ -300,7 +322,7 @@ namespace CallaghanDev.Utilities.MathTools
                 throw new InvalidOperationException("Cannot invert matrix with determinant of zero.");
             }
 
-            ulong n = this.ColumnCount();
+            int n = this.ColumnCount();
 
             if (n == 1)
             {
@@ -323,13 +345,13 @@ namespace CallaghanDev.Utilities.MathTools
 
             Matrix<T> buf = new Matrix<T>();
 
-            ParallelExtensions.For(0, n, options, i => 
+            ParallelExtensions.For(0, n, options, i =>
             {
-                for (ulong j = 0; j < n; j++)
+                for (int j = 0; j < n; j++)
                 {
-                    dynamic sign = (int)Math.Pow(-1, (i + j + 1));
-                    dynamic minorDeterminant = this.Minor((ulong)i, j).Determinant();
-                    buf[(ulong)j, (ulong)i] = sign * minorDeterminant;
+                    dynamic sign = (int)System.Math.Pow(-1, (i + j + 1));
+                    dynamic minorDeterminant = this.Minor((int)i, j).Determinant();
+                    buf[(int)j, (int)i] = sign * minorDeterminant;
                 }
             });
             return buf.MultiplyScalar((dynamic)1 / det);
@@ -341,7 +363,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             Matrix<T> v = new Matrix<T>();
 
-            ulong RowCount = this.RowCount();
+            int RowCount = this.RowCount();
 
             ParallelExtensions.For(0, RowCount, options, i =>
             {
@@ -355,7 +377,7 @@ namespace CallaghanDev.Utilities.MathTools
                 throw new InvalidOperationException("Cannot calc trace of non-square matrix.");
 
             dynamic temp = 0;
-            for (ulong i = 0; i < this.RowCount(); i++)
+            for (int i = 0; i < this.RowCount(); i++)
             {
                 temp += this[i, i];
             }
@@ -365,9 +387,9 @@ namespace CallaghanDev.Utilities.MathTools
         {
             Matrix<T> M = new Matrix<T>();
 
-            for (ulong i = 1; i <= RowCount(); i++)
+            for (int i = 1; i <= RowCount(); i++)
             {
-                for (ulong j = 1; j <= ColumnCount(); j++)
+                for (int j = 1; j <= ColumnCount(); j++)
                 {
                     M[i, j] = this[i, j];
                 }
@@ -438,7 +460,7 @@ namespace CallaghanDev.Utilities.MathTools
                 return CalculateDeterminant(this, rows);
             }
         }
-        private T CalculateDeterminant(Matrix<T> matrix, ulong size)
+        private T CalculateDeterminant(Matrix<T> matrix, int size)
         {
             if (size == 1)
             {
@@ -476,6 +498,47 @@ namespace CallaghanDev.Utilities.MathTools
         }
         #endregion
 
+        #region Matrix Operations GPU
+
+        private GPUAcceleratedArrayTensor.DotProduct GPUAccelleratedDotProduct;
+
+        /// <summary>
+        /// This gives a IlGPU accelerator option for dot product of a matrix.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="accelerator"></param>
+        /// <returns></returns>
+        public Matrix<float> DotProduct(Matrix<float> other, Accelerator accelerator)
+        {
+            if (GPUAccelleratedDotProduct == null)
+            {
+                GPUAccelleratedDotProduct = new GPUAcceleratedArrayTensor.DotProduct(accelerator);
+            }
+
+            float[,] thisArray = this.ToFloatArray();
+            float[,] OtherArray = other.ToArray();
+
+            float[,] values = GPUAccelleratedDotProduct.Calculate(thisArray, OtherArray);
+
+            return new Matrix<float>() { Data = ToConcurrentDictionary<float>(values) };
+        }
+        public Matrix<double> DotProduct(Matrix<double> other, Accelerator accelerator)
+        {
+            if (GPUAccelleratedDotProduct == null)
+            {
+                GPUAccelleratedDotProduct = new GPUAcceleratedArrayTensor.DotProduct(accelerator);
+            }
+
+            double[,] thisArray = this.ToDoubleArray();
+            double[,] OtherArray = other.ToArray();
+
+            double[,] values = GPUAccelleratedDotProduct.Calculate(thisArray, OtherArray);
+
+            return new Matrix<double>() { Data = ToConcurrentDictionary<double>(values) };
+        }
+
+        #endregion
+
         #region Operator Overloads
         public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b)
         {
@@ -500,9 +563,9 @@ namespace CallaghanDev.Utilities.MathTools
         #endregion
 
         #region Utility Methods
-        private Matrix<T> Minor(ulong excludingRow, ulong excludingCol)
+        private Matrix<T> Minor(int excludingRow, int excludingCol)
         {
-            ulong size = RowCount();
+            int size = RowCount();
 
             Matrix<T> subMatrix = new Matrix<T>();
 
@@ -511,10 +574,10 @@ namespace CallaghanDev.Utilities.MathTools
                 if (i == excludingRow)
                     return; // Equivalent to 'continue' in a regular for-loop.
 
-                ulong subi = i > excludingRow ? i - 1 : i; // Adjust subi index if rows above excludingRow were skipped.
-                ulong subj = 0;
+                int subi = i > excludingRow ? i - 1 : i; // Adjust subi index if rows above excludingRow were skipped.
+                int subj = 0;
 
-                for (ulong j = 0; j < size; j++)
+                for (int j = 0; j < size; j++)
                 {
                     if (j == excludingCol)
                         continue;
@@ -526,12 +589,34 @@ namespace CallaghanDev.Utilities.MathTools
 
             return subMatrix;
         }
-        public Matrix<T> Identity(ulong n)
+        public Matrix<T> WithoutFirstAndLastColumn()
+        {
+            int Columns = ColumnCount()-1;
+            int Rows = RowCount();
+            Matrix<T> subMatrix = new Matrix<T>();
+
+            int subR = 0; // Adjust subi index if rows above excludingRow were skipped.
+            int subC;
+
+            ParallelExtensions.For(1, Columns, options, (c) =>
+            {
+                subC = 0;
+                subR++;
+                for (int r = 0; r < Rows; r++)
+                {
+                    subMatrix.SetElement(subR, subC, this.GetElement(r, c));
+                    subC++;
+                }
+            });
+
+            return subMatrix;
+        }
+        public Matrix<T> Identity(int n)
         {
             Matrix<T> result = new Matrix<T>(); // Assuming Matrix<T> has a constructor that initializes the matrix size
-            for (ulong i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (ulong j = 0; j < n; j++)
+                for (int j = 0; j < n; j++)
                 {
                     result[i, j] = (i == j) ? (dynamic)1 : (dynamic)0; // Using dynamic to assume T can be an integer or any numeric type
                 }
@@ -542,98 +627,128 @@ namespace CallaghanDev.Utilities.MathTools
         {
             var clone = new Matrix<T>();
 
-            List<KeyValuePair<(ulong, ulong), T>> elements = new List<KeyValuePair<(ulong, ulong), T>>(Data);
+            List<KeyValuePair<MatrixKey, T>> elements = new List<KeyValuePair<MatrixKey, T>>(Data);
 
-            ParallelExtensions.For(0, (ulong)this.Data.Count, options, i =>
+            ParallelExtensions.For(0, (int)this.Data.Count, options, i =>
             {
-                KeyValuePair<(ulong, ulong), T> Element;
+                KeyValuePair<MatrixKey, T> Element;
 
                 lock (elements)
                 {
                     Element = elements[(int)i];
                 }
-                clone.SetElement(Element.Key.Item1, Element.Key.Item2, Element.Value);
+                clone.SetElement(Element.Key.Row, Element.Key.Column, Element.Value);
             });
 
             return clone;
         }
-        private void DeleteRow(ulong rowIndex)
+        private void DeleteRow(int rowIndex)
         {
-            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
-
+            if (rowIndex >= _RowCount)
+            {
+                throw new Exception("Row doesnt exist and cannot be deleted");
+            }
+            ConcurrentDictionary<MatrixKey, T> Temp_matrixData = new ConcurrentDictionary<MatrixKey, T>();
+            MatrixKey matrixkey;
+            MatrixKey matrixkey1;
             foreach (var key in Data.Keys)
             {
-                if (key.Item1 > rowIndex)
+                if (key.Row > rowIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1 - 1, key.Item2), Data[(key.Item1, key.Item2)]);
+                     matrixkey1 = new MatrixKey(key.Row-1, key.Column);
+                     matrixkey = new MatrixKey(key.Row, key.Column);
+
+                    Temp_matrixData.TryAdd(matrixkey1, Data[matrixkey]);
                 }
-                if (key.Item1 < rowIndex)
+                if (key.Row < rowIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                     matrixkey = new MatrixKey(key.Row, key.Column);
+
+                    Temp_matrixData.TryAdd(matrixkey, Data[matrixkey]);
                 }
             }
             this.Data = Temp_matrixData;
+            _RowCount = _RowCount -1;
         }
-        private void DeleteColumn(ulong columnIndex)
+        private void DeleteColumn(int columnIndex)
         {
-            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
+            if (columnIndex >= _ColumnCount)
+            {
+                throw new Exception("Column doesnt exist and cannot be deleted");
+            }
+            ConcurrentDictionary<MatrixKey, T> Temp_matrixData = new ConcurrentDictionary<MatrixKey, T>();
+            MatrixKey matrixkey;
+            MatrixKey matrixkey1;
 
             foreach (var key in Data.Keys)
             {
-                if (key.Item2 > columnIndex)
+                matrixkey1 = new MatrixKey(key.Row, key.Column-1);
+                matrixkey = new MatrixKey(key.Row, key.Column);
+                if (key.Column > columnIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2 - 1), Data[(key.Item1, key.Item2)]);
+                    Temp_matrixData.TryAdd(matrixkey1, Data[matrixkey]);
                 }
-                if (key.Item2 < columnIndex)
+                if (key.Column < columnIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                    Temp_matrixData.TryAdd(matrixkey, Data[matrixkey]);
                 }
             }
-            this.Data = Temp_matrixData;
-        }
-        private void InsertEmptyRow(ulong rowIndex)
-        {
-            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
 
+            this.Data = Temp_matrixData;
+            _ColumnCount = _ColumnCount - 1;
+        }
+        private void InsertEmptyRow(int rowIndex)
+        {
+            ConcurrentDictionary<MatrixKey, T> Temp_matrixData = new ConcurrentDictionary<MatrixKey, T>();
+            MatrixKey matrixkey;
+            MatrixKey matrixkey1;
             foreach (var key in Data.Keys)
             {
-                if (key.Item1 == rowIndex)
+                matrixkey = new MatrixKey(key.Row, key.Column);
+                if (key.Row == rowIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), default(T));
+                    Temp_matrixData.TryAdd(matrixkey, default(T));
                 }
-                if (key.Item1 > rowIndex)
+                if (key.Row > rowIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1 + 1, key.Item2), Data[(key.Item1, key.Item2)]);
+                    matrixkey1 = new MatrixKey(key.Row + 1, key.Column);
+                    Temp_matrixData.TryAdd(matrixkey1, Data[matrixkey]);
                 }
-                if (key.Item1 < rowIndex)
+                if (key.Row < rowIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                    Temp_matrixData.TryAdd(matrixkey, Data[matrixkey]);
                 }
             }
             this.Data = Temp_matrixData;
+            _RowCount = _RowCount + 1;
         }
-        private void InsertEmptyColumn(ulong columnIndex)
+        private void InsertEmptyColumn(int columnIndex)
         {
-            ConcurrentDictionary<(ulong, ulong), T> Temp_matrixData = new ConcurrentDictionary<(ulong, ulong), T>();
-
+            ConcurrentDictionary<MatrixKey, T> Temp_matrixData = new ConcurrentDictionary<MatrixKey, T>();
+            MatrixKey matrixkey;
+            MatrixKey matrixkey1;
             foreach (var key in Data.Keys)
             {
-                if (key.Item2 == columnIndex) 
+                matrixkey = new MatrixKey(key.Row, key.Column);
+                if (key.Column == columnIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), default(T));
+                    Temp_matrixData.TryAdd(matrixkey, default(T));
                 }
-                if (key.Item2 > columnIndex)
+                if (key.Column > columnIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2 + 1), Data[(key.Item1, key.Item2)]);
+                    matrixkey1 = new MatrixKey(key.Row + 1, key.Column);
+                    Temp_matrixData.TryAdd(matrixkey1, Data[matrixkey]);
                 }
-                if (key.Item2 < columnIndex)
+                if (key.Column < columnIndex)
                 {
-                    Temp_matrixData.TryAdd((key.Item1, key.Item2), Data[(key.Item1, key.Item2)]);
+                    Temp_matrixData.TryAdd(matrixkey, Data[matrixkey]);
                 }
             }
             this.Data = Temp_matrixData;
+
+            _ColumnCount = _ColumnCount + 1;
         }
-        public static Matrix<int> RandomIntMatrix(ulong RowCount, ulong ColumnCount)
+        public static Matrix<int> RandomIntMatrix(int RowCount, int ColumnCount)
         {
             ParallelOptions _options = new ParallelOptions
             {
@@ -644,15 +759,15 @@ namespace CallaghanDev.Utilities.MathTools
             ParallelExtensions.For(0, RowCount, _options, r =>
             {
                 Random rnd = new Random();
-                for (ulong c = 0; c < ColumnCount; c++)
+                for (int c = 0; c < ColumnCount; c++)
                 {
                     M[r, c] = rnd.Next();
                 }
             });
-
+         
             return M;
         }
-        public static Matrix<int> RandomBoxIntMatrix(ulong RowCount, ulong ColumnCount)
+        public static Matrix<int> RandomBoxIntMatrix(int RowCount, int ColumnCount)
         {
             ParallelOptions _options = new ParallelOptions
             {
@@ -663,7 +778,7 @@ namespace CallaghanDev.Utilities.MathTools
             ParallelExtensions.For(0, RowCount, _options, r =>
             {
                 Random rnd = new Random();
-                for (ulong c = 0; c < ColumnCount; c++)
+                for (int c = 0; c < ColumnCount; c++)
                 {
                     M[r, c] = rnd.Next();
                 }
@@ -671,8 +786,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             return M;
         }
-
-        public static Matrix<T> InitializeBoxMatrix(ulong RowCount, ulong ColumnCount)
+        public static Matrix<T> InitializeBoxMatrix(int RowCount, int ColumnCount)
         {
             ParallelOptions _options = new ParallelOptions
             {
@@ -682,7 +796,7 @@ namespace CallaghanDev.Utilities.MathTools
 
             ParallelExtensions.For(0, RowCount, _options, r =>
             {
-                for (ulong c = 0; c < ColumnCount; c++)
+                for (int c = 0; c < ColumnCount; c++)
                 {
                     M[r, c] = default(T);
                 }
@@ -715,7 +829,7 @@ namespace CallaghanDev.Utilities.MathTools
             string json = File.ReadAllText(filePath);
 
             // Initially deserialize to dictionary with string keys to manually handle tuple conversion
-            var tempMatrixData = JsonConvert.DeserializeObject< Dictionary<string, double>>(json, settings);
+            var tempMatrixData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json, settings);
 
             Matrix<T> Temp_matrix = new Matrix<T>();
             try
@@ -726,10 +840,10 @@ namespace CallaghanDev.Utilities.MathTools
                     // Attempt to convert the value to the type T
                     T value = ChangeType<T>(tempMatrixData[key]);
 
-                    Temp_matrix[ulong.Parse(parts[0]), ulong.Parse(parts[1])] = value;
+                    Temp_matrix[int.Parse(parts[0]), int.Parse(parts[1])] = value;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -763,8 +877,8 @@ namespace CallaghanDev.Utilities.MathTools
                         var cells = row.CellsUsed();
                         foreach (var cell in cells)
                         {
-                            ulong rowNumber = (ulong)(cell.Address.RowNumber - 1); // Convert back to 0-based index
-                            ulong columnNumber = (ulong)(cell.Address.ColumnNumber - 1); // Convert back to 0-based index
+                            int rowNumber = (int)(cell.Address.RowNumber - 1); // Convert back to 0-based index
+                            int columnNumber = (int)(cell.Address.ColumnNumber - 1); // Convert back to 0-based index
 
                             ExcelMatrix[rowNumber, columnNumber] = ChangeType<T>((string)cell.Value);
 
@@ -777,13 +891,13 @@ namespace CallaghanDev.Utilities.MathTools
 
                 throw ex;
             }
-      
+
             return ExcelMatrix;
         }
         public void ExportToExcel(string filePath, string MatrixName)
         {
-            ulong maxItemR = Data.Keys.Max(key => key.Item1);
-            ulong maxItemC = Data.Keys.Max(key => key.Item2);
+            int maxItemR = RowCount();
+            int maxItemC = ColumnCount();
 
             if (maxItemC > 16384 || maxItemR > 1048576)
             {
@@ -796,13 +910,13 @@ namespace CallaghanDev.Utilities.MathTools
 
                 foreach (var cell in Data)
                 {
-                    if (Data.ContainsKey((cell.Key.Item1 , cell.Key.Item2 )))
+                    if (Data.ContainsKey(new MatrixKey(cell.Key.Row, cell.Key.Column)))
                     {
-                        worksheet.Cell((int)cell.Key.Item1 + 1, (int)cell.Key.Item2 + 1).Value = cell.Value != null ? cell.Value.ToString() : default(T)?.ToString() ?? string.Empty;
+                        worksheet.Cell((int)cell.Key.Row + 1, (int)cell.Key.Column + 1).Value = cell.Value != null ? cell.Value.ToString() : default(T)?.ToString() ?? string.Empty;
                     }
                     else
                     {
-                        worksheet.Cell((int)cell.Key.Item1 + 1, (int)cell.Key.Item2 + 1).Value = 0;
+                        worksheet.Cell((int)cell.Key.Row + 1, (int)cell.Key.Column + 1).Value = 0;
                     }
                 }
 
@@ -816,26 +930,28 @@ namespace CallaghanDev.Utilities.MathTools
         }
         #endregion
 
+        #region utility methods and Linq
         public override string ToString()
         {
             if (Data == null || !Data.Any())
                 return "The matrix is empty.";
 
             var stringBuilder = new StringBuilder();
-            var maxRow = Data.Keys.Max(k => k.Item1);
-            var maxCol = Data.Keys.Max(k => k.Item2);
+            var maxRow = Data.Keys.Max(k => k.Row);
+            var maxCol = Data.Keys.Max(k => k.Column);
             int cellWidth = Data.Values.Max(v => v.ToString().Length) + 2; // Find maximum value width for alignment
 
             // Top border
             stringBuilder.AppendLine("┌" + string.Join("", Enumerable.Repeat($"─{new string('─', cellWidth)}┬", (int)maxCol)) + $"─{new string('─', cellWidth)}┐");
 
-            for (ulong row = 0; row <= maxRow; row++)
+            for (int row = 0; row <= maxRow; row++)
             {
                 stringBuilder.Append("│ "); // Left border for each row
 
-                for (ulong col = 0; col <= maxCol; col++)
+                for (int col = 0; col <= maxCol; col++)
                 {
-                    if (Data.TryGetValue((row, col), out T value))
+                    MatrixKey matrixKey = new MatrixKey(row, col);
+                    if (Data.TryGetValue(matrixKey, out T value))
                         stringBuilder.Append($"{value}".PadRight(cellWidth)); // Align for better readability
                     else
                         stringBuilder.Append(new string(' ', cellWidth)); // Placeholder for missing values
@@ -854,38 +970,196 @@ namespace CallaghanDev.Utilities.MathTools
 
             return stringBuilder.ToString();
         }
-    }
 
-    public interface IMatrix<T>
-    {
-        public int MaxDegreeOfParallelism { get; set; }
+        public T[,] ToArray()
+        {
+            if (Data == null || Data.Count == 0)
+            {
+                return new T[0, 0];
+            }
 
-        public T this[ulong Row, ulong Column] { get; set; }
+            int maxRow = RowCount();
+            int maxColumn = ColumnCount();
 
-        #region Matrix Size and Structure
-        public ulong RowCount();
-        public ulong ColumnCount();
-        public bool IsSquare();
-        public bool IsOrthogonal();
-        public bool IsDiagonal();
-        public bool IsUnitary();
+            // Initialize the array with the determined maximum dimensions
+            T[,] array = new T[maxRow , maxColumn];
+
+            foreach (var kvp in Data)
+            {
+                array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+
+            }
+
+
+            return array;
+        }
+        public T[][] ConvertToColumnArray()
+        {
+            if (Data.IsEmpty)
+            {
+                return new T[0][]; // Return an empty jagged array if the dictionary is empty.
+            }
+
+            // Determine the size of the jagged array
+            int maxRow = RowCount();
+            int maxColumn = ColumnCount();
+
+            // Initialize the jagged array
+            T[][] dataArray = new T[maxColumn][];
+            for (int i = 0; i < maxColumn; i++)
+            {
+                dataArray[i] = new T[maxRow]; // Correctly initialize each row with 'maxColumn' columns
+            }
+
+            // Populate the jagged array from the dictionary
+            Parallel.ForEach(Data, keyValuePair =>
+            {
+                int row = keyValuePair.Key.Row;
+                int column = keyValuePair.Key.Column;
+                dataArray[column][row] = keyValuePair.Value; // Correctly access row first, then column
+            });
+            return dataArray;
+        }
+        public Matrix<TResult> Select<TResult>(Func<T, TResult> selector)
+        {
+            var resultMatrix = new Matrix<TResult>();
+
+            foreach (var item in this)
+            {
+                resultMatrix[item.Key.Row, item.Key.Column] = selector(item.Value);
+
+            }
+
+            return resultMatrix;
+        }
+        public ConcurrentDictionary<MatrixKey, T> ToConcurrentDictionary<T>(T[,] jaggedArray)
+        {
+            var dictionary = new ConcurrentDictionary<MatrixKey, T>();
+
+            for (int row = 0; row < jaggedArray.GetLength(0); row++)
+            {
+                for (int column = 0; column < jaggedArray.GetLength(1); column++)
+                {
+                    T value = jaggedArray[row, column];
+                    if (!EqualityComparer<T>.Default.Equals(value, default(T))) // Optional: only add if not default
+                    {
+                        dictionary.TryAdd(new MatrixKey(row, column), value);
+                    }
+                }
+            }
+
+            return dictionary;
+        }
+
+        public IEnumerator<KeyValuePair<MatrixKey, T>> GetEnumerator()
+        {
+            return Data.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        public float[,] ToFloatArray()
+        {
+            // Get the array from Matrix<T>
+            T[,] genericArray = this.ToArray();
+
+            // Create a float array with the same dimensions
+            float[,] floatArray = new float[genericArray.GetLength(0), genericArray.GetLength(1)];
+
+            // Convert each element
+            for (int i = 0; i < genericArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < genericArray.GetLength(1); j++)
+                {
+                    floatArray[i, j] = (float)(object)genericArray[i, j];
+                }
+            }
+
+            return floatArray;
+        }
+        public double[,] ToDoubleArray()
+        {
+            // Get the array from Matrix<T>
+            T[,] genericArray = this.ToArray();
+
+            // Create a float array with the same dimensions
+            double[,] doubleArray = new double[genericArray.GetLength(0), genericArray.GetLength(1)];
+
+            // Convert each element
+            for (int i = 0; i < genericArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < genericArray.GetLength(1); j++)
+                {
+                    doubleArray[i, j] = (double)(object)genericArray[i, j];
+                }
+            }
+
+            return doubleArray;
+        }
+        public decimal[,] ToDecimalArray()
+        {
+            // Get the array from Matrix<T>
+            T[,] genericArray = this.ToArray();
+
+            // Create a float array with the same dimensions
+            decimal[,] doubleArray = new decimal[genericArray.GetLength(0), genericArray.GetLength(1)];
+
+            // Convert each element
+            for (int i = 0; i < genericArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < genericArray.GetLength(1); j++)
+                {
+                    doubleArray[i, j] = (decimal)(object)genericArray[i, j];
+                }
+            }
+
+            return doubleArray;
+        }
+        public int[,] ToIntArray()
+        {
+            // Get the array from Matrix<T>
+            T[,] genericArray = this.ToArray();
+
+            // Create a float array with the same dimensions
+            int[,] doubleArray = new int[genericArray.GetLength(0), genericArray.GetLength(1)];
+
+            // Convert each element
+            for (int i = 0; i < genericArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < genericArray.GetLength(1); j++)
+                {
+                    doubleArray[i, j] = (int)(object)genericArray[i, j];
+                }
+            }
+
+            return doubleArray;
+        }
+
+        public Matrix<T> FromArray(T[,] array)
+        {
+            ConcurrentDictionary<MatrixKey, T> result = new ConcurrentDictionary<MatrixKey, T>();
+
+            int rows = array.GetLength(0);
+            int columns = array.GetLength(1);
+            MatrixKey matrixKey;
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    matrixKey = new MatrixKey(i,j);
+
+                    result.TryAdd(matrixKey, array[i, j]);
+                }
+            }
+
+            return new Matrix<T> { Data = result };
+        }
         #endregion
 
-        #region Matrix Operations
-        public Matrix<T> DotProduct(Matrix<T> other);
-        public Matrix<T> Add(Matrix<T> other);
-        public Matrix<T> Subtract(Matrix<T> other);
-        public Matrix<T> MultiplyScalar(T scalar);
-        public Matrix<T> Transpose();
-        public Matrix<T> AddScalar(T scalar);
-        public Matrix<T> Diag(Matrix<T> diag_vector);
-        public Matrix<T> Inverse();
-        public Matrix<T> DiagVector();
-        public T Trace();
-        public Matrix<T> Conjugate();
-        public T Determinant();
-        public Matrix<T> Power(int exponent);
-        #endregion
-
     }
+
+
 }

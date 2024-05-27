@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CallaghanDev.Utilities.System_
+namespace CallaghanDev.Utilities.SystemTools
 {
     public class FileDirectoryHelper
     {

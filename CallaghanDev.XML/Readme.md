@@ -1,0 +1,4 @@
+This project significantly diverges from the rest of my code in that it heavily relies on and draws inspiration from the ClosedXML project. I've used ClosedXML as a foundational base, which can be found at https://github.com/ClosedXML/ClosedXML/tree/develop/ClosedXML, to build upon and make further class modifications and enhancements needed for other projects.
+
+For this project, given that a significant portion of the code is derived from the ClosedXML project, a distinct approach from my other projects has been adopted. Instead of individual comments on copied sources, I have included a comprehensive acknowledgment in the README file. This decision was made to efficiently credit the extensive use and inspiration from ClosedXML, which serves as a core foundation for this project's codebase.
+

@@ -61,12 +61,12 @@ namespace CallaghanDev.Utilities.MathTools
     
         public T[] Column(int Index)
         {
-            return  Data.Where(kvp => kvp.Key.Column == Index)
+            return  Data.AsParallel().Where(kvp => kvp.Key.Column == Index)
                .Select(kvp => kvp.Value).ToArray();
         }
         public T[] Row(int Index)
         {
-            return Data.Where(kvp => kvp.Key.Row == Index)
+            return Data.AsParallel().Where(kvp => kvp.Key.Row == Index)
                .Select(kvp => kvp.Value).ToArray();
         }
 
@@ -80,28 +80,17 @@ namespace CallaghanDev.Utilities.MathTools
         {
             MatrixKey key = new MatrixKey(row, column);
 
-            if (Data.ContainsKey(key))
+            Data.AddOrUpdate(key, value, (existingKey, existingValue) => value);
+
+            // Update the row and column counts if necessary
+            // Assuming _RowCount and _ColumnCount are thread-safe (e.g., using locks or Interlocked)
+            if (column >= _ColumnCount)
             {
-                Data[key] = value;
+                _ColumnCount = column + 1;
             }
-            else
+            if (row >= _RowCount)
             {
-                if (Data.TryAdd(key, value))
-                {
-                    if (key.Column >= _ColumnCount)
-                    {
-                        _ColumnCount = key.Column + 1;
-                    }
-                    if (key.Row >= _RowCount)
-                    {
-                        //_RowCount = Data.Keys.Max(k => k.Row) + 1;
-                        _RowCount = key.Row + 1;
-                    }
-                }
-                else
-                {
-                    throw new InvalidOperationException("Failed to add the new value.");
-                }
+                _RowCount = row + 1;
             }
         }
 
@@ -982,14 +971,14 @@ namespace CallaghanDev.Utilities.MathTools
             int maxColumn = ColumnCount();
 
             // Initialize the array with the determined maximum dimensions
-            T[,] array = new T[maxRow , maxColumn];
+            T[,] array = new T[maxRow, maxColumn];
 
-            foreach (var kvp in Data)
+
+            Parallel.ForEach(Data, kvp =>
             {
                 array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
 
-            }
-
+            });
 
             return array;
         }
@@ -1024,33 +1013,34 @@ namespace CallaghanDev.Utilities.MathTools
         {
             var resultMatrix = new Matrix<TResult>();
 
-            foreach (var item in this)
+            Parallel.ForEach(Data, item =>
             {
                 resultMatrix[item.Key.Row, item.Key.Column] = selector(item.Value);
-
-            }
+            });
 
             return resultMatrix;
         }
-        public ConcurrentDictionary<MatrixKey, T> ToConcurrentDictionary<T>(T[,] jaggedArray)
+        public ConcurrentDictionary<MatrixKey, T> ToConcurrentDictionary<T>(T[,] array)
         {
             var dictionary = new ConcurrentDictionary<MatrixKey, T>();
 
-            for (int row = 0; row < jaggedArray.GetLength(0); row++)
+            int rows = array.GetLength(0);
+            int columns = array.GetLength(1);
+
+            Parallel.For(0, rows, row =>
             {
-                for (int column = 0; column < jaggedArray.GetLength(1); column++)
+                for (int column = 0; column < columns; column++)
                 {
-                    T value = jaggedArray[row, column];
+                    T value = array[row, column];
                     if (!EqualityComparer<T>.Default.Equals(value, default(T))) // Optional: only add if not default
                     {
                         dictionary.TryAdd(new MatrixKey(row, column), value);
                     }
                 }
-            }
+            });
 
             return dictionary;
         }
-
         public IEnumerator<KeyValuePair<MatrixKey, T>> GetEnumerator()
         {
             return Data.GetEnumerator();

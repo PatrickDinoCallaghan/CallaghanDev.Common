@@ -136,6 +136,32 @@ namespace CallaghanDev.Utilities.MathTools
         }
 
 
+        public static double[][] Transpose(this double[][] inputArray)
+        {
+            if (inputArray == null || inputArray.Length == 0)
+                throw new ArgumentException("Input array cannot be null or empty.");
+
+            // Determine the length of the longest sub-array to handle non-uniform jagged arrays
+            int maxLength = inputArray.Max(subArray => subArray.Length);
+
+            // Initialize the transposed array with maxLength rows and inputArray.Length columns
+            double[][] transposedArray = new double[maxLength][];
+            for (int i = 0; i < maxLength; i++)
+            {
+                transposedArray[i] = new double[inputArray.Length];
+            }
+
+            // Transpose the array
+            for (int i = 0; i < inputArray.Length; i++)
+            {
+                for (int j = 0; j < inputArray[i].Length; j++)
+                {
+                    transposedArray[j][i] = inputArray[i][j];
+                }
+            }
+
+            return transposedArray;
+        }
     }
 
 

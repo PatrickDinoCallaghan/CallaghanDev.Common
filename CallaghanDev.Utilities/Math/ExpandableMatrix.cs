@@ -17,7 +17,7 @@ using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 namespace CallaghanDev.Utilities.MathTools
 {
-    public class Matrix<T> : IMatrix<T>, IEnumerable<KeyValuePair<MatrixKey, T>>
+    public class Matrix<T> : IMatrix<T>, IEnumerable<KeyValuePair<MatrixKey, T>>, IDisposable
     {
         ParallelOptions options;
         ConcurrentDictionary<MatrixKey, T> Data;
@@ -818,7 +818,7 @@ namespace CallaghanDev.Utilities.MathTools
             string json = File.ReadAllText(filePath);
 
             // Initially deserialize to dictionary with string keys to manually handle tuple conversion
-            var tempMatrixData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json, settings);
+            var tempMatrixData = JsonConvert.DeserializeObject<ConcurrentDictionary<string, double>>(json, settings);
 
             Matrix<T> Temp_matrix = new Matrix<T>();
             try
@@ -1147,8 +1147,50 @@ namespace CallaghanDev.Utilities.MathTools
 
             return new Matrix<T> { Data = result };
         }
+
         #endregion
 
+        #region IDisposable
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources
+                    if (Data != null)
+                    {
+                        Data.Clear();
+                        Data = null;
+                    }
+
+                    if (options != null)
+                    {
+                        options = null;
+                    }
+                }
+
+                // Dispose unmanaged resources
+                // (none yet for this class)
+
+                disposed = true;
+            }
+        }
+
+        ~Matrix()
+        {
+            Dispose(false);
+        }
+
+        #endregion
     }
 
 

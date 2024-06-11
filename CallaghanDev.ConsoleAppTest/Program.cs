@@ -4,6 +4,7 @@ using System.Reflection;
 using CallaghanDev.Utilities.ConsoleHelper;
 using CallaghanDev.XML.Extensions;
 using CallaghanDev.ConsoleAppTest.TestClasses;
+using DocumentFormat.OpenXml.InkML;
 
 namespace CallaghanDev.ConsoleAppTest
 {
@@ -12,11 +13,21 @@ namespace CallaghanDev.ConsoleAppTest
     {
         public static void Main(string[] args)
         {
-            TestXML();
+            TestMatrix();
             Console.WriteLine("Complete");
             cnsl.Exit();
         }
+        public static void TestMatrix()
+        {
+            CallaghanDev.Utilities.MathTools.Matrix<int> matrix = new CallaghanDev.Utilities.MathTools.Matrix<int>();
+            matrix[1, 2] = 5;
+            matrix[1, 1] = 6;
 
+            matrix.ExportToFile("Cool");
+
+            matrix = CallaghanDev.Utilities.MathTools.Matrix<int>.LoadFromFile("Cool");
+            Console.WriteLine(matrix.ToString());
+        }
         public static void TestXML()
         {
             List<ExcelTestClass> excelClassList = new List<ExcelTestClass>

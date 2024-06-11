@@ -4,16 +4,8 @@ using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text;
-using ILGPU;
 using ILGPU.Runtime;
-using ILGPU.Algorithms;
-using DocumentFormat.OpenXml.Drawing.Charts;
 using CallaghanDev.Utilities.GPU;
-using System.Collections.Generic;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Office.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 namespace CallaghanDev.Utilities.MathTools
 {
@@ -802,6 +794,7 @@ namespace CallaghanDev.Utilities.MathTools
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 Formatting = Newtonsoft.Json.Formatting.Indented
+
             };
 
             string json = JsonConvert.SerializeObject(Data, settings);
@@ -813,6 +806,8 @@ namespace CallaghanDev.Utilities.MathTools
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 Formatting = Newtonsoft.Json.Formatting.Indented
+
+
             };
 
             string json = File.ReadAllText(filePath);
@@ -825,6 +820,7 @@ namespace CallaghanDev.Utilities.MathTools
             {
                 foreach (var key in tempMatrixData.Keys)
                 {
+
                     // Attempt to convert the value to the type T
                     T value = ChangeType<T>(tempMatrixData[key]);
 

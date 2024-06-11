@@ -818,18 +818,17 @@ namespace CallaghanDev.Utilities.MathTools
             string json = File.ReadAllText(filePath);
 
             // Initially deserialize to dictionary with string keys to manually handle tuple conversion
-            var tempMatrixData = JsonConvert.DeserializeObject<ConcurrentDictionary<string, double>>(json, settings);
+            var tempMatrixData = JsonConvert.DeserializeObject<ConcurrentDictionary<MatrixKey, T>>(json, settings);
 
             Matrix<T> Temp_matrix = new Matrix<T>();
             try
             {
                 foreach (var key in tempMatrixData.Keys)
                 {
-                    var parts = key.Trim('(', ')').Split(',');
                     // Attempt to convert the value to the type T
                     T value = ChangeType<T>(tempMatrixData[key]);
 
-                    Temp_matrix[int.Parse(parts[0]), int.Parse(parts[1])] = value;
+                    Temp_matrix[key.Row, key.Column] = value;
                 }
             }
             catch (Exception ex)

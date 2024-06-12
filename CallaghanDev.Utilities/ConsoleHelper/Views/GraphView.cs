@@ -299,8 +299,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 		decimal fpart (decimal x)
 		{
-			if (x < 0) return (1 - (x - Math.Floor (x)));
-			return (x - Math.Floor (x));
+			if (x < 0) return (1 - (x - System.Math.Floor (x)));
+			return (x - System.Math.Floor (x));
 		}
 
 		/// <summary>
@@ -320,8 +320,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			int x1 = end.X;
 			int y1 = end.Y;
 
-			int dx = Math.Abs (x1 - x0), sx = x0 < x1 ? 1 : -1;
-			int dy = Math.Abs (y1 - y0), sy = y0 < y1 ? 1 : -1;
+			int dx = System.Math.Abs (x1 - x0), sx = x0 < x1 ? 1 : -1;
+			int dy = System.Math.Abs (y1 - y0), sy = y0 < y1 ? 1 : -1;
 			int err = (dx > dy ? dx : -dy) / 2, e2;
 
 			while (true) {

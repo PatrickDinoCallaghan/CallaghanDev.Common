@@ -159,17 +159,17 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return contentOffset;
 			}
 			set {
-				var co = new Point (-Math.Abs (value.X), -Math.Abs (value.Y));
+				var co = new Point (-System.Math.Abs (value.X), -System.Math.Abs (value.Y));
 				if (contentOffset != co) {
 					contentOffset = co;
 					contentView.Frame = new Rect (contentOffset, contentSize);
-					var p = Math.Max (0, -contentOffset.Y);
+					var p = System.Math.Max (0, -contentOffset.Y);
 					if (vertical.Position != p) {
-						vertical.Position = Math.Max (0, -contentOffset.Y);
+						vertical.Position = System.Math.Max (0, -contentOffset.Y);
 					}
-					p = Math.Max (0, -contentOffset.X);
+					p = System.Math.Max (0, -contentOffset.X);
 					if (horizontal.Position != p) {
-						horizontal.Position = Math.Max (0, -contentOffset.X);
+						horizontal.Position = System.Math.Max (0, -contentOffset.X);
 					}
 					SetNeedsDisplay ();
 				}
@@ -353,8 +353,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			var savedClip = ClipToBounds ();
 			OnDrawContent (new Rect (ContentOffset,
-				new Size (Math.Max (Bounds.Width - (ShowVerticalScrollIndicator ? 1 : 0), 0),
-					Math.Max (Bounds.Height - (ShowHorizontalScrollIndicator ? 1 : 0), 0))));
+				new Size(System.Math.Max (Bounds.Width - (ShowVerticalScrollIndicator ? 1 : 0), 0),
+                     System.Math.Max (Bounds.Height - (ShowHorizontalScrollIndicator ? 1 : 0), 0))));
 			contentView.Redraw (contentView.Frame);
 			Driver.Clip = savedClip;
 
@@ -465,7 +465,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public bool ScrollUp (int lines)
 		{
 			if (contentOffset.Y < 0) {
-				ContentOffset = new Point (contentOffset.X, Math.Min (contentOffset.Y + lines, 0));
+				ContentOffset = new Point (contentOffset.X, System.Math.Min (contentOffset.Y + lines, 0));
 				return true;
 			}
 			return false;
@@ -479,7 +479,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public bool ScrollLeft (int cols)
 		{
 			if (contentOffset.X < 0) {
-				ContentOffset = new Point (Math.Min (contentOffset.X + cols, 0), contentOffset.Y);
+				ContentOffset = new Point(System.Math.Min (contentOffset.X + cols, 0), contentOffset.Y);
 				return true;
 			}
 			return false;

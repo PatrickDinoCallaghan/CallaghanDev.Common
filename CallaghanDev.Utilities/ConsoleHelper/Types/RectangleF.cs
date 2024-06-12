@@ -241,10 +241,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		public static RectangleF Intersect (RectangleF a, RectangleF b)
 		{
-			float x1 = Math.Max (a.X, b.X);
-			float x2 = Math.Min (a.X + a.Width, b.X + b.Width);
-			float y1 = Math.Max (a.Y, b.Y);
-			float y2 = Math.Min (a.Y + a.Height, b.Y + b.Height);
+			float x1 = System.Math.Max (a.X, b.X);
+			float x2 = System.Math.Min (a.X + a.Width, b.X + b.Width);
+			float y1 = System.Math.Max (a.Y, b.Y);
+			float y2 = System.Math.Min (a.Y + a.Height, b.Y + b.Height);
 
 			if (x2 >= x1 && y2 >= y1) {
 				return new RectangleF (x1, y1, x2 - x1, y2 - y1);
@@ -264,10 +264,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		public static RectangleF Union (RectangleF a, RectangleF b)
 		{
-			float x1 = Math.Min (a.X, b.X);
-			float x2 = Math.Max (a.X + a.Width, b.X + b.Width);
-			float y1 = Math.Min (a.Y, b.Y);
-			float y2 = Math.Max (a.Y + a.Height, b.Y + b.Height);
+			float x1 = System.Math.Min (a.X, b.X);
+			float x2 = System.Math.Max (a.X + a.Width, b.X + b.Width);
+			float y1 = System.Math.Min (a.Y, b.Y);
+			float y2 = System.Math.Max (a.Y + a.Height, b.Y + b.Height);
 
 			return new RectangleF (x1, y1, x2 - x1, y2 - y1);
 		}

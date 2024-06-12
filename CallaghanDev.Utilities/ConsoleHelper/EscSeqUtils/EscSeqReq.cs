@@ -57,7 +57,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				if (found == null) {
 					EscSeqReqStats.Add (new EscSeqReqStatus (terminating, numOfReq));
 				} else if (found != null && found.NumOutstanding < found.NumRequests) {
-					found.NumOutstanding = Math.Min (found.NumOutstanding + numOfReq, found.NumRequests);
+					found.NumOutstanding = System.Math.Min (found.NumOutstanding + numOfReq, found.NumRequests);
 				}
 			}
 		}

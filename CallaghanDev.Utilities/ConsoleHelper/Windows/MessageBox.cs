@@ -247,13 +247,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				maxWidthLine = Application.Driver.Cols;
 			}
 			if (width == 0) {
-				maxWidthLine = Math.Max (maxWidthLine, defaultWidth);
+				maxWidthLine = System.Math.Max (maxWidthLine, defaultWidth);
 			} else {
 				maxWidthLine = width;
 			}
-			int textWidth = Math.Min (TextFormatter.MaxWidth (message, maxWidthLine), Application.Driver.Cols);
+			int textWidth = System.Math.Min (TextFormatter.MaxWidth (message, maxWidthLine), Application.Driver.Cols);
 			int textHeight = TextFormatter.MaxLines (message, textWidth); // message.Count (ustring.Make ('\n')) + 1;
-			int msgboxHeight = Math.Min (Math.Max (1, textHeight) + 4, Application.Driver.Rows); // textHeight + (top + top padding + buttons + bottom)
+			int msgboxHeight = System.Math.Min(System.Math.Max (1, textHeight) + 4, Application.Driver.Rows); // textHeight + (top + top padding + buttons + bottom)
 
 			// Create button array for Dialog
 			int count = 0;
@@ -277,7 +277,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					Height = msgboxHeight
 				};
 			} else {
-				d = new Dialog (title, width, Math.Max (height, 4), buttonList.ToArray ());
+				d = new Dialog (title, width, System.Math.Max (height, 4), buttonList.ToArray ());
 			}
 
 			if (border != null) {
@@ -303,7 +303,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			if (width == 0 & height == 0) {
 				// Dynamically size Width
-				d.Width = Math.Min (Math.Max (maxWidthLine, Math.Max (title.ConsoleWidth, Math.Max (textWidth + 2, d.GetButtonsWidth () + d.buttons.Count + 2))), Application.Driver.Cols); // textWidth + (left + padding + padding + right)
+				d.Width = System.Math.Min(System.Math.Max (maxWidthLine, System.Math.Max (title.ConsoleWidth, System.Math.Max (textWidth + 2, d.GetButtonsWidth () + d.buttons.Count + 2))), Application.Driver.Cols); // textWidth + (left + padding + padding + right)
 			}
 
 			// Setup actions

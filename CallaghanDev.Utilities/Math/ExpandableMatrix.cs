@@ -955,25 +955,33 @@ namespace CallaghanDev.Utilities.MathTools
             return stringBuilder.ToString();
         }
 
+        object toArrayLock = new object();
         public T[,] ToArray()
         {
-            if (Data == null || Data.Count == 0)
+            T[,] array;
+            lock (toArrayLock)
             {
-                return new T[0, 0];
+
+                if (Data == null || Data.Count == 0)
+                {
+                    return new T[0, 0];
+                }
+
+
+                int maxRow = RowCount();
+                int maxColumn = ColumnCount();
+
+                // Initialize the array with the determined maximum dimensions
+                array = new T[maxRow, maxColumn];
+
+
+                Parallel.ForEach(Data, kvp =>
+                {
+                    array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+
+                });
+
             }
-
-            int maxRow = RowCount();
-            int maxColumn = ColumnCount();
-
-            // Initialize the array with the determined maximum dimensions
-            T[,] array = new T[maxRow, maxColumn];
-
-
-            Parallel.ForEach(Data, kvp =>
-            {
-                array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
-
-            });
 
             return array;
         }

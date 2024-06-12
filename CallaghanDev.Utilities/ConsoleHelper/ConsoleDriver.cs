@@ -156,9 +156,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		{
 			// use RGB distance
 			return
-				Math.Abs (color1.Red - color2.Red) +
-				Math.Abs (color1.Green - color2.Green) +
-				Math.Abs (color1.Blue - color2.Blue);
+                 System.Math.Abs (color1.Red - color2.Red) +
+                 System.Math.Abs (color1.Green - color2.Green) +
+                 System.Math.Abs (color1.Blue - color2.Blue);
 		}
 	}
 
@@ -912,7 +912,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			if (!ustring.IsNullOrEmpty (title) && width > 4 && region.Y + paddingTop <= region.Y + paddingBottom) {
 				Move (region.X + 1 + paddingLeft, region.Y + paddingTop);
 				AddRune (' ');
-				var str = title.Sum (r => Math.Max (Rune.ColumnWidth (r), 1)) >= width
+				var str = title.Sum (r => System.Math.Max (Rune.ColumnWidth (r), 1)) >= width
 					? TextFormatter.Format (title, width - 2, false, false) [0] : title;
 				AddStr (str);
 				AddRune (' ');

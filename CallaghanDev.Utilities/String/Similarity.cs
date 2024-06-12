@@ -183,7 +183,7 @@ namespace CallaghanDev.Utilities.String
                 if (lLen1 == 0)
                     return lLen2 == 0 ? 1.0 : 0.0;
 
-                int lSearchRange = System.Math.Max(0, Math.Max(lLen1, lLen2) / 2 - 1);
+                int lSearchRange = System.Math.Max(0, System.Math.Max(lLen1, lLen2) / 2 - 1);
 
                 // default initialized to false
                 bool[] lMatched1 = new bool[lLen1];
@@ -192,8 +192,8 @@ namespace CallaghanDev.Utilities.String
                 int lNumCommon = 0;
                 for (int i = 0; i < lLen1; ++i)
                 {
-                    int lStart = Math.Max(0, i - lSearchRange);
-                    int lEnd = Math.Min(i + lSearchRange + 1, lLen2);
+                    int lStart = System.Math.Max(0, i - lSearchRange);
+                    int lEnd = System.Math.Min(i + lSearchRange + 1, lLen2);
                     for (int j = lStart; j < lEnd; ++j)
                     {
                         if (lMatched2[j]) continue;
@@ -227,7 +227,7 @@ namespace CallaghanDev.Utilities.String
                                  + (lNumCommon - lNumTransposed) / lNumCommonD) / 3.0;
 
                 if (lWeight <= mWeightThreshold) return lWeight;
-                int lMax = Math.Min(mNumChars, Math.Min(aString1.Length, aString2.Length));
+                int lMax = System.Math.Min(mNumChars, System.Math.Min(aString1.Length, aString2.Length));
                 int lPos = 0;
                 while (lPos < lMax && aString1[lPos] == aString2[lPos])
                     ++lPos;

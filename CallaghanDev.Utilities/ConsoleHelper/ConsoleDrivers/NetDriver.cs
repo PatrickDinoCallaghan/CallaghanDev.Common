@@ -231,15 +231,15 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				}
 				int buffHeight, buffWidth;
 				if (((NetDriver)consoleDriver).IsWinPlatform) {
-					buffHeight = Math.Max (Console.BufferHeight, 0);
-					buffWidth = Math.Max (Console.BufferWidth, 0);
+					buffHeight = System.Math.Max (Console.BufferHeight, 0);
+					buffWidth = System.Math.Max (Console.BufferWidth, 0);
 				} else {
 					buffHeight = consoleDriver.Rows;
 					buffWidth = consoleDriver.Cols;
 				}
 				if (IsWinChanged (
-					Math.Max (Console.WindowHeight, 0),
-					Math.Max (Console.WindowWidth, 0),
+                     System.Math.Max (Console.WindowHeight, 0),
+                     System.Math.Max (Console.WindowWidth, 0),
 					buffHeight,
 					buffWidth)) {
 
@@ -251,8 +251,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		bool IsWinChanged (int winHeight, int winWidth, int buffHeight, int buffWidth)
 		{
 			if (winWidth != consoleDriver.Cols || winHeight != consoleDriver.Rows) {
-				var w = Math.Max (winWidth, 0);
-				var h = Math.Max (winHeight, 0);
+				var w = System.Math.Max (winWidth, 0);
+				var h = System.Math.Max (winHeight, 0);
 				GetWindowSizeEvent (new Size (w, h));
 				return true;
 			}
@@ -1226,7 +1226,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			top = 0;
 			left = 0;
 			cols = size.Width;
-			rows = Math.Max (size.Height, 0); 
+			rows = System.Math.Max (size.Height, 0); 
 			ResizeScreen ();
 			UpdateOffScreen ();
 			winChanging = false;

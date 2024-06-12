@@ -311,7 +311,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				TextChanged?.Invoke (oldText);
 
 				if (point > text.Count) {
-					point = Math.Max (TextModel.DisplaySize (text, 0).size - 1, 0);
+					point = System.Math.Max (TextModel.DisplaySize (text, 0).size - 1, 0);
 				}
 
 				Adjust ();
@@ -378,7 +378,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				var cols = Rune.ColumnWidth (text [idx]);
 				TextModel.SetCol (ref col, Frame.Width - 1, cols);
 			}
-			var pos = point - first + Math.Min (Frame.X, 0);
+			var pos = point - first + System.Math.Min (Frame.X, 0);
 			var offB = OffSetBackground ();
 			var containerFrame = SuperView?.ViewToScreen (SuperView.Bounds) ?? default;
 			var thisFrame = ViewToScreen (Bounds);
@@ -495,7 +495,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			} else if (Frame.Width > 0 && (first + point - (Frame.Width + offB) == 0 ||
 				  TextModel.DisplaySize (text, first, point).size >= Frame.Width + offB)) {
 
-				first = Math.Max (TextModel.CalculateLeftColumn (text, first,
+				first = System.Math.Max (TextModel.CalculateLeftColumn (text, first,
 					point, Frame.Width + offB), 0);
 			}
 			SetNeedsDisplay ();
@@ -603,10 +603,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					if (oldCursorPos > newText.Count) {
 						oldCursorPos = newText.Count;
 					}
-					SetText (newText.GetRange (0, oldCursorPos).Concat (kbstr).Concat (newText.GetRange (oldCursorPos, Math.Min (newText.Count - oldCursorPos, newText.Count))));
+					SetText (newText.GetRange (0, oldCursorPos).Concat (kbstr).Concat (newText.GetRange (oldCursorPos, System.Math.Min (newText.Count - oldCursorPos, newText.Count))));
 				}
 			} else {
-				SetText (newText.GetRange (0, oldCursorPos).Concat (kbstr).Concat (newText.GetRange (Math.Min (oldCursorPos + 1, newText.Count), Math.Max (newText.Count - oldCursorPos - 1, 0))));
+				SetText (newText.GetRange (0, oldCursorPos).Concat (kbstr).Concat (newText.GetRange(System.Math.Min (oldCursorPos + 1, newText.Count), System.Math.Max (newText.Count - oldCursorPos - 1, 0))));
 				point++;
 			}
 			Adjust ();
@@ -760,7 +760,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		void MoveWordLeftExtend ()
 		{
 			if (point > 0) {
-				int x = Math.Min (start > -1 && start > point ? start : point, text.Count);
+				int x = System.Math.Min (start > -1 && start > point ? start : point, text.Count);
 				if (x > 0) {
 					int sbw = WordBackward (x);
 					if (sbw != -1)
@@ -894,7 +894,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 
 			if (i != p)
-				return Math.Min (i, text.Count);
+                return System.Math.Min (i, text.Count);
 
 			return -1;
 		}
@@ -940,7 +940,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 
 			if (i != p)
-				return Math.Max (i, 0);
+                return System.Math.Max (i, 0);
 
 			return -1;
 		}
@@ -1134,7 +1134,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			x = x + first < -1 ? 0 : x;
 			selectedStart = selectedStart == -1 && text.Count > 0 && x >= 0 && x <= text.Count ? x : selectedStart;
 			if (selectedStart > -1) {
-				length = Math.Abs (x + direction <= text.Count ? x + direction - selectedStart : text.Count - selectedStart);
+				length = System.Math.Abs (x + direction <= text.Count ? x + direction - selectedStart : text.Count - selectedStart);
 				SetSelectedStartSelectedLength ();
 				if (start > -1 && length > 0) {
 					selectedText = length > 0 ? ustring.Make (text).ToString ().Substring (
@@ -1350,7 +1350,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			var host = (TextField)HostControl;
 			var currentLine = host.Text.ToRuneList ();
-			var cursorPosition = Math.Min (host.CursorPosition + columnOffset, currentLine.Count);
+			var cursorPosition = System.Math.Min (host.CursorPosition + columnOffset, currentLine.Count);
 			return IdxToWord (currentLine, cursorPosition, columnOffset);
 		}
 

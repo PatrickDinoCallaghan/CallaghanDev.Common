@@ -187,7 +187,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public override int CursorPosition {
 			get => base.CursorPosition;
 			set {
-				base.CursorPosition = Math.Max (Math.Min (value, fieldLen), 1);
+				base.CursorPosition = System.Math.Max(System.Math.Min (value, fieldLen), 1);
 			}
 		}
 

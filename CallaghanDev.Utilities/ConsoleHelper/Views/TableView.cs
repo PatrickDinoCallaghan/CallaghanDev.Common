@@ -109,7 +109,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			get => columnOffset;
 
 			//try to prevent this being set to an out of bounds column
-			set => columnOffset = TableIsNullOrInvisible() ? 0 : Math.Max (0, Math.Min (Table.Columns.Count - 1, value));
+			set => columnOffset = TableIsNullOrInvisible() ? 0 : System.Math.Max (0, System.Math.Min (Table.Columns.Count - 1, value));
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		public int RowOffset {
 			get => rowOffset;
-			set => rowOffset = TableIsNullOrInvisible () ? 0 : Math.Max (0, Math.Min (Table.Rows.Count - 1, value));
+			set => rowOffset = TableIsNullOrInvisible () ? 0 : System.Math.Max (0, System.Math.Min (Table.Rows.Count - 1, value));
 		}
 
 		/// <summary>
@@ -130,7 +130,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				var oldValue = selectedColumn;
 
 				//try to prevent this being set to an out of bounds column
-				selectedColumn = TableIsNullOrInvisible () ? 0 : Math.Min (Table.Columns.Count - 1, Math.Max (0, value));
+				selectedColumn = TableIsNullOrInvisible () ? 0 : System.Math.Min (Table.Columns.Count - 1, System.Math.Max (0, value));
 
 				if (oldValue != selectedColumn)
 					OnSelectedCellChanged (new SelectedCellChangedEventArgs (Table, oldValue, SelectedColumn, SelectedRow, SelectedRow));
@@ -146,7 +146,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 				var oldValue = selectedRow;
 
-				selectedRow = TableIsNullOrInvisible () ? 0 : Math.Min (Table.Rows.Count - 1, Math.Max (0, value));
+				selectedRow = TableIsNullOrInvisible () ? 0 : System.Math.Min (Table.Rows.Count - 1, System.Math.Max (0, value));
 
 				if (oldValue != selectedRow)
 					OnSelectedCellChanged (new SelectedCellChangedEventArgs (Table, SelectedColumn, SelectedColumn, oldValue, selectedRow));
@@ -699,9 +699,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				case TextAlignment.Centered:
 				case TextAlignment.Justified:
 					return
-						new string (' ', (int)Math.Floor (toPad / 2.0)) + // round down
+						new string (' ', (int)System.Math.Floor (toPad / 2.0)) + // round down
 						representation +
-						 new string (' ', (int)Math.Ceiling (toPad / 2.0)); // round up
+						 new string (' ', (int)System.Math.Ceiling (toPad / 2.0)); // round up
 				}
 			}
 
@@ -947,11 +947,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <returns></returns>
 		private TableSelection CreateTableSelection (int pt1X, int pt1Y, int pt2X, int pt2Y)
 		{
-			var top = Math.Max(Math.Min (pt1Y, pt2Y), 0);
-			var bot = Math.Max(Math.Max (pt1Y, pt2Y), 0);
+			var top = System.Math.Max(System.Math.Min (pt1Y, pt2Y), 0);
+			var bot = System.Math.Max(System.Math.Max (pt1Y, pt2Y), 0);
 
-			var left = Math.Max(Math.Min (pt1X, pt2X), 0);
-			var right = Math.Max(Math.Max (pt1X, pt2X), 0);
+			var left = System.Math.Max (System.Math.Min (pt1X, pt2X), 0);
+			var right = System.Math.Max(System.Math.Max (pt1X, pt2X), 0);
 
 			// Rect class is inclusive of Top Left but exclusive of Bottom Right so extend by 1
 			return new TableSelection (new Point (pt1X, pt1Y), new Rect (left, top, right - left + 1, bot - top + 1));
@@ -1231,8 +1231,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return;
 			}
 
-			ColumnOffset = Math.Max (Math.Min (ColumnOffset, Table.Columns.Count - 1), 0);
-			RowOffset = Math.Max (Math.Min (RowOffset, Table.Rows.Count - 1), 0);
+			ColumnOffset = System.Math.Max(System.Math.Min (ColumnOffset, Table.Columns.Count - 1), 0);
+			RowOffset = System.Math.Max(System.Math.Min (RowOffset, Table.Rows.Count - 1), 0);
 		}
 
 
@@ -1249,8 +1249,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return;
 			}
 
-			SelectedColumn = Math.Max (Math.Min (SelectedColumn, Table.Columns.Count - 1), 0);
-			SelectedRow = Math.Max (Math.Min (SelectedRow, Table.Rows.Count - 1), 0);
+			SelectedColumn = System.Math.Max(System.Math.Min (SelectedColumn, Table.Columns.Count - 1), 0);
+			SelectedRow = System.Math.Max(System.Math.Min (SelectedRow, Table.Rows.Count - 1), 0);
 
 			// If SelectedColumn is invisible move it to a visible one
 			SelectedColumn = GetNearestVisibleColumn (SelectedColumn, lookRight: true, true);
@@ -1271,14 +1271,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 				// ensure region's origin exists
 				region.Origin = new Point (
-					Math.Max (Math.Min (region.Origin.X, Table.Columns.Count - 1), 0),
-					Math.Max (Math.Min (region.Origin.Y, Table.Rows.Count - 1), 0));
+                     System.Math.Max(System.Math.Min (region.Origin.X, Table.Columns.Count - 1), 0),
+                     System.Math.Max(System.Math.Min (region.Origin.Y, Table.Rows.Count - 1), 0));
 
 				// ensure regions do not go over edge of table bounds
 				region.Rect = Rect.FromLTRB (region.Rect.Left,
 					region.Rect.Top,
-					Math.Max (Math.Min (region.Rect.Right, Table.Columns.Count), 0),
-					Math.Max (Math.Min (region.Rect.Bottom, Table.Rows.Count), 0)
+                     System.Math.Max(System.Math.Min (region.Rect.Right, Table.Columns.Count), 0),
+                     System.Math.Max(System.Math.Min (region.Rect.Bottom, Table.Rows.Count), 0)
 					);
 
 				MultiSelectedRegions.Push (region);
@@ -1525,8 +1525,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 				// there is space
 				yield return new ColumnToRender (col, startingIdxForCurrentHeader,
-					// required for if we end up here because first == true i.e. we have a single massive width (overspilling bounds) column to present
-					Math.Min (availableHorizontalSpace, colWidth),
+                     // required for if we end up here because first == true i.e. we have a single massive width (overspilling bounds) column to present
+                     System.Math.Min (availableHorizontalSpace, colWidth),
 					lastColumn == col);
 				first = false;
 			}
@@ -1559,7 +1559,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			for (int i = RowOffset; i < RowOffset + rowsToRender && i < Table.Rows.Count; i++) {
 
 				//expand required space if cell is bigger than the last biggest cell or header
-				spaceRequired = Math.Max (spaceRequired, GetRepresentation (Table.Rows [i] [col], colStyle).Sum (c => Rune.ColumnWidth (c)));
+				spaceRequired = System.Math.Max (spaceRequired, GetRepresentation (Table.Rows [i] [col], colStyle).Sum (c => Rune.ColumnWidth (c)));
 			}
 
 			// Don't require more space than the style allows

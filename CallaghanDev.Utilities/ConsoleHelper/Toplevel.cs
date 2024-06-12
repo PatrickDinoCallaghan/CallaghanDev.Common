@@ -649,20 +649,20 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			}
 			mb = null; sb = null;
 			if (!(superView is Toplevel)) {
-				nx = Math.Max (Math.Min (x, top.Frame.Right - 1), 0);
-				ny = Math.Max (Math.Min (y, top.Frame.Bottom - 1), 0);
+				nx = System.Math.Max(System.Math.Min (x, top.Frame.Right - 1), 0);
+				ny = System.Math.Max(System.Math.Min (y, top.Frame.Bottom - 1), 0);
 				return superView;
 			}
 			var superViewBorder = superView.Border != null ? (superView.Border.DrawMarginFrame ? 1 : 0) : 0;
 			var topBorder = top.Modal ? 0 : top.Border != null ? (top.Border.DrawMarginFrame ? 1 : 0) : 0;
-			nx = Math.Max (x, 0);
-			nx = !top.IsMdiChild && !top.Modal && nx + superViewBorder * 2 + top.Frame.Width >= l ? Math.Max (l - top.Frame.Width - superViewBorder * 2, 0) : nx;
+			nx = System.Math.Max (x, 0);
+			nx = !top.IsMdiChild && !top.Modal && nx + superViewBorder * 2 + top.Frame.Width >= l ? System.Math.Max (l - top.Frame.Width - superViewBorder * 2, 0) : nx;
 			nx = top.Modal && nx == 0 ? superViewBorder : nx;
 			nx = top.IsMdiChild && nx < superViewBorder ? superViewBorder : nx;
 			nx = top.Modal && nx + superViewBorder + top.Frame.Width >= l ? l - top.Frame.Width - superViewBorder : nx;
 			nx = top.IsMdiChild && nx + superViewBorder + top.Frame.Width >= l ? l - top.Frame.Width - superViewBorder : nx;
 			if (nx + topBorder * 2 > top.Frame.X + top.Frame.Width) {
-				nx = Math.Max (top.Frame.Right - topBorder * 2, 0);
+				nx = System.Math.Max (top.Frame.Right - topBorder * 2, 0);
 			}
 			//System.Diagnostics.Debug.WriteLine ($"nx:{nx}, rWidth:{rWidth}");
 			bool m = false, s = false;
@@ -682,7 +682,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			} else {
 				l = 0;
 			}
-			ny = Math.Max (y, l);
+			ny = System.Math.Max (y, l);
 			ny = top.Modal && ny == 0 ? superViewBorder : ny;
 			ny = top.IsMdiChild && ny < superViewBorder + l ? ny + superViewBorder : ny;
 			if (!(top is Window && top == Application.Top) && (superView == null || top == Application.Top || superView == Application.Top)) {
@@ -701,12 +701,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			} else {
 				l = (s ? superView.Frame.Height - 1 : superView.Frame.Height);
 			}
-			ny = Math.Min (ny, l);
-			ny = !top.IsMdiChild && !top.Modal && ny + superViewBorder * 2 + top.Frame.Height >= l ? Math.Max (l - top.Frame.Height - superViewBorder * 2, m ? 1 : 0) : ny;
+			ny = System.Math.Min (ny, l);
+			ny = !top.IsMdiChild && !top.Modal && ny + superViewBorder * 2 + top.Frame.Height >= l ? System.Math.Max (l - top.Frame.Height - superViewBorder * 2, m ? 1 : 0) : ny;
 			ny = top.Modal && ny + superViewBorder * 2 + top.Frame.Height >= l ? l - top.Frame.Height - superViewBorder : ny;
-			ny = top.IsMdiChild && ny + superViewBorder + top.Frame.Height >= l ? Math.Max (l - top.Frame.Height - superViewBorder, m ? 1 : 0) : ny;
+			ny = top.IsMdiChild && ny + superViewBorder + top.Frame.Height >= l ? System.Math.Max (l - top.Frame.Height - superViewBorder, m ? 1 : 0) : ny;
 			if (ny + topBorder * 2 > top.Frame.Y + top.Frame.Height) {
-				ny = Math.Max (top.Frame.Bottom - topBorder * 2, 0);
+				ny = System.Math.Max (top.Frame.Bottom - topBorder * 2, 0);
 			}
 			//System.Diagnostics.Debug.WriteLine ($"ny:{ny}, rHeight:{rHeight}");
 

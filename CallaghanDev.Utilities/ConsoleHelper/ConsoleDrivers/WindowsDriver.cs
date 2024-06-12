@@ -221,15 +221,15 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				throw new System.ComponentModel.Win32Exception (Marshal.GetLastWin32Error ());
 			}
 			var maxWinSize = GetLargestConsoleWindowSize (ScreenBuffer);
-			var newCols = Math.Min (cols, maxWinSize.X);
-			var newRows = Math.Min (rows, maxWinSize.Y);
-			csbi.dwSize = new Coord (newCols, Math.Max (newRows, (short)1));
+			var newCols = System.Math.Min (cols, maxWinSize.X);
+			var newRows = System.Math.Min (rows, maxWinSize.Y);
+			csbi.dwSize = new Coord (newCols, System.Math.Max (newRows, (short)1));
 			csbi.srWindow = new SmallRect (0, 0, newCols, newRows);
 			csbi.dwMaximumWindowSize = new Coord (newCols, newRows);
 			if (!SetConsoleScreenBufferInfoEx (ScreenBuffer, ref csbi)) {
 				throw new System.ComponentModel.Win32Exception (Marshal.GetLastWin32Error ());
 			}
-			var winRect = new SmallRect (0, 0, (short)(newCols - 1), (short)Math.Max (newRows - 1, 0));
+			var winRect = new SmallRect (0, 0, (short)(newCols - 1), (short)System.Math.Max (newRows - 1, 0));
 			if (!SetConsoleWindowInfo (OutputHandle, true, ref winRect)) {
 				//throw new System.ComponentModel.Win32Exception (Marshal.GetLastWin32Error ());
 				return new Size (cols, rows);
@@ -258,10 +258,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				throw new System.ComponentModel.Win32Exception (Marshal.GetLastWin32Error ());
 			}
 			var sz = new Size (csbi.srWindow.Right - csbi.srWindow.Left + 1,
-				Math.Max (csbi.srWindow.Bottom - csbi.srWindow.Top + 1, 0));
+                 System.Math.Max (csbi.srWindow.Bottom - csbi.srWindow.Top + 1, 0));
 			position = new Point (csbi.srWindow.Left, csbi.srWindow.Top);
 			SetConsoleOutputWindow (csbi);
-			var winRect = new SmallRect (0, 0, (short)(sz.Width - 1), (short)Math.Max (sz.Height - 1, 0));
+			var winRect = new SmallRect (0, 0, (short)(sz.Width - 1), (short)System.Math.Max (sz.Height - 1, 0));
 			if (!SetConsoleScreenBufferInfoEx (OutputHandle, ref csbi)) {
 				throw new System.ComponentModel.Win32Exception (Marshal.GetLastWin32Error ());
 			}
@@ -760,7 +760,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				w += 3;
 			}
 			var newSize = WinConsole.SetConsoleWindow (
-				(short)Math.Max (w, 16), (short)Math.Max (e.Height, 0));
+				(short)System.Math.Max (w, 16), (short)System.Math.Max (e.Height, 0));
 
 			left = 0;
 			top = 0;

@@ -259,7 +259,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			int top = Top;
 			int left = Left;
-			int rows = Math.Min (FakeConsole.WindowHeight + top, Rows);
+			int rows = System.Math.Min (FakeConsole.WindowHeight + top, Rows);
 			int cols = Cols;
 
 			var savedRow = FakeConsole.CursorTop;

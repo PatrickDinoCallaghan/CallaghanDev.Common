@@ -114,7 +114,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (AutoSize || ustring.IsNullOrEmpty (Text) || Frame.Width <= 2) {
 				return Text;
 			}
-			return Text.RuneSubstring (0, Math.Min (Frame.Width - 2, Text.RuneCount));
+			return Text.RuneSubstring (0, System.Math.Min (Frame.Width - 2, Text.RuneCount));
 		}
 
 		/// <summary>

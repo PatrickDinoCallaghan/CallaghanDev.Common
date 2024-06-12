@@ -172,7 +172,7 @@ namespace CallaghanDev.Utilities.MathTools
         #region Private Helpers
         private string FloatToFractionString(float decimalValue)
         {
-            decimalValue = Math.Abs(decimalValue);
+            decimalValue = System.Math.Abs(decimalValue);
 
             // Define precision for the conversion to avoid floating-point inaccuracies.
             long numerator = (long)(decimalValue * FractionPrecision);

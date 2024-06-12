@@ -511,8 +511,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		void PerformMultipleSelection (int? firstSelected = null)
 		{
 			if (allowsMultipleSelection) {
-				int first = Math.Min (firstSelected ?? selected, selected);
-				int last = Math.Max (selected, firstSelected ?? selected);
+				int first = System.Math.Min (firstSelected ?? selected, selected);
+				int last = System.Math.Max (selected, firstSelected ?? selected);
 				for (int i = first; i <= last; i++) {
 					if ((canChooseFiles && infos [i].Item2 == false) ||
 					    (canChooseDirectories && infos [i].Item2 &&
@@ -760,7 +760,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 		private static int SetComboBoxHeight (List<string> allowedTypes)
 		{
-			return allowedTypes != null ? Math.Min (allowedTypes.Count + 1, 8) : 8;
+			return allowedTypes != null ? System.Math.Min (allowedTypes.Count + 1, 8) : 8;
 		}
 
 		internal bool canceled;

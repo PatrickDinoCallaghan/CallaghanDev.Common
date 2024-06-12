@@ -149,7 +149,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 				var minimumScreenX = graph.GraphSpaceToScreen (new PointF (Minimum.Value, y)).X;
 
 				// unless that is off the screen to the left
-				xStart = Math.Max (xStart, minimumScreenX);
+				xStart = System.Math.Max (xStart, minimumScreenX);
 			}
 
 			for (int i = xStart; i < bounds.Width; i++) {
@@ -225,7 +225,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 			if (!string.IsNullOrWhiteSpace (text)) {
 
 				// center the label but don't draw it outside bounds of the graph
-				int drawAtX = Math.Max (0, screenPosition - (text.Length / 2));
+				int drawAtX = System.Math.Max (0, screenPosition - (text.Length / 2));
 				string toRender = text;
 
 				// this is how much space is left
@@ -241,7 +241,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 					toRender = toRender.Substring (0, xSpaceAvailable);
 				}
 
-				graph.Move (drawAtX, Math.Min (y + 1, graph.Bounds.Height - 1));
+				graph.Move (drawAtX, System.Math.Min (y + 1, graph.Bounds.Height - 1));
 				driver.AddStr (toRender);
 			}
 		}
@@ -261,7 +261,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 
 			// don't draw labels below the minimum
 			if (Minimum.HasValue) {
-				start.X = Math.Max (start.X, Minimum.Value);
+				start.X = System.Math.Max (start.X, Minimum.Value);
 			}
 
 			var current = start;
@@ -301,9 +301,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 			// graphs where positive and negative numbers visible
 			var origin = graph.GraphSpaceToScreen (new PointF (0, 0));
 
-			// float the X axis so that it accurately represents the origin of the graph
-			// but anchor it to top/bottom if the origin is offscreen
-			return Math.Min (Math.Max (0, origin.Y), graph.Bounds.Height - ((int)graph.MarginBottom + 1));
+            // float the X axis so that it accurately represents the origin of the graph
+            // but anchor it to top/bottom if the origin is offscreen
+            return System.Math.Min(System.Math.Max (0, origin.Y), graph.Bounds.Height - ((int)graph.MarginBottom + 1));
 		}
 	}
 
@@ -336,7 +336,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 			var yEnd = GetAxisYEnd (graph);
 
 			// don't draw down further than the control bounds
-			yEnd = Math.Min (yEnd, bounds.Height - (int)graph.MarginBottom);
+			yEnd = System.Math.Min (yEnd, bounds.Height - (int)graph.MarginBottom);
 
 			// Draw solid line
 			for (int i = 0; i < yEnd; i++) {
@@ -429,7 +429,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 
 			// don't draw labels below the minimum
 			if (Minimum.HasValue) {
-				start.Y = Math.Max (start.Y, Minimum.Value);
+				start.Y = System.Math.Max (start.Y, Minimum.Value);
 			}
 
 			var current = start;
@@ -478,7 +478,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 
 			// and the label text
 			if (!string.IsNullOrWhiteSpace (text)) {
-				graph.Move (Math.Max (0, x - labelThickness), screenPosition);
+				graph.Move(System.Math.Max (0, x - labelThickness), screenPosition);
 				Application.Driver.AddStr (text);
 			}
 		}
@@ -495,9 +495,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 			// graphs where positive and negative numbers visible
 			var origin = graph.GraphSpaceToScreen (new PointF (0, 0));
 
-			// float the Y axis so that it accurately represents the origin of the graph
-			// but anchor it to left/right if the origin is offscreen
-			return Math.Min (Math.Max ((int)graph.MarginLeft, origin.X), graph.Bounds.Width - 1);
+            // float the Y axis so that it accurately represents the origin of the graph
+            // but anchor it to left/right if the origin is offscreen
+            return System.Math.Min(System.Math.Max ((int)graph.MarginLeft, origin.X), graph.Bounds.Width - 1);
 		}
 	}
 

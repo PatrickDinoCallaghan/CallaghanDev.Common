@@ -304,7 +304,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				}
 				i++;
 			}
-			return Math.Min (i, idx);
+            return System.Math.Min (i, idx);
 		}
 
 		void SetTabIndex ()
@@ -870,10 +870,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			if (NeedDisplay.IsEmpty)
 				NeedDisplay = region;
 			else {
-				var x = Math.Min (NeedDisplay.X, region.X);
-				var y = Math.Min (NeedDisplay.Y, region.Y);
-				var w = Math.Max (NeedDisplay.Width, region.Width);
-				var h = Math.Max (NeedDisplay.Height, region.Height);
+				var x = System.Math.Min (NeedDisplay.X, region.X);
+				var y = System.Math.Min (NeedDisplay.Y, region.Y);
+				var w = System.Math.Max (NeedDisplay.Width, region.Width);
+				var h = System.Math.Max (NeedDisplay.Height, region.Height);
 				NeedDisplay = new Rect (x, y, w, h);
 			}
 			container?.SetChildNeedsDisplay ();
@@ -1139,8 +1139,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// The following ensures that the cursor is always in the screen boundaries.
 			if (clipped) {
-				rrow = Math.Min (rrow, Driver.Rows - 1);
-				rcol = Math.Min (rcol, Driver.Cols - 1);
+				rrow = System.Math.Min (rrow, Driver.Rows - 1);
+				rcol = System.Math.Min (rcol, Driver.Cols - 1);
 			}
 		}
 
@@ -1556,8 +1556,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		{
 			Rect rect = NeedDisplay;
 			if (!containerBounds.IsEmpty) {
-				rect.Width = Math.Min (NeedDisplay.Width, containerBounds.Width);
-				rect.Height = Math.Min (NeedDisplay.Height, containerBounds.Height);
+				rect.Width = System.Math.Min (NeedDisplay.Width, containerBounds.Width);
+				rect.Height = System.Math.Min (NeedDisplay.Height, containerBounds.Height);
 			}
 
 			return rect;
@@ -1567,19 +1567,19 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		{
 			var containerBounds = SuperView == null ? default : SuperView.ViewToScreen (SuperView.Bounds);
 			var driverClip = Driver == null ? Rect.Empty : Driver.Clip;
-			containerBounds.X = Math.Max (containerBounds.X, driverClip.X);
-			containerBounds.Y = Math.Max (containerBounds.Y, driverClip.Y);
+			containerBounds.X = System.Math.Max (containerBounds.X, driverClip.X);
+			containerBounds.Y = System.Math.Max (containerBounds.Y, driverClip.Y);
 			var lenOffset = (driverClip.X + driverClip.Width) - (containerBounds.X + containerBounds.Width);
 			if (containerBounds.X + containerBounds.Width > driverClip.X + driverClip.Width) {
-				containerBounds.Width = Math.Max (containerBounds.Width + lenOffset, 0);
+				containerBounds.Width = System.Math.Max (containerBounds.Width + lenOffset, 0);
 			} else {
-				containerBounds.Width = Math.Min (containerBounds.Width, driverClip.Width);
+				containerBounds.Width = System.Math.Min (containerBounds.Width, driverClip.Width);
 			}
 			lenOffset = (driverClip.Y + driverClip.Height) - (containerBounds.Y + containerBounds.Height);
 			if (containerBounds.Y + containerBounds.Height > driverClip.Y + driverClip.Height) {
-				containerBounds.Height = Math.Max (containerBounds.Height + lenOffset, 0);
+				containerBounds.Height = System.Math.Max (containerBounds.Height + lenOffset, 0);
 			} else {
-				containerBounds.Height = Math.Min (containerBounds.Height, driverClip.Height);
+				containerBounds.Height = System.Math.Min (containerBounds.Height, driverClip.Height);
 			}
 			return containerBounds;
 		}
@@ -2184,7 +2184,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			} else {
 				actX = x?.Anchor (hostFrame.Width) ?? 0;
 
-				actW = Math.Max (CalculateActualWidth (width, hostFrame, actX, s), 0);
+				actW = System.Math.Max (CalculateActualWidth (width, hostFrame, actX, s), 0);
 			}
 
 			if (y is Pos.PosCenter) {
@@ -2198,7 +2198,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			} else {
 				actY = y?.Anchor (hostFrame.Height) ?? 0;
 
-				actH = Math.Max (CalculateActualHeight (height, hostFrame, actY, s), 0);
+				actH = System.Math.Max (CalculateActualHeight (height, hostFrame, actY, s), 0);
 			}
 
 			var r = new Rect (actX, actY, actW, actH);
@@ -2231,7 +2231,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				actW = AutoSize && s.Width > actW ? s.Width : actW;
 				break;
 			default:
-				actW = Math.Max (width.Anchor (hostFrame.Width - actX), 0);
+				actW = System.Math.Max (width.Anchor (hostFrame.Width - actX), 0);
 				actW = AutoSize && s.Width > actW ? s.Width : actW;
 				break;
 			}
@@ -2261,7 +2261,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				actH = AutoSize && s.Height > actH ? s.Height : actH;
 				break;
 			default:
-				actH = Math.Max (height.Anchor (hostFrame.Height - actY), 0);
+				actH = System.Math.Max (height.Anchor (hostFrame.Height - actY), 0);
 				actH = AutoSize && s.Height > actH ? s.Height : actH;
 				break;
 			}
@@ -2786,11 +2786,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			if (isWidth) {
 				return TextFormatter.IsHorizontalDirection (TextDirection) &&
 				    TextFormatter.Text?.Contains (HotKeySpecifier) == true
-				    ? Math.Max (Rune.ColumnWidth (HotKeySpecifier), 0) : 0;
+                    ? System.Math.Max (Rune.ColumnWidth (HotKeySpecifier), 0) : 0;
 			} else {
 				return TextFormatter.IsVerticalDirection (TextDirection) &&
 				    TextFormatter.Text?.Contains (HotKeySpecifier) == true
-				    ? Math.Max (Rune.ColumnWidth (HotKeySpecifier), 0) : 0;
+                    ? System.Math.Max (Rune.ColumnWidth (HotKeySpecifier), 0) : 0;
 			}
 		}
 

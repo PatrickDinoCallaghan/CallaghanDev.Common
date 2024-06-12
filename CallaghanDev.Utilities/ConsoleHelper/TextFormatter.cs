@@ -518,7 +518,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var runes = StripCRLF (text).ToRuneList ();
 			if (!preserveTrailingSpaces) {
 				if (IsHorizontalDirection (textDirection)) {
-					while ((end = start + Math.Max (GetMaxLengthForWidth (runes.GetRange (start, runes.Count - start), width), 1)) < runes.Count) {
+					while ((end = start + System.Math.Max (GetMaxLengthForWidth (runes.GetRange (start, runes.Count - start), width), 1)) < runes.Count) {
 						while (runes [end] != ' ' && end > start)
 							end--;
 						if (end == start)
@@ -828,7 +828,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var max = 0;
 			result.ForEach (s => {
 				var m = 0;
-				s.ToRuneList ().ForEach (r => m += Math.Max (Rune.ColumnWidth (r), 1));
+				s.ToRuneList ().ForEach (r => m += System.Math.Max (Rune.ColumnWidth (r), 1));
 				if (m > max) {
 					max = m;
 				}
@@ -855,7 +855,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <returns>The text width.</returns>
 		public static int GetTextWidth (ustring text)
 		{
-			return text.ToRuneList ().Sum (r => Math.Max (Rune.ColumnWidth (r), 1));
+			return text.ToRuneList ().Sum (r => System.Math.Max (Rune.ColumnWidth (r), 1));
 		}
 
 		/// <summary>
@@ -872,7 +872,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			for (int i = (startIndex == -1 ? 0 : startIndex); i < (length == -1 ? lines.Count : startIndex + length); i++) {
 				var runes = lines [i];
 				if (runes.Length > 0)
-					max += runes.Max (r => Math.Max (Rune.ColumnWidth (r), 1));
+					max += runes.Max (r => System.Math.Max (Rune.ColumnWidth (r), 1));
 			}
 			return max;
 		}
@@ -890,7 +890,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var max = 0;
 			var runes = text.ToRunes ();
 			for (int i = (startIndex == -1 ? 0 : startIndex); i < (length == -1 ? runes.Length : startIndex + length); i++) {
-				max += Math.Max (Rune.ColumnWidth (runes [i]), 1);
+				max += System.Math.Max (Rune.ColumnWidth (runes [i]), 1);
 			}
 			return max;
 		}
@@ -907,7 +907,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var runesLength = 0;
 			var runeIdx = 0;
 			for (; runeIdx < runes.Count; runeIdx++) {
-				var runeWidth = Math.Max (Rune.ColumnWidth (runes [runeIdx]), 1);
+				var runeWidth = System.Math.Max (Rune.ColumnWidth (runes [runeIdx]), 1);
 				if (runesLength + runeWidth > width) {
 					break;
 				}
@@ -927,7 +927,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var runesLength = 0;
 			var runeIdx = 0;
 			for (; runeIdx < runes.Count; runeIdx++) {
-				var runeWidth = Math.Max (Rune.ColumnWidth (runes [runeIdx]), 1);
+				var runeWidth = System.Math.Max (Rune.ColumnWidth (runes [runeIdx]), 1);
 				if (runesLength + runeWidth > width) {
 					break;
 				}
@@ -949,7 +949,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			for (; lineIdx < lines.Count; lineIdx++) {
 				var runes = lines [lineIdx].ToRuneList ();
 				var maxRruneWidth = runes.Count > 0
-					? runes.Max (r => Math.Max (Rune.ColumnWidth (r), 1)) : 1;
+					? runes.Max (r => System.Math.Max (Rune.ColumnWidth (r), 1)) : 1;
 				if (runesLength + maxRruneWidth > width) {
 					break;
 				}
@@ -1178,10 +1178,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			var isVertical = IsVerticalDirection (textDirection);
 			var maxBounds = containerBounds == default
 				? bounds
-				: new Rect (Math.Max (containerBounds.X, bounds.X),
-					Math.Max (containerBounds.Y, bounds.Y),
-					Math.Max (Math.Max (containerBounds.Width, containerBounds.Right - bounds.Left), 0),
-					Math.Max (Math.Max (containerBounds.Height, containerBounds.Bottom - bounds.Top), 0));
+				: new Rect(System.Math.Max (containerBounds.X, bounds.X),
+                     System.Math.Max (containerBounds.Y, bounds.Y),
+                     System.Math.Max(System.Math.Max (containerBounds.Width, containerBounds.Right - bounds.Left), 0),
+                     System.Math.Max(System.Math.Max (containerBounds.Height, containerBounds.Bottom - bounds.Top), 0));
 
 			int boundsStart = 0;
 			if (isVertical) {
@@ -1316,7 +1316,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 					} else {
 						Application.Driver?.AddRune (rune);
 					}
-					var runeWidth = Math.Max (Rune.ColumnWidth (rune), 1);
+					var runeWidth = System.Math.Max (Rune.ColumnWidth (rune), 1);
 					if (isVertical) {
 						current++;
 					} else {

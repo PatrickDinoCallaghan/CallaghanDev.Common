@@ -69,7 +69,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					return true;
 				} else if (me.Flags == MouseFlags.ReportMousePosition && HideDropdownListOnClick) {
 					if (isMousePositionValid) {
-						highlighted = Math.Min (TopItem + me.Y, Source.Count);
+						highlighted = System.Math.Min (TopItem + me.Y, Source.Count);
 						SetNeedsDisplay ();
 					}
 					isFocusing = false;
@@ -888,7 +888,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (Bounds.Height == 0)
 				return 0;
 
-			return Math.Min (Math.Max (Bounds.Height - 1, minimumHeight - 1), searchset?.Count > 0 ? searchset.Count : isShow ? Math.Max (Bounds.Height - 1, minimumHeight - 1) : 0);
+            return System.Math.Min(System.Math.Max (Bounds.Height - 1, minimumHeight - 1), searchset?.Count > 0 ? searchset.Count : isShow ? System.Math.Max (Bounds.Height - 1, minimumHeight - 1) : 0);
 		}
 	}
 }

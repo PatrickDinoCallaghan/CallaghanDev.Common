@@ -300,7 +300,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 		bool MoveEndOfLine ()
 		{
-			position = Math.Min ((position / bytesPerLine * bytesPerLine) + bytesPerLine - 1, source.Length);
+			position = System.Math.Min ((position / bytesPerLine * bytesPerLine) + bytesPerLine - 1, source.Length);
 			SetNeedsDisplay ();
 
 			return true;
@@ -498,12 +498,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				SetFocus ();
 
 			if (me.Flags == MouseFlags.WheeledDown) {
-				DisplayStart = Math.Min (DisplayStart + bytesPerLine, source.Length);
+				DisplayStart = System.Math.Min (DisplayStart + bytesPerLine, source.Length);
 				return true;
 			}
 
 			if (me.Flags == MouseFlags.WheeledUp) {
-				DisplayStart = Math.Max (DisplayStart - bytesPerLine, 0);
+				DisplayStart = System.Math.Max (DisplayStart - bytesPerLine, 0);
 				return true;
 			}
 
@@ -525,9 +525,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return true;
 			firstNibble = true;
 			if (leftSide)
-				position = Math.Min (lineStart + me.X - blocksRightOffset, source.Length);
+				position = System.Math.Min (lineStart + me.X - blocksRightOffset, source.Length);
 			else
-				position = Math.Min (lineStart + item, source.Length);
+				position = System.Math.Min (lineStart + item, source.Length);
 
 			if (me.Flags == MouseFlags.Button1DoubleClicked) {
 				leftSide = !leftSide;

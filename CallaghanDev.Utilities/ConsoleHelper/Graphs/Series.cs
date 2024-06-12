@@ -221,7 +221,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 					screenStart.X = graph.AxisY.GetAxisXPosition (graph);
 
 					// dont draw bar off the right of the control
-					screenEnd.X = Math.Min (graph.Bounds.Width - 1, screenEnd.X);
+					screenEnd.X = System.Math.Min (graph.Bounds.Width - 1, screenEnd.X);
 
 					// if bar is off the screen
 					if (screenStart.Y < 0 || screenStart.Y > drawBounds.Height - graph.MarginBottom) {
@@ -233,7 +233,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 					screenStart.Y = graph.AxisX.GetAxisYPosition (graph);
 
 					// dont draw bar up above top of control
-					screenEnd.Y = Math.Max (0, screenEnd.Y);
+					screenEnd.Y = System.Math.Max (0, screenEnd.Y);
 
 					// if bar is off the screen
 					if (screenStart.X < graph.MarginLeft || screenStart.X > graph.MarginLeft + drawBounds.Width - 1) {

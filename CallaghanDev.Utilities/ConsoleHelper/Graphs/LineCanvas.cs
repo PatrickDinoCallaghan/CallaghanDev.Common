@@ -527,8 +527,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 							);
 
 					} else {
-						var xmin = Math.Min (Start.X, Start.X + Length);
-						var xmax = Math.Max (Start.X, Start.X + Length);
+						var xmin = System.Math.Min (Start.X, Start.X + Length);
+						var xmax = System.Math.Max (Start.X, Start.X + Length);
 
 						if (xmin < x && xmax > x) {
 							return new IntersectionDefinition (
@@ -567,8 +567,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Graphs {
 							);
 
 					} else {
-						var ymin = Math.Min (Start.Y, Start.Y + Length);
-						var ymax = Math.Max (Start.Y, Start.Y + Length);
+						var ymin = System.Math.Min (Start.Y, Start.Y + Length);
+						var ymax = System.Math.Max (Start.Y, Start.Y + Length);
 
 						if (ymin < y && ymax > y) {
 							return new IntersectionDefinition (

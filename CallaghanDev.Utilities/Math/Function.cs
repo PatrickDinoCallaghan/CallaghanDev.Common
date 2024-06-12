@@ -36,12 +36,12 @@ namespace CallaghanDev.Utilities.MathTools
 
         public static float sigmoid(float x)//activation functions and their corrosponding derivatives
         {
-            float k = (float)Math.Exp(-x);
+            float k = (float)System.Math.Exp(-x);
             return 1 / (1.0f + k);
         }
         public static float tanh(float x)
         {
-            return (float)Math.Tanh(x);
+            return (float)System.Math.Tanh(x);
         }
 
         //Rectified Linear Unit
@@ -66,12 +66,12 @@ namespace CallaghanDev.Utilities.MathTools
 
         public static double sigmoid(double x)
         {
-            double k = Math.Exp(x);
+            double k = System.Math.Exp(x);
             return k / (1.0d + k);
         }
         public static double tanh(double x)
         {
-            return Math.Tanh(x);// This is not a good move, lose the precision of the decimal by converting to a double, and highly inefficent
+            return System.Math.Tanh(x);// This is not a good move, lose the precision of the decimal by converting to a double, and highly inefficent
         }
 
         public static class FirstDerivative

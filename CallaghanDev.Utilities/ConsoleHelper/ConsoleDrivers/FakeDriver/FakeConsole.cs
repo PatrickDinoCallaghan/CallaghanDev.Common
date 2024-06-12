@@ -956,8 +956,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			CursorLeft = left;
 			CursorTop = top;
-			WindowLeft = Math.Max (Math.Min (left, BufferWidth - WindowWidth), 0);
-			WindowTop = Math.Max (Math.Min (top, BufferHeight - WindowHeight), 0);
+			WindowLeft = System.Math.Max(System.Math.Min (left, BufferWidth - WindowWidth), 0);
+			WindowTop = System.Math.Max(System.Math.Min (top, BufferHeight - WindowHeight), 0);
 		}
 
 		//

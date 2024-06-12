@@ -75,7 +75,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			Move (0, 0);
 			Driver.SetAttribute (GetNormalColor ());
 
-			var hLineWidth = Math.Max (1, Rune.ColumnWidth (Driver.HLine));
+			var hLineWidth = System.Math.Max (1, Rune.ColumnWidth (Driver.HLine));
 
 			var dEnd = Orientation == Orientation.Horizontal ?
 				bounds.Width :

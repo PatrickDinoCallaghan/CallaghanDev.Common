@@ -205,7 +205,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			last = last < lines.Count ? last : lines.Count;
 			for (int i = first; i < last; i++) {
 				var line = GetLine (i);
-				var tabSum = line.Sum (r => r == '\t' ? Math.Max (tabWidth - 1, 0) : 0);
+				var tabSum = line.Sum (r => r == '\t' ? System.Math.Max (tabWidth - 1, 0) : 0);
 				var l = line.Count + tabSum;
 				if (l > maxLength) {
 					maxLength = l;
@@ -443,7 +443,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					txt = txt.ToUpper ();
 				}
 				var matchText = !matchCase ? text.ToUpper ().ToString () : text.ToString ();
-				var col = txt.IndexOf (matchText, Math.Min (start.X, txt.Length));
+				var col = txt.IndexOf (matchText, System.Math.Min (start.X, txt.Length));
 				if (col > -1 && matchWholeWord && !MatchWholeWord (txt, matchText, col)) {
 					continue;
 				}
@@ -468,7 +468,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					txt = txt.ToUpper ();
 				}
 				if (start.Y != i) {
-					start.X = Math.Max (x.Count - 1, 0);
+					start.X = System.Math.Max (x.Count - 1, 0);
 				}
 				var matchText = !matchCase ? text.ToUpper ().ToString () : text.ToString ();
 				var col = txt.LastIndexOf (matchText, toFind.found ? start.X - 1 : start.X);
@@ -837,7 +837,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		}
 
 		public int GetModelLineFromWrappedLines (int line) => wrappedModelLines.Count > 0
-			? wrappedModelLines [Math.Min (line, wrappedModelLines.Count - 1)].ModelLine
+			? wrappedModelLines[System.Math.Min (line, wrappedModelLines.Count - 1)].ModelLine
 			: 0;
 
 		public int GetModelColFromWrappedLines (int line, int col)
@@ -850,7 +850,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			var firstLine = wrappedModelLines.IndexOf (r => r.ModelLine == modelLine);
 			int modelCol = 0;
 
-			for (int i = firstLine; i <= Math.Min (line, wrappedModelLines.Count - 1); i++) {
+			for (int i = firstLine; i <= System.Math.Min (line, wrappedModelLines.Count - 1); i++) {
 				var wLine = wrappedModelLines [i];
 
 				if (i < line) {
@@ -1001,7 +1001,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				if (wLine.ModelLine != modelLine || wLineToCompare.ModelLine != modelLine)
 					break;
 
-				modelCol += Math.Max (wLine.ColWidth, wLineToCompare.ColWidth);
+				modelCol += System.Math.Max (wLine.ColWidth, wLineToCompare.ColWidth);
 				colWidthOffset += wLine.ColWidth - wLineToCompare.ColWidth;
 				if (modelCol > col) {
 					modelCol += col - modelCol;
@@ -1402,7 +1402,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				if (obj.RemovedOnAdded != null) {
 					int offset;
 					if (obj.IsUndoing) {
-						offset = Math.Max (obj.RemovedOnAdded.Lines.Count - obj.Lines.Count, 1);
+						offset = System.Math.Max (obj.RemovedOnAdded.Lines.Count - obj.Lines.Count, 1);
 					} else {
 						offset = obj.RemovedOnAdded.Lines.Count - 1;
 					}
@@ -1527,12 +1527,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 		}
 
-		int frameWidth => Math.Max (Frame.Width - (RightOffset != 0 ? 2 : 1), 0);
+		int frameWidth => System.Math.Max (Frame.Width - (RightOffset != 0 ? 2 : 1), 0);
 
 		/// <summary>
 		/// Gets or sets the top row.
 		/// </summary>
-		public int TopRow { get => topRow; set => topRow = Math.Max (Math.Min (value, Lines - 1), 0); }
+		public int TopRow { get => topRow; set => topRow = System.Math.Max(System.Math.Min (value, Lines - 1), 0); }
 
 		/// <summary>
 		/// Gets or sets the left column.
@@ -1542,7 +1542,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			set {
 				if (value > 0 && wordWrap)
 					return;
-				leftColumn = Math.Max (Math.Min (value, Maxlength - 1), 0);
+				leftColumn = System.Math.Max(System.Math.Min (value, Maxlength - 1), 0);
 			}
 		}
 
@@ -1562,10 +1562,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public Point CursorPosition {
 			get => new Point (currentColumn, currentRow);
 			set {
-				var line = model.GetLine (Math.Max (Math.Min (value.Y, model.Count - 1), 0));
+				var line = model.GetLine(System.Math.Max(System.Math.Min (value.Y, model.Count - 1), 0));
 				currentColumn = value.X < 0 ? 0 : value.X > line.Count ? line.Count : value.X;
 				currentRow = value.Y < 0 ? 0 : value.Y > model.Count - 1
-					? Math.Max (model.Count - 1, 0) : value.Y;
+                    ? System.Math.Max (model.Count - 1, 0) : value.Y;
 				SetNeedsDisplay ();
 				Adjust ();
 			}
@@ -1592,7 +1592,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			get => selectionStartRow;
 			set {
 				selectionStartRow = value < 0 ? 0 : value > model.Count - 1
-					? Math.Max (model.Count - 1, 0) : value;
+                    ? System.Math.Max (model.Count - 1, 0) : value;
 				selecting = true;
 				SetNeedsDisplay ();
 				Adjust ();
@@ -1720,7 +1720,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public int TabWidth {
 			get => tabWidth;
 			set {
-				tabWidth = Math.Max (value, 0);
+				tabWidth = System.Math.Max (value, 0);
 				if (tabWidth > 0 && !AllowsTab) {
 					AllowsTab = true;
 				}
@@ -1883,8 +1883,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 
 			if (selecting) {
-				var minRow = Math.Min (Math.Max (Math.Min (selectionStartRow, currentRow) - topRow, 0), Frame.Height);
-				var maxRow = Math.Min (Math.Max (Math.Max (selectionStartRow, currentRow) - topRow, 0), Frame.Height);
+				var minRow = System.Math.Min(System.Math.Max(System.Math.Min (selectionStartRow, currentRow) - topRow, 0), Frame.Height);
+				var maxRow = System.Math.Min(System.Math.Max(System.Math.Max (selectionStartRow, currentRow) - topRow, 0), Frame.Height);
 
 				SetNeedsDisplay (new Rect (0, minRow, Frame.Width, maxRow));
 			}
@@ -2521,16 +2521,16 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			var line = GetCurrentLine ();
 			if (Used) {
-				line.Insert (Math.Min (currentColumn, line.Count), rune);
+				line.Insert(System.Math.Min (currentColumn, line.Count), rune);
 			} else {
 				if (currentColumn < line.Count) {
 					line.RemoveAt (currentColumn);
 				}
-				line.Insert (Math.Min (currentColumn, line.Count), rune);
+				line.Insert(System.Math.Min (currentColumn, line.Count), rune);
 			}
 			var prow = currentRow - topRow;
 			if (!wrapNeeded) {
-				SetNeedsDisplay (new Rect (0, prow, Math.Max (Frame.Width, 0), Math.Max (prow + 1, 0)));
+				SetNeedsDisplay (new Rect (0, prow, System.Math.Max (Frame.Width, 0), System.Math.Max (prow + 1, 0)));
 			}
 		}
 
@@ -2585,12 +2585,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					HistoryText.LineStatus.Replaced);
 
 				if (!wordWrap && currentColumn - leftColumn > Frame.Width) {
-					leftColumn = Math.Max (currentColumn - Frame.Width + 1, 0);
+					leftColumn = System.Math.Max (currentColumn - Frame.Width + 1, 0);
 				}
 				if (wordWrap) {
 					SetNeedsDisplay ();
 				} else {
-					SetNeedsDisplay (new Rect (0, currentRow - topRow, Frame.Width, Math.Max (currentRow - topRow + 1, 0)));
+					SetNeedsDisplay (new Rect (0, currentRow - topRow, Frame.Width, System.Math.Max (currentRow - topRow + 1, 0)));
 				}
 
 				UpdateWrapModel ();
@@ -2688,10 +2688,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				topRow = currentRow;
 				need = true;
 			} else if (currentRow - topRow + BottomOffset >= Frame.Height + offB.height) {
-				topRow = Math.Min (Math.Max (currentRow - Frame.Height + 1 + BottomOffset, 0), currentRow);
+				topRow = System.Math.Min(System.Math.Max (currentRow - Frame.Height + 1 + BottomOffset, 0), currentRow);
 				need = true;
 			} else if (topRow > 0 && currentRow < topRow) {
-				topRow = Math.Max (topRow - 1, 0);
+				topRow = System.Math.Max (topRow - 1, 0);
 				need = true;
 			}
 			if (need) {
@@ -2718,9 +2718,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			if (!curWrap) {
 				if (curStart > 0 && curOffset > 0 && valueOffset == 0) {
-					newStart = Math.Max (curStart - curOffset, 0);
+					newStart = System.Math.Max (curStart - curOffset, 0);
 				} else if (curStart > 0 && curOffset == 0 && valueOffset > 0) {
-					newStart = Math.Max (Math.Min (curStart + valueOffset, curLength - curSize + 1), 0);
+					newStart = System.Math.Max(System.Math.Min (curStart + valueOffset, curLength - curSize + 1), 0);
 				}
 
 				if (newStart != curStart) {
@@ -2793,10 +2793,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				idx = 0;
 			}
 			if (isRow) {
-				topRow = Math.Max (idx > model.Count - 1 ? model.Count - 1 : idx, 0);
+				topRow = System.Math.Max (idx > model.Count - 1 ? model.Count - 1 : idx, 0);
 			} else if (!wordWrap) {
 				var maxlength = model.GetMaxVisibleLine (topRow, topRow + Frame.Height + RightOffset, TabWidth);
-				leftColumn = Math.Max (!wordWrap && idx > maxlength - 1 ? maxlength - 1 : idx, 0);
+				leftColumn = System.Math.Max (!wordWrap && idx > maxlength - 1 ? maxlength - 1 : idx, 0);
 			}
 			SetNeedsDisplay ();
 		}
@@ -4252,7 +4252,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (fromRow == 0 && fromCol == 0)
 				return null;
 
-			var col = Math.Max (fromCol - 1, 0);
+			var col = System.Math.Max (fromCol - 1, 0);
 			var row = fromRow;
 			try {
 				var rune = RuneAt (col, row);
@@ -4480,16 +4480,16 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			List<Rune> r = null;
 			if (model.Count > 0) {
-				var maxCursorPositionableLine = Math.Max ((model.Count - 1) - topRow, 0);
-				if (Math.Max (ev.Y, 0) > maxCursorPositionableLine) {
+				var maxCursorPositionableLine = System.Math.Max ((model.Count - 1) - topRow, 0);
+				if (System.Math.Max (ev.Y, 0) > maxCursorPositionableLine) {
 					currentRow = maxCursorPositionableLine + topRow;
 				} else {
-					currentRow = Math.Max (ev.Y + topRow, 0);
+					currentRow = System.Math.Max (ev.Y + topRow, 0);
 				}
 				r = GetCurrentLine ();
-				var idx = TextModel.GetColFromX (r, leftColumn, Math.Max (ev.X, 0), TabWidth);
+				var idx = TextModel.GetColFromX (r, leftColumn, System.Math.Max (ev.X, 0), TabWidth);
 				if (idx - leftColumn >= r.Count + RightOffset) {
-					currentColumn = Math.Max (r.Count - leftColumn + RightOffset, 0);
+					currentColumn = System.Math.Max (r.Count - leftColumn + RightOffset, 0);
 				} else {
 					currentColumn = idx + leftColumn;
 				}
@@ -4520,7 +4520,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			var host = (TextView)HostControl;
 			var currentLine = host.GetCurrentLine ();
-			var cursorPosition = Math.Min (host.CurrentColumn + columnOffset, currentLine.Count);
+			var cursorPosition = System.Math.Min (host.CurrentColumn + columnOffset, currentLine.Count);
 			return IdxToWord (currentLine, cursorPosition, columnOffset);
 		}
 

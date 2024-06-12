@@ -177,7 +177,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				// Justify Buttons
 				// leftmost and rightmost buttons are hard against edges. The rest are evenly spaced.
 
-				var spacing = (int)Math.Ceiling ((double)(Bounds.Width - buttonsWidth - (Border.DrawMarginFrame ? 2 : 0)) / (buttons.Count - 1));
+				var spacing = (int)System.Math.Ceiling ((double)(Bounds.Width - buttonsWidth - (Border.DrawMarginFrame ? 2 : 0)) / (buttons.Count - 1));
 				for (int i = buttons.Count - 1; i >= 0; i--) {
 					Button button = buttons [i];
 					if (i == buttons.Count - 1) {
@@ -187,7 +187,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 						if (i == 0) {
 							// first (leftmost) button - always hard flush left
 							var left = Bounds.Width - ((Border.DrawMarginFrame ? 2 : 0) + Border.BorderThickness.Left + Border.BorderThickness.Right);
-							button.X = Pos.AnchorEnd (Math.Max (left, 0));
+							button.X = Pos.AnchorEnd(System.Math.Max (left, 0));
 						} else {
 							shiftLeft += button.Frame.Width + (spacing);
 							button.X = Pos.AnchorEnd (shiftLeft);

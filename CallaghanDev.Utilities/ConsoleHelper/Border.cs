@@ -419,10 +419,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			get {
 				var driver = Application.Driver;
 				if (Parent?.Border == null) {
-					return Math.Min (Child?.Frame.Width + (2 * marginFrame) + Padding.Right
+                    return System.Math.Min (Child?.Frame.Width + (2 * marginFrame) + Padding.Right
 						+ BorderThickness.Right + Padding.Left + BorderThickness.Left ?? 0, driver.Cols);
 				}
-				return Math.Min (Parent.Frame.Width, driver.Cols);
+                return System.Math.Min (Parent.Frame.Width, driver.Cols);
 			}
 		}
 		/// <summary>
@@ -432,10 +432,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			get {
 				var driver = Application.Driver;
 				if (Parent?.Border == null) {
-					return Math.Min (Child?.Frame.Height + (2 * marginFrame) + Padding.Bottom
+                    return System.Math.Min (Child?.Frame.Height + (2 * marginFrame) + Padding.Bottom
 						+ BorderThickness.Bottom + Padding.Top + BorderThickness.Top ?? 0, driver.Rows);
 				}
-				return Math.Min (Parent.Frame.Height, driver.Rows);
+                return System.Math.Min (Parent.Frame.Height, driver.Rows);
 			}
 		}
 
@@ -587,8 +587,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 					Height = ActualHeight
 				};
 				//Child.Clear (effectBorder);
-				for (int r = effectBorder.Y; r < Math.Min (effectBorder.Bottom, driver.Rows); r++) {
-					for (int c = effectBorder.X; c < Math.Min (effectBorder.Right, driver.Cols); c++) {
+				for (int r = effectBorder.Y; r < System.Math.Min (effectBorder.Bottom, driver.Rows); r++) {
+					for (int c = effectBorder.X; c < System.Math.Min (effectBorder.Right, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
@@ -603,8 +603,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			borderRect = new Rect () {
 				X = borderRect.X + borderThickness.Left,
 				Y = borderRect.Y + borderThickness.Top,
-				Width = Math.Max (borderRect.Width - borderThickness.Right - borderThickness.Left, 0),
-				Height = Math.Max (borderRect.Height - borderThickness.Bottom - borderThickness.Top, 0)
+				Width = System.Math.Max (borderRect.Width - borderThickness.Right - borderThickness.Left, 0),
+				Height = System.Math.Max (borderRect.Height - borderThickness.Bottom - borderThickness.Top, 0)
 			};
 			if (borderRect != scrRect) {
 				// Draw padding
@@ -621,15 +621,15 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 					borderRect = new Rect () {
 						X = scrRect.X + sumPadding.Left,
 						Y = scrRect.Y + sumPadding.Top,
-						Width = Math.Max (scrRect.Width - sumPadding.Right - sumPadding.Left, 0),
-						Height = Math.Max (scrRect.Height - sumPadding.Bottom - sumPadding.Top, 0)
+						Width = System.Math.Max (scrRect.Width - sumPadding.Right - sumPadding.Left, 0),
+						Height = System.Math.Max (scrRect.Height - sumPadding.Bottom - sumPadding.Top, 0)
 					};
 				} else {
 					borderRect = new Rect () {
 						X = borderRect.X + padding.Left,
 						Y = borderRect.Y + padding.Top,
-						Width = Math.Max (borderRect.Width - padding.Right - padding.Left, 0),
-						Height = Math.Max (borderRect.Height - padding.Bottom - padding.Top, 0)
+						Width = System.Math.Max (borderRect.Width - padding.Right - padding.Left, 0),
+						Height = System.Math.Max (borderRect.Height - padding.Bottom - padding.Top, 0)
 					};
 				}
 				if (borderRect.Width > 0 && borderRect.Height > 0) {
@@ -655,7 +655,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			for (int r = frame.Y - drawMarginFrame - sumThickness.Top;
 				r < frame.Y - drawMarginFrame - padding.Top; r++) {
 				for (int c = frame.X - drawMarginFrame - sumThickness.Left;
-					c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -663,7 +663,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the left BorderThickness
 			for (int r = frame.Y - drawMarginFrame - padding.Top;
-				r < Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
 				for (int c = frame.X - drawMarginFrame - sumThickness.Left;
 					c < frame.X - drawMarginFrame - padding.Left; c++) {
 
@@ -673,9 +673,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the right BorderThickness
 			for (int r = frame.Y - drawMarginFrame - padding.Top;
-				r < Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
 				for (int c = frame.Right + drawMarginFrame + padding.Right;
-					c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -683,9 +683,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the lower BorderThickness
 			for (int r = frame.Bottom + drawMarginFrame + padding.Bottom;
-				r < Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom, driver.Rows); r++) {
 				for (int c = frame.X - drawMarginFrame - sumThickness.Left;
-					c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -697,7 +697,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			for (int r = frame.Y - drawMarginFrame - padding.Top;
 				r < frame.Y - drawMarginFrame; r++) {
 				for (int c = frame.X - drawMarginFrame - padding.Left;
-					c < Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -705,7 +705,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the left Padding
 			for (int r = frame.Y - drawMarginFrame;
-				r < Math.Min (frame.Bottom + drawMarginFrame, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame, driver.Rows); r++) {
 				for (int c = frame.X - drawMarginFrame - padding.Left;
 					c < frame.X - drawMarginFrame; c++) {
 
@@ -715,9 +715,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the right Padding
 			for (int r = frame.Y - drawMarginFrame;
-				r < Math.Min (frame.Bottom + drawMarginFrame, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame, driver.Rows); r++) {
 				for (int c = frame.Right + drawMarginFrame;
-					c < Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -725,9 +725,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			// Draw the lower Padding
 			for (int r = frame.Bottom + drawMarginFrame;
-				r < Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
+				r < System.Math.Min (frame.Bottom + drawMarginFrame + padding.Bottom, driver.Rows); r++) {
 				for (int c = frame.X - drawMarginFrame - padding.Left;
-					c < Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right + drawMarginFrame + padding.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -756,7 +756,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				for (int r = frame.Y - drawMarginFrame - sumThickness.Top + effect3DOffset.Y;
 					r >= 0 && r < frame.Y - drawMarginFrame - sumThickness.Top; r++) {
 					for (int c = frame.X - drawMarginFrame - sumThickness.Left + effect3DOffset.X;
-						c >= 0 && c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
+						c >= 0 && c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
@@ -764,7 +764,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 				// Draw the left Effect3D
 				for (int r = frame.Y - drawMarginFrame - sumThickness.Top + effect3DOffset.Y;
-					r >= 0 && r < Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+					r >= 0 && r < System.Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
 					for (int c = frame.X - drawMarginFrame - sumThickness.Left + effect3DOffset.X;
 						c >= 0 && c < frame.X - drawMarginFrame - sumThickness.Left; c++) {
 
@@ -774,9 +774,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 				// Draw the right Effect3D
 				for (int r = frame.Y - drawMarginFrame - sumThickness.Top + effect3DOffset.Y;
-					r >= 0 && r < Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+					r >= 0 && r < System.Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
 					for (int c = frame.Right + drawMarginFrame + sumThickness.Right;
-						c >= 0 && c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
+						c >= 0 && c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
@@ -784,9 +784,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 				// Draw the lower Effect3D
 				for (int r = frame.Bottom + drawMarginFrame + sumThickness.Bottom;
-					r >= 0 && r < Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+					r >= 0 && r < System.Math.Min (frame.Bottom + drawMarginFrame + sumThickness.Bottom + effect3DOffset.Y, driver.Rows); r++) {
 					for (int c = frame.X - drawMarginFrame - sumThickness.Left + effect3DOffset.X;
-						c >= 0 && c < Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
+						c >= 0 && c < System.Math.Min (frame.Right + drawMarginFrame + sumThickness.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
@@ -807,40 +807,40 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			SetBorderBrush (driver);
 
 			// Draw the upper BorderThickness
-			for (int r = Math.Max (frame.Y, 0);
-				r < Math.Min (frame.Y + borderThickness.Top, frame.Bottom); r++) {
+			for (int r = System.Math.Max (frame.Y, 0);
+				r < System.Math.Min (frame.Y + borderThickness.Top, frame.Bottom); r++) {
 				for (int c = frame.X;
-					c < Math.Min (frame.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the left BorderThickness
-			for (int r = Math.Max (Math.Min (frame.Y + borderThickness.Top, frame.Bottom), 0);
-				r < Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
+			for (int r = System.Math.Max(System.Math.Min (frame.Y + borderThickness.Top, frame.Bottom), 0);
+				r < System.Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
 				for (int c = frame.X;
-					c < Math.Min (frame.X + borderThickness.Left, frame.Right); c++) {
+					c < System.Math.Min (frame.X + borderThickness.Left, frame.Right); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the right BorderThickness
-			for (int r = Math.Max (Math.Min (frame.Y + borderThickness.Top, frame.Bottom), 0);
-				r < Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
-				for (int c = Math.Max (frame.Right - borderThickness.Right, frame.X);
-					c < Math.Min (frame.Right, driver.Cols); c++) {
+			for (int r = System.Math.Max(System.Math.Min (frame.Y + borderThickness.Top, frame.Bottom), 0);
+				r < System.Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
+				for (int c = System.Math.Max (frame.Right - borderThickness.Right, frame.X);
+					c < System.Math.Min (frame.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the lower BorderThickness
-			for (int r = Math.Max (frame.Bottom - borderThickness.Bottom, frame.Y);
-				r < Math.Min (frame.Bottom, driver.Rows); r++) {
+			for (int r = System.Math.Max (frame.Bottom - borderThickness.Bottom, frame.Y);
+				r < System.Math.Min (frame.Bottom, driver.Rows); r++) {
 				for (int c = frame.X;
-					c < Math.Min (frame.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -849,40 +849,40 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			SetBackground (driver);
 
 			// Draw the upper Padding
-			for (int r = Math.Max (frame.Y + borderThickness.Top, 0);
-				r < Math.Min (frame.Y + sumThickness.Top, frame.Bottom - borderThickness.Bottom); r++) {
+			for (int r = System.Math.Max (frame.Y + borderThickness.Top, 0);
+				r < System.Math.Min (frame.Y + sumThickness.Top, frame.Bottom - borderThickness.Bottom); r++) {
 				for (int c = frame.X + borderThickness.Left;
-					c < Math.Min (frame.Right - borderThickness.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right - borderThickness.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the left Padding
-			for (int r = Math.Max (frame.Y + sumThickness.Top, 0);
-				r < Math.Min (frame.Bottom - sumThickness.Bottom, driver.Rows); r++) {
+			for (int r = System.Math.Max (frame.Y + sumThickness.Top, 0);
+				r < System.Math.Min (frame.Bottom - sumThickness.Bottom, driver.Rows); r++) {
 				for (int c = frame.X + borderThickness.Left;
-					c < Math.Min (frame.X + sumThickness.Left, frame.Right - borderThickness.Right); c++) {
+					c < System.Math.Min (frame.X + sumThickness.Left, frame.Right - borderThickness.Right); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the right Padding
-			for (int r = Math.Max (frame.Y + sumThickness.Top, 0);
-				r < Math.Min (frame.Bottom - sumThickness.Bottom, driver.Rows); r++) {
-				for (int c = Math.Max (frame.Right - sumThickness.Right, frame.X + sumThickness.Left);
-					c < Math.Max (frame.Right - borderThickness.Right, frame.X + sumThickness.Left); c++) {
+			for (int r = System.Math.Max (frame.Y + sumThickness.Top, 0);
+				r < System.Math.Min (frame.Bottom - sumThickness.Bottom, driver.Rows); r++) {
+				for (int c = System.Math.Max (frame.Right - sumThickness.Right, frame.X + sumThickness.Left);
+					c < System.Math.Max (frame.Right - borderThickness.Right, frame.X + sumThickness.Left); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
 			}
 
 			// Draw the lower Padding
-			for (int r = Math.Max (frame.Bottom - sumThickness.Bottom, frame.Y + borderThickness.Top);
-				r < Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
+			for (int r = System.Math.Max (frame.Bottom - sumThickness.Bottom, frame.Y + borderThickness.Top);
+				r < System.Math.Min (frame.Bottom - borderThickness.Bottom, driver.Rows); r++) {
 				for (int c = frame.X + borderThickness.Left;
-					c < Math.Min (frame.Right - borderThickness.Right, driver.Cols); c++) {
+					c < System.Math.Min (frame.Right - borderThickness.Right, driver.Cols); c++) {
 
 					AddRuneAt (driver, c, r, ' ');
 				}
@@ -895,8 +895,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				var rect = new Rect () {
 					X = frame.X + sumThickness.Left,
 					Y = frame.Y + sumThickness.Top,
-					Width = Math.Max (frame.Width - sumThickness.Right - sumThickness.Left, 0),
-					Height = Math.Max (frame.Height - sumThickness.Bottom - sumThickness.Top, 0)
+					Width = System.Math.Max (frame.Width - sumThickness.Right - sumThickness.Left, 0),
+					Height = System.Math.Max (frame.Height - sumThickness.Bottom - sumThickness.Top, 0)
 				};
 				if (rect.Width > 0 && rect.Height > 0) {
 					driver.DrawWindowFrame (rect, 1, 1, 1, 1, BorderStyle != BorderStyle.None, fill, this);
@@ -908,19 +908,19 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				driver.SetAttribute (GetEffect3DBrush ());
 
 				// Draw the upper Effect3D
-				for (int r = Math.Max (frame.Y + effect3DOffset.Y, 0);
+				for (int r = System.Math.Max (frame.Y + effect3DOffset.Y, 0);
 					r < frame.Y; r++) {
-					for (int c = Math.Max (frame.X + effect3DOffset.X, 0);
-						c < Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
+					for (int c = System.Math.Max (frame.X + effect3DOffset.X, 0);
+						c < System.Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
 				}
 
 				// Draw the left Effect3D
-				for (int r = Math.Max (frame.Y + effect3DOffset.Y, 0);
-					r < Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
-					for (int c = Math.Max (frame.X + effect3DOffset.X, 0);
+				for (int r = System.Math.Max (frame.Y + effect3DOffset.Y, 0);
+					r < System.Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+					for (int c = System.Math.Max (frame.X + effect3DOffset.X, 0);
 						c < frame.X; c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
@@ -928,10 +928,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				}
 
 				// Draw the right Effect3D
-				for (int r = Math.Max (frame.Y + effect3DOffset.Y, 0);
-					r < Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+				for (int r = System.Math.Max (frame.Y + effect3DOffset.Y, 0);
+					r < System.Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
 					for (int c = frame.Right;
-						c < Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
+						c < System.Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}
@@ -939,9 +939,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 				// Draw the lower Effect3D
 				for (int r = frame.Bottom;
-					r < Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
-					for (int c = Math.Max (frame.X + effect3DOffset.X, 0);
-						c < Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
+					r < System.Math.Min (frame.Bottom + effect3DOffset.Y, driver.Rows); r++) {
+					for (int c = System.Math.Max (frame.X + effect3DOffset.X, 0);
+						c < System.Math.Min (frame.Right + effect3DOffset.X, driver.Cols); c++) {
 
 						AddRuneAt (driver, c, r, (Rune)driver.Contents [r, c, 0]);
 					}

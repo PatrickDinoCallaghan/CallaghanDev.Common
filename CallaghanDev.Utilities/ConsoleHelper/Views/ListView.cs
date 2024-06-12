@@ -583,7 +583,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				if (selected < top) {
 					top = selected;
 				} else if (selected > top + Frame.Height) {
-					top = Math.Max (selected - Frame.Height + 1, 0);
+					top = System.Math.Max (selected - Frame.Height + 1, 0);
 				}
 				OnSelectedChanged ();
 				SetNeedsDisplay ();
@@ -636,7 +636,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="items">Number of items to scroll down.</param>
 		public virtual bool ScrollDown (int items)
 		{
-			top = Math.Max (Math.Min (top + items, source.Count - 1), 0);
+			top = System.Math.Max(System.Math.Min (top + items, source.Count - 1), 0);
 			SetNeedsDisplay ();
 			return true;
 		}
@@ -647,7 +647,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="items">Number of items to scroll up.</param>
 		public virtual bool ScrollUp (int items)
 		{
-			top = Math.Max (top - items, 0);
+			top = System.Math.Max (top - items, 0);
 			SetNeedsDisplay ();
 			return true;
 		}
@@ -658,7 +658,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="cols">Number of columns to scroll right.</param>
 		public virtual bool ScrollRight (int cols)
 		{
-			left = Math.Max (Math.Min (left + cols, Maxlength - 1), 0);
+			left = System.Math.Max(System.Math.Min (left + cols, Maxlength - 1), 0);
 			SetNeedsDisplay ();
 			return true;
 		}
@@ -669,7 +669,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="cols">Number of columns to scroll left.</param>
 		public virtual bool ScrollLeft (int cols)
 		{
-			left = Math.Max (left - cols, 0);
+			left = System.Math.Max (left - cols, 0);
 			SetNeedsDisplay ();
 			return true;
 		}
@@ -752,7 +752,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (selected < top) {
 				top = selected;
 			} else if (Frame.Height > 0 && selected >= top + Frame.Height) {
-				top = Math.Max (selected - Frame.Height + 1, 0);
+				top = System.Math.Max (selected - Frame.Height + 1, 0);
 			}
 		}
 

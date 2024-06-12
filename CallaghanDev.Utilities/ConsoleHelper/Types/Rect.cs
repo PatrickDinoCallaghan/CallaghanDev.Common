@@ -141,10 +141,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 				return Empty;
 
 			return Rect.FromLTRB (
-				Math.Max (a.Left, b.Left),
-				Math.Max (a.Top, b.Top),
-				Math.Min (a.Right, b.Right),
-				Math.Min (a.Bottom, b.Bottom));
+                 System.Math.Max (a.Left, b.Left),
+                 System.Math.Max (a.Top, b.Top),
+                 System.Math.Min (a.Right, b.Right),
+                 System.Math.Min (a.Bottom, b.Bottom));
 		}
 
 		/// <summary>
@@ -172,10 +172,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 
 		public static Rect Union (Rect a, Rect b)
 		{
-			return FromLTRB (Math.Min (a.Left, b.Left),
-					 Math.Min (a.Top, b.Top),
-					 Math.Max (a.Right, b.Right),
-					 Math.Max (a.Bottom, b.Bottom));
+			return FromLTRB(System.Math.Min (a.Left, b.Left),
+                     System.Math.Min (a.Top, b.Top),
+                      System.Math.Max (a.Right, b.Right),
+                     System.Math.Max (a.Bottom, b.Bottom));
 		}
 
 		/// <summary>

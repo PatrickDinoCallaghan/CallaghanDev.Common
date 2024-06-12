@@ -165,7 +165,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 						key = (ConsoleKey)cki [1].KeyChar;
 					}
 					newConsoleKeyInfo = new ConsoleKeyInfo ((char)key,
-						(ConsoleKey)Math.Min ((uint)key, 255),
+						(ConsoleKey)System.Math.Min ((uint)key, 255),
 						false,
 						true,
 						false);

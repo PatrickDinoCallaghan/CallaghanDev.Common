@@ -140,47 +140,47 @@ namespace CallaghanDev.Utilities.MathTools
 
         public static decimal Ceiling(this decimal value, decimal divisor)
         {
-            return Math.Ceiling(value / divisor);
+            return System.Math.Ceiling(value / divisor);
         }
 
         public static decimal Floor(this decimal value, decimal divisor)
         {
-            return Math.Floor(value / divisor);
+            return System.Math.Floor(value / divisor);
         }
 
         public static decimal Round(this decimal value)
         {
-            return Math.Round(value);
+            return System.Math.Round(value);
         }
 
         public static float Sqrt(this float value)
         {
-            return (float)Math.Sqrt(value);
+            return (float)System.Math.Sqrt(value);
         }
 
         public static float Ceiling(this float value, float divisor)
         {
-            return (float)Math.Ceiling(value / divisor);
+            return (float)System.Math.Ceiling(value / divisor);
         }
 
         public static float Floor(this float value, float divisor)
         {
-            return (float)Math.Floor(value / divisor);
+            return (float)System.Math.Floor(value / divisor);
         }
 
         public static float Round(this float value)
         {
-            return (float)Math.Round(value);
+            return (float)System.Math.Round(value);
         }
 
         public static int Ceiling(this int value, int divisor)
         {
-            return (int)Math.Ceiling((double)value / divisor);
+            return (int)System.Math.Ceiling((double)value / divisor);
         }
 
         public static int Floor(this int value, int divisor)
         {
-            return (int)Math.Floor((double)value / divisor);
+            return (int)System.Math.Floor((double)value / divisor);
         }
 
         public static int Round(this int value)
@@ -190,22 +190,22 @@ namespace CallaghanDev.Utilities.MathTools
 
         public static long Sqrt(this long value)
         {
-            return (long)Math.Sqrt(value);
+            return (long)System.Math.Sqrt(value);
         }
 
         public static long Ceiling(this long value, long divisor)
         {
-            return (long)Math.Ceiling((double)value / divisor);
+            return (long)System.Math.Ceiling((double)value / divisor);
         }
 
         public static long Floor(this long value, long divisor)
         {
-            return (long)Math.Floor((double)value / divisor);
+            return (long)System.Math.Floor((double)value / divisor);
         }
 
         public static long Round(this long value)
         {
-            return (long)Math.Round((double)value);
+            return (long)System.Math.Round((double)value);
         }
     }
 

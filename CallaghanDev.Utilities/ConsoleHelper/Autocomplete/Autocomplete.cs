@@ -206,24 +206,24 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 
 			if (PopupInsideContainer) {
 				// don't overspill vertically
-				height = Math.Min (HostControl.Bounds.Height - renderAt.Y, MaxHeight);
+				height = System.Math.Min (HostControl.Bounds.Height - renderAt.Y, MaxHeight);
 				// There is no space below, lets see if can popup on top
 				if (height < Suggestions.Count && HostControl.Bounds.Height - renderAt.Y >= height) {
 					// Verifies that the upper limit available is greater than the lower limit
 					if (renderAt.Y > HostControl.Bounds.Height - renderAt.Y) {
-						renderAt.Y = Math.Max (renderAt.Y - Math.Min (Suggestions.Count + 1, MaxHeight + 1), 0);
-						height = Math.Min (Math.Min (Suggestions.Count, MaxHeight), LastPopupPos.Value.Y - 1);
+						renderAt.Y = System.Math.Max (renderAt.Y - System.Math.Min (Suggestions.Count + 1, MaxHeight + 1), 0);
+						height = System.Math.Min(System.Math.Min (Suggestions.Count, MaxHeight), LastPopupPos.Value.Y - 1);
 					}
 				}
 			} else {
 				// don't overspill vertically
-				height = Math.Min (Math.Min (top.Bounds.Height - HostControl.Frame.Bottom, MaxHeight), Suggestions.Count);
+				height = System.Math.Min(System.Math.Min (top.Bounds.Height - HostControl.Frame.Bottom, MaxHeight), Suggestions.Count);
 				// There is no space below, lets see if can popup on top
 				if (height < Suggestions.Count && HostControl.Frame.Y - top.Frame.Y >= height) {
 					// Verifies that the upper limit available is greater than the lower limit
 					if (HostControl.Frame.Y > top.Bounds.Height - HostControl.Frame.Y) {
-						renderAt.Y = Math.Max (HostControl.Frame.Y - Math.Min (Suggestions.Count, MaxHeight), 0);
-						height = Math.Min (Math.Min (Suggestions.Count, MaxHeight), HostControl.Frame.Y);
+						renderAt.Y = System.Math.Max (HostControl.Frame.Y - System.Math.Min (Suggestions.Count, MaxHeight), 0);
+						height = System.Math.Min(System.Math.Min (Suggestions.Count, MaxHeight), HostControl.Frame.Y);
 					}
 				} else {
 					renderAt.Y = HostControl.Frame.Bottom;
@@ -240,17 +240,17 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				return;
 			}
 
-			width = Math.Min (MaxWidth, toRender.Max (s => s.Length));
+			width = System.Math.Min (MaxWidth, toRender.Max (s => s.Length));
 
 			if (PopupInsideContainer) {
 				// don't overspill horizontally, let's see if can be displayed on the left
 				if (width > HostControl.Bounds.Width - renderAt.X) {
 					// Verifies that the left limit available is greater than the right limit
 					if (renderAt.X > HostControl.Bounds.Width - renderAt.X) {
-						renderAt.X -= Math.Min (width, LastPopupPos.Value.X);
-						width = Math.Min (width, LastPopupPos.Value.X);
+						renderAt.X -= System.Math.Min (width, LastPopupPos.Value.X);
+						width = System.Math.Min (width, LastPopupPos.Value.X);
 					} else {
-						width = Math.Min (width, HostControl.Bounds.Width - renderAt.X);
+						width = System.Math.Min (width, HostControl.Bounds.Width - renderAt.X);
 					}
 				}
 			} else {
@@ -258,10 +258,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 				if (width > top.Bounds.Width - (renderAt.X + HostControl.Frame.X)) {
 					// Verifies that the left limit available is greater than the right limit
 					if (renderAt.X + HostControl.Frame.X > top.Bounds.Width - (renderAt.X + HostControl.Frame.X)) {
-						renderAt.X -= Math.Min (width, LastPopupPos.Value.X);
-						width = Math.Min (width, LastPopupPos.Value.X);
+						renderAt.X -= System.Math.Min (width, LastPopupPos.Value.X);
+						width = System.Math.Min (width, LastPopupPos.Value.X);
 					} else {
-						width = Math.Min (width, top.Bounds.Width - renderAt.X);
+						width = System.Math.Min (width, top.Bounds.Width - renderAt.X);
 					}
 				}
 			}
@@ -299,7 +299,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// </summary>
 		public virtual void EnsureSelectedIdxIsValid ()
 		{
-			SelectedIdx = Math.Max (0, Math.Min (Suggestions.Count - 1, SelectedIdx));
+			SelectedIdx = System.Math.Max (0, System.Math.Min (Suggestions.Count - 1, SelectedIdx));
 
 			// if user moved selection up off top of current scroll window
 			if (SelectedIdx < ScrollOffset) {

@@ -151,7 +151,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			int width = 0;
 
 			foreach (var s in radioLabels)
-				width = Math.Max (s.ConsoleWidth + 3, width);
+				width = System.Math.Max (s.ConsoleWidth + 3, width);
 			return new Rect (x, y, width, radioLabels.Count);
 		}
 
@@ -346,7 +346,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 		void MoveEnd ()
 		{
-			cursor = Math.Max (radioLabels.Count - 1, 0);
+			cursor = System.Math.Max (radioLabels.Count - 1, 0);
 		}
 
 		void MoveHome ()

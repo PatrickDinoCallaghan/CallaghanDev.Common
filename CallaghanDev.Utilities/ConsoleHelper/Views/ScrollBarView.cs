@@ -220,10 +220,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 						if (max == value - position) {
 							position = value;
 						} else {
-							position = Math.Max (position + max, 0);
+							position = System.Math.Max (position + max, 0);
 						}
 					} else if (max < 0) {
-						position = Math.Max (position + max, 0);
+						position = System.Math.Max (position + max, 0);
 					}
 					var s = GetBarsize (vertical);
 					OnChangedPosition ();
@@ -505,9 +505,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				} else {
 					bh -= 2;
 					var by1 = KeepContentAlwaysInViewport ? position * bh / Size : position * bh / (Size + bh);
-					var by2 = KeepContentAlwaysInViewport ? Math.Min (((position + bh) * bh / Size) + 1, bh - 1) : (position + bh) * bh / (Size + bh);
+					var by2 = KeepContentAlwaysInViewport ? System.Math.Min (((position + bh) * bh / Size) + 1, bh - 1) : (position + bh) * bh / (Size + bh);
 					if (KeepContentAlwaysInViewport && by1 == by2) {
-						by1 = Math.Max (by1 - 1, 0);
+						by1 = System.Math.Max (by1 - 1, 0);
 					}
 
 					Move (col, 0);
@@ -566,9 +566,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				} else {
 					bw -= 2;
 					var bx1 = KeepContentAlwaysInViewport ? position * bw / Size : position * bw / (Size + bw);
-					var bx2 = KeepContentAlwaysInViewport ? Math.Min (((position + bw) * bw / Size) + 1, bw - 1) : (position + bw) * bw / (Size + bw);
+					var bx2 = KeepContentAlwaysInViewport ? System.Math.Min (((position + bw) * bw / Size) + 1, bw - 1) : (position + bw) * bw / (Size + bw);
 					if (KeepContentAlwaysInViewport && bx1 == bx2) {
-						bx1 = Math.Max (bx1 - 1, 0);
+						bx1 = System.Math.Max (bx1 - 1, 0);
 					}
 
 					Move (0, row);
@@ -672,7 +672,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				&& mouseEvent.Flags.HasFlag (MouseFlags.Button1Pressed | MouseFlags.ReportMousePosition))) {
 					if (lastLocation == -1) {
 						lastLocation = location;
-						posBarOffset = keepContentAlwaysInViewport ? Math.Max (location - posTopLeftTee, 1) : 0;
+						posBarOffset = keepContentAlwaysInViewport ? System.Math.Max (location - posTopLeftTee, 1) : 0;
 						return true;
 					}
 
@@ -683,7 +683,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 								Position = pos + nv;
 							}
 						} else if (CanScroll (Size - pos, out int nv, vertical)) {
-							Position = Math.Min (pos + nv, Size);
+							Position = System.Math.Min (pos + nv, Size);
 						}
 					} else if (location < lastLocation) {
 						if (location - posBarOffset > 0) {
@@ -695,9 +695,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 							Position = 0;
 						}
 					} else if (location - posBarOffset >= barsize && posBottomRightTee - posTopLeftTee >= 3 && CanScroll (Size - pos, out int nv, vertical)) {
-						Position = Math.Min (pos + nv, Size);
+						Position = System.Math.Min (pos + nv, Size);
 					} else if (location - posBarOffset >= barsize - 1 && posBottomRightTee - posTopLeftTee <= 3 && CanScroll (Size - pos, out nv, vertical)) {
-						Position = Math.Min (pos + nv, Size);
+						Position = System.Math.Min (pos + nv, Size);
 					} else if (location - posBarOffset <= 0 && posBottomRightTee - posTopLeftTee <= 3) {
 						Position = 0;
 					}
@@ -713,7 +713,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					Position = 0;
 				} else if (location == barsize) {
 					if (CanScroll (Size - pos, out int nv, vertical)) {
-						Position = Math.Min (pos + nv, Size);
+						Position = System.Math.Min (pos + nv, Size);
 					}
 				}
 			}
@@ -728,7 +728,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return false;
 			}
 			int s = GetBarsize (isVertical);
-			var newSize = Math.Max (Math.Min (size - s, position + n), 0);
+			var newSize = System.Math.Max(System.Math.Min (size - s, position + n), 0);
 			max = size > s + newSize ? (newSize == 0 ? -position : n) : size - (s + position) - 1;
 			if (size >= s + newSize && max != 0) {
 				return true;

@@ -222,7 +222,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			foreach (var ch in title) {
 				if (ch == MenuBar.HotKeySpecifier)
 					continue;
-				len += Math.Max (Rune.ColumnWidth (ch), 1);
+				len += System.Math.Max (Rune.ColumnWidth (ch), 1);
 			}
 
 			return len;
@@ -393,10 +393,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			int maxW = (items.Max (z => z?.Width) ?? 0) + 2; // This 2 is frame border?
 			int maxH = items.Length + 2; // This 2 is frame border?
 			if (parent != null && x + maxW > Driver.Cols) {
-				minX = Math.Max (parent.Frame.Right - parent.Frame.Width - maxW, 0);
+				minX = System.Math.Max (parent.Frame.Right - parent.Frame.Width - maxW, 0);
 			}
 			if (y + maxH > Driver.Rows) {
-				minY = Math.Max (Driver.Rows - maxH, 0);
+				minY = System.Math.Max (Driver.Rows - maxH, 0);
 			}
 			return new Rect (minX, minY, maxW, maxH);
 		}

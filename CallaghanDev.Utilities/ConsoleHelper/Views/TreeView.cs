@@ -185,7 +185,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public int ScrollOffsetVertical {
 			get => scrollOffsetVertical;
 			set {
-				scrollOffsetVertical = Math.Max (0, value);
+				scrollOffsetVertical = System.Math.Max (0, value);
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public int ScrollOffsetHorizontal {
 			get => scrollOffsetHorizontal;
 			set {
-				scrollOffsetHorizontal = Math.Max (0, value);
+				scrollOffsetHorizontal = System.Math.Max (0, value);
 			}
 		}
 
@@ -963,7 +963,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public void GoToEnd ()
 		{
 			var map = BuildLineMap ();
-			ScrollOffsetVertical = Math.Max (0, map.Count - Bounds.Height + 1);
+			ScrollOffsetVertical = System.Math.Max (0, map.Count - Bounds.Height + 1);
 			SelectedObject = map.LastOrDefault ()?.Model;
 
 			SetNeedsDisplay ();
@@ -1013,7 +1013,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 					// The current selection has disapeared!
 					SelectedObject = roots.Keys.FirstOrDefault ();
 				} else {
-					var newIdx = Math.Min (Math.Max (0, idx + offset), map.Count - 1);
+					var newIdx = System.Math.Min(System.Math.Max (0, idx + offset), map.Count - 1);
 
 					var newBranch = map.ElementAt (newIdx);
 
@@ -1177,7 +1177,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			} else if (idx >= ScrollOffsetVertical + Bounds.Height - leaveSpace) {
 
 				//if user has scrolled off bottom of visible tree
-				ScrollOffsetVertical = Math.Max (0, (idx + 1) - (Bounds.Height - leaveSpace));
+				ScrollOffsetVertical = System.Math.Max (0, (idx + 1) - (Bounds.Height - leaveSpace));
 			}
 		}
 
@@ -1437,8 +1437,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			var oldIdx = map.IndexOf (from);
 
-			var lowIndex = Math.Min (oldIdx, toIndex);
-			var highIndex = Math.Max (oldIdx, toIndex);
+			var lowIndex = System.Math.Min (oldIdx, toIndex);
+			var highIndex = System.Math.Max (oldIdx, toIndex);
 
 			// Select everything between the old and new indexes
 			foreach (var alsoInclude in map.Skip (lowIndex).Take (highIndex - lowIndex)) {

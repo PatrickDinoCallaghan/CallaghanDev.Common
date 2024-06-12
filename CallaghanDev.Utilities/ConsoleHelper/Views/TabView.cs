@@ -204,11 +204,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (Style.ShowBorder) {
 
 				// How much space do we need to leave at the bottom to show the tabs
-				int spaceAtBottom = Math.Max (0, GetTabHeight (false) - 1);
-				int startAtY = Math.Max (0, GetTabHeight (true) - 1);
+				int spaceAtBottom = System.Math.Max (0, GetTabHeight (false) - 1);
+				int startAtY = System.Math.Max (0, GetTabHeight (true) - 1);
 
 				DrawFrame (new Rect (0, startAtY, bounds.Width,
-					Math.Max (bounds.Height - spaceAtBottom - startAtY, 0)), 0, true);
+                     System.Math.Max (bounds.Height - spaceAtBottom - startAtY, 0)), 0, true);
 			}
 
 			if (Tabs.Any ()) {
@@ -284,7 +284,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				return;
 			}
 
-			var newIdx = Math.Max (0, Math.Min (currentIdx + amount, Tabs.Count - 1));
+			var newIdx = System.Math.Max (0, System.Math.Min (currentIdx + amount, Tabs.Count - 1));
 
 			SelectedTab = tabs [newIdx];
 			SetNeedsDisplay ();
@@ -299,7 +299,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <remarks>Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void EnsureValidScrollOffsets ()
 		{
-			TabScrollOffset = Math.Max (Math.Min (TabScrollOffset, Tabs.Count - 1), 0);
+			TabScrollOffset = System.Math.Max(System.Math.Min (TabScrollOffset, Tabs.Count - 1), 0);
 		}
 
 		/// <summary>
@@ -315,7 +315,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			if (!CalculateViewport (Bounds).Any (r => Equals (SelectedTab, r.Tab))) {
 
 				// Set scroll offset so the first tab rendered is the
-				TabScrollOffset = Math.Max (0, Tabs.IndexOf (SelectedTab));
+				TabScrollOffset = System.Math.Max (0, Tabs.IndexOf (SelectedTab));
 			}
 		}
 
@@ -360,7 +360,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				// The maximum number of characters to use for the tab name as specified
 				// by the user (MaxTabTextWidth).  But not more than the width of the view
 				// or we won't even be able to render a single tab!
-				var maxWidth = Math.Max (0, Math.Min (bounds.Width - 3, MaxTabTextWidth));
+				var maxWidth = System.Math.Max (0, System.Math.Min (bounds.Width - 3, MaxTabTextWidth));
 
 				// if tab view is width <= 3 don't render any tabs
 				if (maxWidth == 0) {
@@ -431,7 +431,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			// if the currently selected tab is no longer a member of Tabs
 			if (SelectedTab == null || !Tabs.Contains (SelectedTab)) {
 				// select the tab closest to the one that disappeared
-				var toSelect = Math.Max (idx - 1, 0);
+				var toSelect = System.Math.Max (idx - 1, 0);
 
 				if (toSelect < Tabs.Count) {
 					SelectedTab = Tabs.ElementAt (toSelect);

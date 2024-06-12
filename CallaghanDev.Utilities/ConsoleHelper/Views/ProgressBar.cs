@@ -107,7 +107,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public float Fraction {
 			get => fraction;
 			set {
-				fraction = Math.Min (value, 1);
+				fraction = System.Math.Min (value, 1);
 				isActivity = false;
 				SetNeedsDisplay ();
 			}
@@ -363,7 +363,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 		void PopulateActivityPos ()
 		{
-			activityPos = new int [Math.Min (Frame.Width / 3, 5)];
+			activityPos = new int[System.Math.Min (Frame.Width / 3, 5)];
 			for (int i = 0; i < activityPos.Length; i++) {
 				activityPos [i] = i - activityPos.Length + 1;
 			}

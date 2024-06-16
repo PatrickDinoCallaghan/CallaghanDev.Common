@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenQA.Selenium.DevTools.V121.Animation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,34 +14,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper
         private const int BAR_LENGTH = 50;
         public static void DisplayProgressBar(int currentIteration, int totalIterations, string Title = "")
         {
-            DisplayProgressBar((long)currentIteration, (long)(totalIterations), Title);
+            cmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
         }
         public static void DisplayProgressBar(long currentIteration, long totalIterations, string Title = "")
         {
-            if (totalIterations <= 0) { return; }
-            double progress = (double)currentIteration / (double)totalIterations;
-            int charsToPrint = (int)(progress * BAR_LENGTH);
-
-            if (progress > 1)
-                progress = 1;
-
-            if (BAR_LENGTH - charsToPrint > 0)
-            {
-                System.Console.ForegroundColor = ConsoleColor.Red;
-                System.Console.Write(Title + "\r[");
-                System.Console.Write(new string('#', charsToPrint));
-                System.Console.Write(new string(' ', BAR_LENGTH - charsToPrint));
-                System.Console.Write($"] {progress * 100:0.00}%");
-            }
-            else
-            {
-                System.Console.ForegroundColor = ConsoleColor.Green;
-                System.Console.Write(Title + "\r[");
-                System.Console.Write(new string('#', BAR_LENGTH));
-                System.Console.Write($"] {progress * 100:0.00}%");
-                System.Console.ResetColor();
-                System.Console.WriteLine();
-            }
+            cmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
         }
         public static bool AskYesNoQuestion(string question)
         {

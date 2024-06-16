@@ -6,6 +6,8 @@ using System.Globalization;
 using System.Text;
 using ILGPU.Runtime;
 using CallaghanDev.Utilities.GPU;
+using System.Diagnostics;
+using DocumentFormat.OpenXml.Office2010.PowerPoint;
 
 namespace CallaghanDev.Utilities.MathTools
 {
@@ -957,30 +959,44 @@ namespace CallaghanDev.Utilities.MathTools
 
         public T[,] ToArray()
         {
-            if (Data == null || Data.Count == 0)
+            T[,] array;
+            try
             {
-                return new T[0, 0];
+
+                if (Data == null || Data.Count == 0)
+                {
+                    return new T[0, 0];
+                }
+
+                int maxRow = RowCount();
+                int maxColumn = ColumnCount();
+
+                // Initialize the array with the determined maximum dimensions
+                array = new T[maxRow, maxColumn];
+
+
+                /*  Parallel.ForEach(Data, kvp =>
+                  {
+                      array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+
+                  });*/
+
+                foreach (var kvp in Data)
+                {
+                    array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+                }
+
             }
-
-            int maxRow = RowCount();
-            int maxColumn = ColumnCount();
-
-            // Initialize the array with the determined maximum dimensions
-            T[,] array = new T[maxRow, maxColumn];
-
-
-          /*  Parallel.ForEach(Data, kvp =>
+            catch (global::System.Exception)
             {
-                array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+                StackTrace st = new StackTrace();
 
-            });*/
+                StackFrame frame = st.GetFrame(2);
 
-            foreach (var kvp in Data)
-            {
+                Debug.WriteLine(frame.GetMethod().Name.ToString());
 
-                array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
+                array = ToArray();
             }
-
             return array;
         }
         public T[][] ConvertToColumnArray()
@@ -1008,7 +1024,9 @@ namespace CallaghanDev.Utilities.MathTools
                 int column = keyValuePair.Key.Column;
                 dataArray[column][row] = keyValuePair.Value; // Correctly access row first, then column
             });
+
             return dataArray;
+
         }
         public Matrix<TResult> Select<TResult>(Func<T, TResult> selector)
         {
@@ -1017,6 +1035,17 @@ namespace CallaghanDev.Utilities.MathTools
             Parallel.ForEach(Data, item =>
             {
                 resultMatrix[item.Key.Row, item.Key.Column] = selector(item.Value);
+            });
+
+            return resultMatrix;
+        }
+        public Matrix<TResult> SelectTranspose<TResult>(Func<T, TResult> selector)
+        {
+            var resultMatrix = new Matrix<TResult>();
+
+            Parallel.ForEach(Data, item =>
+            {
+                resultMatrix[item.Key.Column, item.Key.Row] = selector(item.Value);
             });
 
             return resultMatrix;

@@ -10,6 +10,44 @@ using System.Threading.Tasks;
 
 namespace CallaghanDev.Utilities.Math
 {
+    public class MatrixArrayJsonConverter<T> : JsonConverter
+    {
+        private readonly JsonConverter _matrixConverter;
+
+        public MatrixArrayJsonConverter()
+        {
+            _matrixConverter = new MatrixJsonConverter<T>();
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Matrix<T>[]);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var array = (Matrix<T>[])value;
+            writer.WriteStartArray();
+            foreach (var matrix in array)
+            {
+                _matrixConverter.WriteJson(writer, matrix, serializer);
+            }
+            writer.WriteEndArray();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var list = new List<Matrix<T>>();
+            reader.Read(); // StartArray
+            while (reader.TokenType != JsonToken.EndArray)
+            {
+                var matrix = _matrixConverter.ReadJson(reader, typeof(Matrix<T>), null, serializer);
+                list.Add((Matrix<T>)matrix);
+                reader.Read(); // Next token
+            }
+            return list.ToArray();
+        }
+    }
 
     public class MatrixJsonConverter<T> : JsonConverter
     {

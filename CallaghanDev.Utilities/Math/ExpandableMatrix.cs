@@ -13,9 +13,13 @@ namespace CallaghanDev.Utilities.MathTools
 {
     public class Matrix<T> : IMatrix<T>, IEnumerable<KeyValuePair<MatrixKey, T>>, IDisposable
     {
-        ParallelOptions options;
+
+
+        private int _RowCount = 0;
+        private int _ColumnCount = 0;
         ConcurrentDictionary<MatrixKey, T> Data;
 
+        ParallelOptions options;
         private int _MaxDegreeOfParallelism;
         public int MaxDegreeOfParallelism
         {
@@ -101,8 +105,6 @@ namespace CallaghanDev.Utilities.MathTools
 
         #region Matrix Size and Structure
 
-        private int _RowCount = 0;
-        private int _ColumnCount = 0;
         public int RowCount()
         {
             return _RowCount;
@@ -993,9 +995,8 @@ namespace CallaghanDev.Utilities.MathTools
 
                 StackFrame frame = st.GetFrame(2);
 
-                Debug.WriteLine(frame.GetMethod().Name.ToString());
+                throw new Exception((frame.GetMethod().Name.ToString()));
 
-                array = ToArray();
             }
             return array;
         }

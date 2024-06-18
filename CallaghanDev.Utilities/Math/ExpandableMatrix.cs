@@ -82,14 +82,35 @@ namespace CallaghanDev.Utilities.MathTools
 
             // Update the row and column counts if necessary
             // Assuming _RowCount and _ColumnCount are thread-safe (e.g., using locks or Interlocked)
-            if (column >= _ColumnCount)
+            /*if (column >= _ColumnCount)
             {
                 _ColumnCount = column + 1;
             }
             if (row >= _RowCount)
             {
                 _RowCount = row + 1;
-            }
+            }*/
+            // Update the column count in a thread-safe manner
+            int initialColumnCount;
+            do
+            {
+                initialColumnCount = _ColumnCount;
+                if (column >= initialColumnCount)
+                {
+                    Interlocked.CompareExchange(ref _ColumnCount, column + 1, initialColumnCount);
+                }
+            } while (column >= initialColumnCount && initialColumnCount != _ColumnCount);
+
+            // Update the row count in a thread-safe manner
+            int initialRowCount;
+            do
+            {
+                initialRowCount = _RowCount;
+                if (row >= initialRowCount)
+                {
+                    Interlocked.CompareExchange(ref _RowCount, row + 1, initialRowCount);
+                }
+            } while (row >= initialRowCount && initialRowCount != _RowCount);
         }
 
         public (int Rows, int Columns) GetSize()
@@ -964,7 +985,6 @@ namespace CallaghanDev.Utilities.MathTools
             T[,] array;
             try
             {
-
                 if (Data == null || Data.Count == 0)
                 {
                     return new T[0, 0];
@@ -976,18 +996,10 @@ namespace CallaghanDev.Utilities.MathTools
                 // Initialize the array with the determined maximum dimensions
                 array = new T[maxRow, maxColumn];
 
-
-                /*  Parallel.ForEach(Data, kvp =>
-                  {
-                      array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
-
-                  });*/
-
-                foreach (var kvp in Data)
+                Parallel.ForEach(Data, kvp =>
                 {
                     array[kvp.Key.Row, kvp.Key.Column] = kvp.Value;
-                }
-
+                });
             }
             catch (global::System.Exception)
             {

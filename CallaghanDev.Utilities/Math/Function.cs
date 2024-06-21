@@ -74,6 +74,20 @@ namespace CallaghanDev.Utilities.MathTools
             return System.Math.Tanh(x);// This is not a good move, lose the precision of the decimal by converting to a double, and highly inefficent
         }
 
+        //Untested
+        public static double Gelu(double x)
+        {
+            //approximate formula for GeLU
+            return 0.5 * x * (1 + System.Math.Tanh(System.Math.Sqrt(2 / System.Math.PI) * (x + 0.044715 * System.Math.Pow(x, 3))));
+        }
+        //Untested
+        public static float Gelu(float x)
+        {
+            //approximate formula for GeLU
+            return (float)Gelu((double)x);
+        }
+
+
         public static class FirstDerivative
         {
             public static double sigmoid(double x)
@@ -133,6 +147,25 @@ namespace CallaghanDev.Utilities.MathTools
 
                 // Convert the result to a float and return
                 return (float)derivativeResult.RealValue;
+            }
+
+            //Untested
+            public static double Gelu(double x)
+            {
+                // Constants
+                double sqrt2Pi = System.Math.Sqrt(2 / System.Math.PI);
+                double coeff = 0.044715;
+
+                // Intermediate values
+                double xCube = System.Math.Pow(x, 3);
+                double tanhArg = sqrt2Pi * (x + coeff * xCube);
+                double tanhValue = System.Math.Tanh(tanhArg);
+
+                // Derivative of GeLU
+                double sech2Value = 1 - System.Math.Pow(tanhValue, 2);
+                double innerDerivative = sqrt2Pi * (1 + 3 * coeff * System.Math.Pow(x, 2));
+
+                return 0.5 * (1 + tanhValue) + 0.5 * x * sech2Value * innerDerivative;
             }
         }
     }

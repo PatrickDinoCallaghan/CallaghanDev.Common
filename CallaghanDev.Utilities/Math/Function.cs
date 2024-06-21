@@ -61,7 +61,7 @@ namespace CallaghanDev.Utilities.MathTools
         }
         public static float leakyrelu(float x)
         {
-            return (0 >= x) ? 0.01f * x : x;
+            return (0 >= x) ? 0.1f * x : x;
         }
 
         public static double sigmoid(double x)
@@ -90,7 +90,7 @@ namespace CallaghanDev.Utilities.MathTools
             }
             public static double leakyrelu(double x)
             {
-                return (0 >= x) ? 0.01d : 1;
+                return (0 >= x) ? 0.1d : 1;
             }
             public static float sigmoid(float x)
             {
@@ -106,7 +106,7 @@ namespace CallaghanDev.Utilities.MathTools
             }
             public static float leakyrelu(float x)
             {
-                return (0 >= x) ? 0.01f : 1;
+                return (0 >= x) ? 0.1f : 1;
             }
             public static float EvaluateFirstDerivative(string expression, string variableName, float variableValue)
             {

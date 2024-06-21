@@ -4,114 +4,107 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-internal class cmslProgressBar
+internal class CmslProgressBar
 {
-    private static Dictionary<string, Tuple<Stopwatch, cmslProgressBar>> _ProgressBars = new Dictionary<string, Tuple<Stopwatch, cmslProgressBar>>();
-    private const int BAR_LENGTH = 50;
-    private static bool Silent = false; // Assuming you have a mechanism to set this value
-
+    private static readonly Dictionary<string, Tuple<Stopwatch, CmslProgressBar>> ProgressBars = new();
+    private static int BarLength = 50;
+    private static readonly bool Silent = false; // Assuming you have a mechanism to set this value
+    private static int maxLength = 0;
     public bool TitleLineUsed { get; set; } = false;
 
     public static void DisplayProgressBar(long currentIteration, long totalIterations, string title = "")
     {
-        if (Silent) return;
+        if (Silent || totalIterations <= 0) return;
 
-        if (!_ProgressBars.ContainsKey(title))
+        if (!ProgressBars.ContainsKey(title))
         {
             var stopwatch = new Stopwatch();
-            var progressBar = new cmslProgressBar();
+            var progressBar = new CmslProgressBar();
             stopwatch.Start();
-            _ProgressBars.Add(title, new Tuple<Stopwatch, cmslProgressBar>(stopwatch, progressBar));
+            ProgressBars.Add(title, new Tuple<Stopwatch, CmslProgressBar>(stopwatch, progressBar));
         }
 
-        if (totalIterations <= 0) return;
-
-        double progress = (double)currentIteration / totalIterations;
-        int charsToPrint = (int)(progress * BAR_LENGTH);
-        progress = Math.Min(progress, 1);
-
+        double progress = Math.Min((double)currentIteration / totalIterations, 1);
+        int charsToPrint = (int)(progress * BarLength);
         string timeEstimation = GetTimeEstimation(progress, title);
 
         Console.ForegroundColor = progress < 1 ? ConsoleColor.Red : ConsoleColor.Green;
 
-        if (progress < 1)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-        }
-        else
-        {
-            UpdateTitleLineIfNeeded(title);
-            Console.ForegroundColor = ConsoleColor.Green;
-        }
-
         PrintProgressBar(progress, title, charsToPrint, timeEstimation);
 
-        if (progress == 1)
+        if (progress >= 1)
         {
-            _ProgressBars[title].Item1.Stop();
-            _ProgressBars.Remove(title);
+            if (ProgressBars[title].Item1.IsRunning)
+            {
+                PrintProgressBarFinished("Time Elapsed:" + PrintEffectiveTimeSpan(ProgressBars[title].Item1.Elapsed));
+            }
+            ProgressBars[title].Item1.Stop();
+            ProgressBars.Remove(title);
+
             Console.ResetColor();
             Console.WriteLine();
         }
+    }
+
+    private static string PrintEffectiveTimeSpan(TimeSpan timeSpan)
+    {
+        if (timeSpan.TotalDays >= 1)
+            return $"{(int)timeSpan.TotalDays}d {timeSpan.Hours}h {timeSpan.Minutes}m";
+        if (timeSpan.TotalHours >= 1)
+            return $"{(int)timeSpan.TotalHours}h {timeSpan.Minutes}m";
+        if (timeSpan.TotalMinutes >= 1)
+            return $"{(int)timeSpan.TotalMinutes}m {timeSpan.Seconds}s";
+
+        return $"{(int)timeSpan.TotalSeconds}s {timeSpan.Milliseconds}ms";
     }
 
     private static string GetTimeEstimation(double progress, string title)
     {
         if (progress <= 0) return string.Empty;
 
-        double elapsedSeconds = _ProgressBars[title].Item1.Elapsed.TotalSeconds;
+        double elapsedSeconds = ProgressBars[title].Item1.Elapsed.TotalSeconds;
         double estimatedTotalTimeSeconds = elapsedSeconds / progress;
         double estimatedRemainingTimeSeconds = estimatedTotalTimeSeconds - elapsedSeconds;
         TimeSpan estimatedRemainingTime = TimeSpan.FromSeconds(estimatedRemainingTimeSeconds);
 
-        string eta = " ETA: ";
-
-        if (estimatedRemainingTime.TotalDays >= 1)
-        {
-            eta += $"{(int)estimatedRemainingTime.TotalDays}d ";
-        }
-        if (estimatedRemainingTime.TotalHours >= 1)
-        {
-            eta += $"{estimatedRemainingTime.Hours}h ";
-        }
-        if (estimatedRemainingTime.TotalMinutes >= 1)
-        {
-            eta += $"{estimatedRemainingTime.Minutes}m ";
-        }
-        eta += $"{estimatedRemainingTime.Seconds}s";
-
-        return eta;
+        return $" ETA: {FormatTimeSpan(estimatedRemainingTime)}";
     }
 
-    private static void UpdateTitleLineIfNeeded(string title)
+    private static string FormatTimeSpan(TimeSpan timeSpan)
     {
-        if (_ProgressBars[title].Item2.TitleLineUsed)
-        {
-            Console.CursorTop = Console.CursorTop - 1;
-            Console.CursorLeft = 0;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(TitleizeFirstLetter(title));
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-        }
+        string eta = string.Empty;
 
-        if (!_ProgressBars[title].Item2.TitleLineUsed)
-        {
-            Console.WriteLine(TitleizeFirstLetter(title));
-            _ProgressBars[title].Item2.TitleLineUsed = true;
-        }
+        if (timeSpan.TotalDays >= 1)
+            eta += $"{(int)timeSpan.TotalDays}d ";
+        if (timeSpan.TotalHours >= 1)
+            eta += $"{timeSpan.Hours}h ";
+        if (timeSpan.TotalMinutes >= 1)
+            eta += $"{timeSpan.Minutes}m ";
+
+        eta += $"{timeSpan.Seconds}s";
+        return eta;
     }
 
     private static void PrintProgressBar(double progress, string title, int charsToPrint, string timeEstimation)
     {
-        string printTitle = _ProgressBars[title].Item2.TitleLineUsed ? "" : TitleizeFirstLetter(title);
+        string printTitle = ProgressBars[title].Item2.TitleLineUsed ? "" : TitleizeFirstLetter(title);
 
-        Console.Write($"{printTitle}\r[");
-        Console.Write(new string('#', charsToPrint));
-        Console.Write(new string(' ', BAR_LENGTH - charsToPrint));
-        Console.Write($"] {progress * 100:0.00}% {timeEstimation}");
+        string progressString = $"{printTitle}\r[" + new string('#', charsToPrint) + new string(' ', BarLength - charsToPrint) + $"] {progress * 100:0.00}% {timeEstimation}";
+        int length = progressString.Length;
+
+        if (maxLength < length || Console.WindowWidth < maxLength)
+        {
+            maxLength = Console.WindowWidth - length - 5;
+        }
+
+
+        Console.Write(progressString + new string(' ', maxLength));
+        Console.SetCursorPosition(length, Console.GetCursorPosition().Top);
+    }
+
+    private static void PrintProgressBarFinished(string timeTaken)
+    {
+        Console.Write($" {timeTaken}\r[");
     }
 
     private static string TitleizeFirstLetter(string input)
@@ -125,5 +118,10 @@ internal class cmslProgressBar
         }
 
         return alphanumeric;
+    }
+
+    public static void SetBarLength (int Length)
+    {
+        BarLength = Length + 2;
     }
 }

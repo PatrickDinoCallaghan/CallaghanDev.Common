@@ -14,11 +14,16 @@ namespace CallaghanDev.Utilities.ConsoleHelper
         private const int BAR_LENGTH = 50;
         public static void DisplayProgressBar(int currentIteration, int totalIterations, string Title = "")
         {
-            cmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
+
+            int windowWidth = Console.WindowWidth / 3;
+            CmslProgressBar.SetBarLength(windowWidth);
+            CmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
         }
         public static void DisplayProgressBar(long currentIteration, long totalIterations, string Title = "")
         {
-            cmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
+            int windowWidth = Console.WindowWidth/3;
+            CmslProgressBar.SetBarLength(windowWidth);
+            CmslProgressBar.DisplayProgressBar(currentIteration, totalIterations, Title);
         }
         public static bool AskYesNoQuestion(string question)
         {

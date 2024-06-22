@@ -10,7 +10,7 @@ A large part of the code in the `Utilities.ConsoleHelper` folder is taken and mo
 
 ### CallaghanDex.XML
 
-The majority of the `CallaghanDex.XML` project is taken from [ClosedXML](https://github.com/ClosedXML/ClosedXML). This section offers functionalities for reading, manipulating, and writing Excel files using .NET.
+The majority of the `CallaghanDev.XML` project is taken from [ClosedXML](https://github.com/ClosedXML/ClosedXML). This section offers functionalities for reading, manipulating, and writing Excel files using .NET.
 
 ### Original Code
 

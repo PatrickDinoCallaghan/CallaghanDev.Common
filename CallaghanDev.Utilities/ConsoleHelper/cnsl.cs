@@ -1,13 +1,4 @@
-﻿using OpenQA.Selenium.DevTools.V121.Animation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CallaghanDev.Utilities.ConsoleHelper
+﻿namespace CallaghanDev.Utilities.ConsoleHelper
 {
     public static class cnsl
     {

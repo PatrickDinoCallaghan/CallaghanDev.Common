@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CallaghanDev.Utilities.Web
+namespace CallaghanDev.Utilities.Web.Enums
 {
-    public enum browserType
+    public enum BrowserTypeEnum
     {
         Firefox,
         w3m

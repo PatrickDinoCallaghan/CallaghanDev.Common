@@ -14,6 +14,7 @@ namespace CallaghanDev.Utilities.Web.Enums
         ClassName,
         TagName,
         LinkText,
-        PartialLinkText
+        PartialLinkText,
+        Text
     }
 }

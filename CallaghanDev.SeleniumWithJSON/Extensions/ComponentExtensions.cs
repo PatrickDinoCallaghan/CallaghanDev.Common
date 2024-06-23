@@ -17,7 +17,7 @@ namespace CallaghanDev.SeleniumWithJSON.Extensions
 
         public static Tuple<IWebElement, List<IWebElement>> ItemSelection(this IWebDriver webdriver, WebControlElementType elementType, string Identifier)
         {
-            WaitForPageLoad(webdriver);
+            webdriver.WaitForPageLoad();
             List<ByLocatorFunction> functions = new List<ByLocatorFunction>
             {
                 By.CssSelector,
@@ -29,15 +29,20 @@ namespace CallaghanDev.SeleniumWithJSON.Extensions
             };
             foreach (var function in functions)
             {
-                By byLocator = function(Identifier);
-                IWebElement webElement = webdriver.FindElement(byLocator);
-
-                if (GetElementType(webElement) == elementType)
+                try
                 {
-                    return new Tuple<IWebElement, List<IWebElement>>(webElement, null) ;
+                    By byLocator = function(Identifier);
+                    IWebElement webElement = webdriver.FindElement(byLocator);
+
+                    if (webElement.GetElementType() == elementType)
+                    {
+                        return new Tuple<IWebElement, List<IWebElement>>(webElement, null);
+                    }
                 }
+                catch (OpenQA.Selenium.NoSuchElementException Notfound) { }
+                catch (Exception ex) { }
             }
-            List<IWebElement> webElementsByType = GetAllElements(webdriver).Where(r => GetElementType(r) == elementType).ToList();
+            List<IWebElement> webElementsByType = GetAllElements(webdriver).Where(r => r.GetElementType() == elementType && !string.IsNullOrEmpty(r.BestIdentifier())).ToList();
 
             if (webElementsByType.Any())
             {
@@ -71,7 +76,6 @@ namespace CallaghanDev.SeleniumWithJSON.Extensions
                 {
                     if (kvp.Value == mostSimilarValue)
                     {
-
                         ByLocatorFunction func = kvp.Key;
                         By byLocator = func(kvp.Value);
                         IWebElement webElement = webdriver.FindElement(byLocator);
@@ -82,50 +86,8 @@ namespace CallaghanDev.SeleniumWithJSON.Extensions
 
             throw new Exception("No similar locator found.");
         }
-        private static WebControlElementType GetElementType(IWebElement element)
-        {
-            string tagName = element.TagName.ToLower();
-            string type = element.GetAttribute("type")?.ToLower();
 
-            return tagName switch
-            {
-                "input" => type switch
-                {
-                    "text" => WebControlElementType.InputText,
-                    "password" => WebControlElementType.InputPassword,
-                    "checkbox" => WebControlElementType.InputCheckbox,
-                    "radio" => WebControlElementType.InputRadio,
-                    "submit" => WebControlElementType.InputSubmit,
-                    "button" => WebControlElementType.InputButton,
-                    "file" => WebControlElementType.InputFile,
-                    "hidden" => WebControlElementType.InputHidden,
-                    "email" => WebControlElementType.InputEmail,
-                    "number" => WebControlElementType.InputNumber,
-                    "date" => WebControlElementType.InputDate,
-                    "range" => WebControlElementType.InputRange,
-                    "search" => WebControlElementType.InputSearch,
-                    "tel" => WebControlElementType.InputTel,
-                    "url" => WebControlElementType.InputUrl,
-                    "color" => WebControlElementType.InputColor,
-                    _ => throw new Exception("Unknown input type")
-                },
-                "button" => WebControlElementType.Button,
-                "select" => WebControlElementType.Select,
-                "option" => WebControlElementType.Option,
-                "textarea" => WebControlElementType.TextArea,
-                "label" => WebControlElementType.Label,
-                "fieldset" => WebControlElementType.Fieldset,
-                "legend" => WebControlElementType.Legend,
-                "form" => WebControlElementType.Form,
-                "output" => WebControlElementType.Output,
-                "datalist" => WebControlElementType.Datalist,
-                "keygen" => WebControlElementType.Keygen,
-                "progress" => WebControlElementType.Progress,
-                "meter" => WebControlElementType.Meter,
-                _ => throw new Exception("Unknown element type")
-            };
-        }
-        private static void WaitForPageLoad(IWebDriver driver)
+        private static void WaitForPageLoad(this IWebDriver driver)
         {
             var wait = new OpenQA.Selenium.Support.UI.WebDriverWait(driver, TimeSpan.FromSeconds(10));
             wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));

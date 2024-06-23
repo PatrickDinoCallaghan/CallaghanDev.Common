@@ -70,7 +70,7 @@ namespace CallaghanDev.Utilities.Web
                             {
                                 webdriver.Manage().Cookies.AddCookie(cookie);
 
-                            Console.WriteLine($"Cookie added for domain:{ConvertToValidUrl(cookie.Domain)}");
+                            Console.WriteLine($"Cookie added for domain:{webdriver.ConvertToValidUrl(cookie.Domain)}");
                             CookieFound = true;
                             }
                             catch (Exception ex)
@@ -87,7 +87,7 @@ namespace CallaghanDev.Utilities.Web
                            Cookie cookie = cookies.Where(r => r.Domain == CookieNameClosest).FirstOrDefault();
                         if (cookie != null)
                         {
-                            string correctedDomian = ConvertToValidUrl(cookie.Domain);
+                            string correctedDomian = webdriver.ConvertToValidUrl(cookie.Domain);
                             webdriver.Navigate().GoToUrl(correctedDomian);
                             webdriver.Manage().Cookies.AddCookie(cookie);
                             Console.WriteLine($"Cookie added for domain:{correctedDomian}");
@@ -127,7 +127,7 @@ namespace CallaghanDev.Utilities.Web
         }
 
         #region A set of CSS and form based extension methods for <see cref="IWebDriver"/>.
-        public static string ConvertToValidUrl(string domain)
+        public static string ConvertToValidUrl(this IWebDriver webdriver, string domain)
         {
             if (Uri.TryCreate(domain, UriKind.Absolute, out Uri result) && (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps))
             {
@@ -147,16 +147,6 @@ namespace CallaghanDev.Utilities.Web
         public static void Wait(this IWebDriver webdriver, double seconds)
         {
             Thread.Sleep(TimeSpan.FromSeconds(seconds));
-        }
-
-        /// <summary>
-        /// Waits 2 seconds, which is *usually* the maximum time needed for all Javascript execution to finish on the page.
-        /// </summary>
-        /// <param name="webdriver">A <see cref="IWebDriver"/> instance.</param>
-        [Obsolete("Use WaitForElementDisplayed instead, as WaitForPageLoad uses Thread.Sleep")]
-        public static void WaitForPageLoad(this IWebDriver webdriver)
-        {
-            webdriver.Wait(2);
         }
 
         /// <summary>

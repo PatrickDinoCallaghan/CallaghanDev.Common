@@ -10,58 +10,17 @@ namespace CallaghanDev.Utilities.Web.Enums
     public enum WebControlElementType
     {
         None,
-        // Input elements
-        InputText,
-        InputPassword,
-        InputCheckbox,
-        InputRadio,
-        InputSubmit,
-        InputButton,
-        InputFile,
-        InputHidden,
-        InputEmail,
-        InputNumber,
-        InputDate,
-        InputRange,
-        InputSearch,
-        InputTel,
-        InputUrl,
-        InputColor,
-
-        // Button elements
+        Unknown,
         Button,
-
-        // Select elements
-        Select,
-        Option,
-
-        // TextArea elements
-        TextArea,
-
-        // Label elements
+        TextBox,
+        CheckBox,
+        RadioButton,
+        DropDownList,
+        Link,
+        Image,
+        Table,
         Label,
-
-        // Fieldset elements
-        Fieldset,
-        Legend,
-
-        // Form elements
-        Form,
-
-        // Output elements
-        Output,
-
-        // Datalist elements
-        Datalist,
-
-        // Keygen elements
-        Keygen,
-
-        // Progress elements
-        Progress,
-
-        // Meter elements
-        Meter
+        TextArea
     }
 
 }

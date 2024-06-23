@@ -4,13 +4,13 @@ A comprehensive collection of reusable methods, extensions, and tools designed t
 
 ## Project Structure
 
-### Utilities.ConsoleHelper
+### CallaghanDev.Utilities.ConsoleHelper
 
 A large part of the code in the `Utilities.ConsoleHelper` folder is taken and modified from [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui). This section provides utilities for creating and managing console user interfaces.
 
-### CallaghanDex.XML
+### CallaghanDev.XML
 
-The majority of the `CallaghanDex.XML` project is taken from [ClosedXML](https://github.com/ClosedXML/ClosedXML). This section offers functionalities for reading, manipulating, and writing Excel files using .NET.
+The majority of the `CallaghanDev.XML` project is taken from [ClosedXML](https://github.com/ClosedXML/ClosedXML). This section offers functionalities for reading, manipulating, and writing Excel files using .NET.
 
 ### Original Code
 

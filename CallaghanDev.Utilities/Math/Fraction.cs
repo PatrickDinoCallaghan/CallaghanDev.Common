@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CallaghanDev.Utilities.MathTools
 {
@@ -12,7 +8,7 @@ namespace CallaghanDev.Utilities.MathTools
     /// Represents a fractional number between -1 and 1 with fixed-point decimal handling using a short, 
     /// effectively creating a 2-byte float. While operations with Fraction may be slower than with float 
     /// types, they are typically faster than with decimal types. The Fraction structure is designed to 
-    /// offer greater precision for values strictly between -1 and 1 compared to floats after binary opperations,
+    /// offer greater precision for values strictly between -1 and 1 compared to floats after binary operations,
     /// due to its fixed-point decimal handling and specific scale. It balances between medium precision and low memory 
     /// usage while offering medium CPU computational efficiency. In contrast, floats provide high CPU 
     /// computational efficiency and lower precision with medium memory usage, whereas decimals offer high 
@@ -22,169 +18,122 @@ namespace CallaghanDev.Utilities.MathTools
     [StructLayout(LayoutKind.Sequential)]
     public struct Fraction : ISerializable
     {
-        private short Data;  // -32,768 to 32,767
+        private long numerator;
+        private long denominator;
 
         #region Constants
-        const long invDivisor = 429503;
-        const short DecimalPrecision = 10000;
-        const int FractionPrecision = 1000000; // Adjust based on required precision for the fraction.
-        const float FloatConverter = 10000f;
+        const int DecimalPrecision = 10000;
+        const int FractionPrecision = 1000000;
         #endregion
 
-        public float floatValue
+        public double DecimalValue
         {
-            get { return Data / FloatConverter; } // Simplified conversion to float
-            set { Data = (short)(value * DecimalPrecision); }
-        }
-        public float decimalValue
-        {
-            get { return Data / FloatConverter; } // Simplified conversion to float
-            set { Data = (short)(value * DecimalPrecision); }
-        }
-        public Fraction(short Numerator, short Denominator)
-        {
-            if (Numerator > Denominator)
+            get { return (double)numerator / denominator; }
+            set
             {
-                throw new ArgumentException("Numerator should not be greater than Denominator.");
-            }
+                if (IsIrrational(value))
+                {
+                    throw new ArgumentException("Cannot convert an irrational number to a fraction.");
+                }
 
-            // This ensures the fraction is scaled according to a predefined scale (e.g., 1000 for milli-units).
-            Data = (short)(((float)Numerator / (float)Denominator) * DecimalPrecision);
-        }
-        public Fraction(float InData)
-        {
-            floatValue = InData;
-        }
-        public Fraction(decimal InData)
-        {
-            decimal shifted = InData * DecimalPrecision;
-            Data = (short)(shifted);
-        }
-
-        #region Operator Overloads
-        private Fraction(short InData)
-        {
-            Data = InData;
-        }
-        public static Fraction operator *(Fraction a, Fraction b)
-        {
-            unchecked
-            {
-                // Correct the multiplication to match with the fixed-point representation logic.
-                long result = a.Data * b.Data; // Multiplication in their scale.
-
-                result = (result * invDivisor) >> 32; // Adjust the result by the inverse divisor and bit shift.
-
-                return new Fraction((short)result);
-            }
-        }
-        public static Fraction operator /(Fraction a, Fraction b)
-        {
-            if (b.Data == 0)
-            {
-                return new Fraction(32767);
-            }
-            //This approach maintains integer arithmetic for better CPU efficiency.
-            int scaledA = a.Data * DecimalPrecision;
-
-            int result = scaledA / b.Data;
-
-            return new Fraction((short)result);
-        }
-        public static Fraction operator +(Fraction a, Fraction b)
-        {
-            unchecked
-            {
-                int result = a.Data + b.Data;
-                return new Fraction((short)result);
-            }
-        }
-        public static Fraction operator -(Fraction a, Fraction b)
-        {
-            unchecked
-            {
-                int result = a.Data - b.Data;
-                return new Fraction((short)result);
-            }
-        }
-        public static Fraction operator -(Fraction a)
-        {
-            unchecked
-            {
-                a.Data = (short)-a.Data;
-                return a;
+                var fraction = FromDecimal((decimal)value);
+                numerator = fraction.numerator;
+                denominator = fraction.denominator;
             }
         }
 
-        public static bool operator ==(Fraction a, Fraction b)
+        public Fraction(long numerator, long denominator)
         {
-            if (!(a > b) || (b > a))
+            if (denominator == 0)
             {
-                return true;
+                throw new ArgumentException("Denominator cannot be zero.");
+            }
+
+            this.numerator = numerator;
+            this.denominator = denominator;
+            Simplify();
+        }
+
+        public Fraction(double value)
+        {
+            if (IsIrrational(value))
+            {
+                throw new ArgumentException("Cannot convert an irrational number to a fraction.");
+            }
+
+            var fraction = FromDecimal((decimal)value);
+            numerator = fraction.numerator;
+            denominator = fraction.denominator;
+        }
+
+        public Fraction(decimal value)
+        {
+            var fraction = FromDecimal(value);
+            numerator = fraction.numerator;
+            denominator = fraction.denominator;
+        }
+
+        public Fraction(string fractionString)
+        {
+            if (string.IsNullOrWhiteSpace(fractionString))
+            {
+                throw new ArgumentException("Input string cannot be null or empty.");
+            }
+
+            if (fractionString.Contains("/"))
+            {
+                // Handle fraction string
+                var parts = fractionString.Split('/');
+                if (parts.Length != 2)
+                {
+                    throw new FormatException("Input string is not in the correct format 'numerator/denominator'.");
+                }
+
+                if (!long.TryParse(parts[0], out numerator))
+                {
+                    throw new FormatException("Numerator part is not a valid integer.");
+                }
+
+                if (!long.TryParse(parts[1], out denominator))
+                {
+                    throw new FormatException("Denominator part is not a valid integer.");
+                }
+
+                if (denominator == 0)
+                {
+                    throw new ArgumentException("Denominator cannot be zero.");
+                }
+
+                Simplify();
             }
             else
             {
-                return false;
+                // Handle decimal string
+                if (!decimal.TryParse(fractionString, out decimal decimalValue))
+                {
+                    throw new FormatException("Input string is not a valid decimal.");
+                }
+
+                var fraction = FromDecimal(decimalValue);
+                numerator = fraction.numerator;
+                denominator = fraction.denominator;
             }
         }
-        public static bool operator !=(Fraction a, Fraction b)
-        {
 
-            if ((a > b) || (b > a))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-        public static bool operator >(Fraction a, Fraction b)
+        private void Simplify()
         {
-            return (a.Data > b.Data);
-        }
-        public static bool operator <(Fraction a, Fraction b)
-        {
-            return (b > a);
-        }
-        #endregion
-
-        #region Public Methods
-        public override string ToString()
-        {
-            return FloatToFractionString(floatValue);
-        }
-        public override readonly bool Equals(object obj)
-        {
-            if (obj is Fraction other)
-            {
-                return this.Data == other.Data;
-            }
-            return false;
-        }
-        public override int GetHashCode()
-        {
-            return Data.GetHashCode();
-        }
-        #endregion
-
-        #region Private Helpers
-        private string FloatToFractionString(float decimalValue)
-        {
-            decimalValue = System.Math.Abs(decimalValue);
-
-            // Define precision for the conversion to avoid floating-point inaccuracies.
-            long numerator = (long)(decimalValue * FractionPrecision);
-
-            // Simplify the fraction (using the Greatest Common Divisor).
-            long gcd = GreatestCommonDivisor(numerator, FractionPrecision);
+            long gcd = GreatestCommonDivisor(System.Math.Abs(numerator), System.Math.Abs(denominator));
             numerator /= gcd;
-            long denominator = FractionPrecision / gcd;
+            denominator /= gcd;
 
-            return ((decimalValue < 0) ? "-" : "") + numerator.ToString() + "/" + denominator.ToString();
+            if (denominator < 0)
+            {
+                numerator = -numerator;
+                denominator = -denominator;
+            }
         }
-        private long GreatestCommonDivisor(long a, long b)
+
+        private static long GreatestCommonDivisor(long a, long b)
         {
             while (b != 0)
             {
@@ -194,181 +143,124 @@ namespace CallaghanDev.Utilities.MathTools
             }
             return a;
         }
+
+        public static Fraction FromDecimal(decimal value)
+        {
+            int sign = System.Math.Sign(value);
+            value = System.Math.Abs(value);
+            long numerator = (long)(value * FractionPrecision);
+            long denominator = FractionPrecision;
+
+            return new Fraction(sign * numerator, denominator);
+        }
+
+        private static bool IsIrrational(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                return false;
+            }
+
+            const double tolerance = 1e-10;
+            long denominator = 1;
+
+            while (denominator < long.MaxValue / 10)
+            {
+                double fraction = System.Math.Round(value * denominator) / denominator;
+                if (System.Math.Abs(value - fraction) < tolerance)
+                {
+                    return false;
+                }
+                denominator *= 10;
+            }
+
+            return true;
+        }
+
+        #region Operator Overloads
+        public static Fraction operator *(Fraction a, Fraction b)
+        {
+            return new Fraction(a.numerator * b.numerator, a.denominator * b.denominator);
+        }
+
+        public static Fraction operator /(Fraction a, Fraction b)
+        {
+            if (b.numerator == 0)
+            {
+                throw new DivideByZeroException("Cannot divide by zero fraction.");
+            }
+
+            return new Fraction(a.numerator * b.denominator, a.denominator * b.numerator);
+        }
+
+        public static Fraction operator +(Fraction a, Fraction b)
+        {
+            long commonDenominator = a.denominator * b.denominator;
+            long numeratorSum = a.numerator * b.denominator + b.numerator * a.denominator;
+            return new Fraction(numeratorSum, commonDenominator);
+        }
+
+        public static Fraction operator -(Fraction a, Fraction b)
+        {
+            long commonDenominator = a.denominator * b.denominator;
+            long numeratorDifference = a.numerator * b.denominator - b.numerator * a.denominator;
+            return new Fraction(numeratorDifference, commonDenominator);
+        }
+
+        public static bool operator ==(Fraction a, Fraction b)
+        {
+            return a.numerator == b.numerator && a.denominator == b.denominator;
+        }
+
+        public static bool operator !=(Fraction a, Fraction b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator >(Fraction a, Fraction b)
+        {
+            return a.DecimalValue > b.DecimalValue;
+        }
+
+        public static bool operator <(Fraction a, Fraction b)
+        {
+            return a.DecimalValue < b.DecimalValue;
+        }
+        #endregion
+
+        #region Public Methods
+        public override string ToString()
+        {
+            return $"{numerator}/{denominator}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Fraction other)
+            {
+                return this == other;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(numerator, denominator);
+        }
         #endregion
 
         #region Serialization
-        // Add a special constructor for deserialization
         private Fraction(SerializationInfo info, StreamingContext context)
         {
-            // Only deserialize the Data field
-            Data = info.GetInt16("Data");
+            numerator = info.GetInt64("Numerator");
+            denominator = info.GetInt64("Denominator");
         }
 
-        // Implement the GetObjectData method for serialization
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            // Only serialize the Data field
-            info.AddValue("Data", Data);
+            info.AddValue("Numerator", numerator);
+            info.AddValue("Denominator", denominator);
         }
         #endregion
-    }
-    public class FractionPerformanceTests
-    {
-        private const int NumberOfOpperations = 9999999;
-        public void MutiplyPerforamce()
-        {
-            float[] array1 = new float[NumberOfOpperations];
-            float[] array2 = new float[NumberOfOpperations];
-
-
-            Utilities.MathTools.Fraction[] Fractionarray1 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-            Utilities.MathTools.Fraction[] Fractionarray2 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-
-            Random random = new Random(); // Instance of Random for generating numbers
-
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                // Generating random double and converting to decimal
-                array1[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-                array2[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-
-                Fractionarray1[i] = new Utilities.MathTools.Fraction((decimal)array1[i]);
-                Fractionarray2[i] = new Utilities.MathTools.Fraction((decimal)array2[i]);
-            }
-
-            HashSet<decimal> savevals = new HashSet<decimal>();
-            var Traditional = System.Diagnostics.Stopwatch.StartNew();
-
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                float newval = array1[i] * array2[i];
-            }
-            Traditional.Stop();
-            var newc = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                Utilities.MathTools.Fraction mtuli = Fractionarray1[i] * Fractionarray2[i];
-            }
-            newc.Stop();
-
-            Console.WriteLine($"Traditional:[{Traditional.ElapsedMilliseconds}], New:[{newc.ElapsedMilliseconds}] Success:{newc.ElapsedMilliseconds < Traditional.ElapsedMilliseconds}");
-
-        }
-        public void AdditionPerforamce()
-        {
-            float[] array1 = new float[NumberOfOpperations];
-            float[] array2 = new float[NumberOfOpperations];
-
-
-            Utilities.MathTools.Fraction[] Fractionarray1 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-            Utilities.MathTools.Fraction[] Fractionarray2 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-
-            Random random = new Random(); // Instance of Random for generating numbers
-
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                // Generating random double and converting to decimal
-                array1[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-                array2[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-
-                Fractionarray1[i] = new Utilities.MathTools.Fraction((decimal)array1[i]);
-                Fractionarray2[i] = new Utilities.MathTools.Fraction((decimal)array2[i]);
-            }
-
-            var Traditional = System.Diagnostics.Stopwatch.StartNew();
-            float newval = 0;
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                newval = array1[i] + array2[i];
-            }
-            Traditional.Stop();
-            var newc = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                Utilities.MathTools.Fraction mtuli = Fractionarray1[i] + Fractionarray2[i];
-            }
-            newc.Stop();
-
-            Console.WriteLine($"Traditional:[{Traditional.ElapsedMilliseconds}], New:[{newc.ElapsedMilliseconds}] Success:{newc.ElapsedMilliseconds < Traditional.ElapsedMilliseconds}");
-
-        }
-        public void SubtractionPerforamce()
-        {
-            decimal[] array1 = new decimal[NumberOfOpperations];
-            decimal[] array2 = new decimal[NumberOfOpperations];
-
-
-            Utilities.MathTools.Fraction[] Fractionarray1 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-            Utilities.MathTools.Fraction[] Fractionarray2 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-
-            Random random = new Random(); // Instance of Random for generating numbers
-
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                // Generating random double and converting to decimal
-                array1[i] = (decimal)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-                array2[i] = (decimal)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-
-                Fractionarray1[i] = new Utilities.MathTools.Fraction((decimal)array1[i]);
-                Fractionarray2[i] = new Utilities.MathTools.Fraction((decimal)array2[i]);
-            }
-
-            HashSet<decimal> savevals = new HashSet<decimal>();
-            var Traditional = System.Diagnostics.Stopwatch.StartNew();
-            decimal newval = 0;
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                newval = array1[i] - array2[i];
-            }
-            Traditional.Stop();
-            var newc = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                Utilities.MathTools.Fraction mtuli = Fractionarray1[i] - Fractionarray2[i];
-            }
-            newc.Stop();
-
-            Console.WriteLine($"Traditional:[{Traditional.ElapsedMilliseconds}], New:[{newc.ElapsedMilliseconds}] Success:{newc.ElapsedMilliseconds < Traditional.ElapsedMilliseconds}");
-
-        }
-        public void DivisionPerforamce()
-        {
-            float[] array1 = new float[NumberOfOpperations];
-            float[] array2 = new float[NumberOfOpperations];
-
-
-            Utilities.MathTools.Fraction[] Fractionarray1 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-            Utilities.MathTools.Fraction[] Fractionarray2 = new Utilities.MathTools.Fraction[NumberOfOpperations];
-
-            Random random = new Random(); // Instance of Random for generating numbers
-
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                // Generating random double and converting to decimal
-                array1[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-                array2[i] = (float)(2 * random.NextDouble() - 1); // This will generate values between -1 and 1
-
-                Fractionarray1[i] = new Utilities.MathTools.Fraction((decimal)array1[i]);
-                Fractionarray2[i] = new Utilities.MathTools.Fraction((decimal)array2[i]);
-            }
-
-            var Traditional = System.Diagnostics.Stopwatch.StartNew();
-            float newval = 0;
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                newval = array1[i] / array2[i];
-            }
-            Traditional.Stop();
-            var newc = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < NumberOfOpperations; i++)
-            {
-                Utilities.MathTools.Fraction mtuli = Fractionarray1[i] / Fractionarray2[i];
-            }
-            newc.Stop();
-
-            Console.WriteLine($"Traditional:[{Traditional.ElapsedMilliseconds}], New:[{newc.ElapsedMilliseconds}] Success:{newc.ElapsedMilliseconds < Traditional.ElapsedMilliseconds}");
-
-        }
-
     }
 }

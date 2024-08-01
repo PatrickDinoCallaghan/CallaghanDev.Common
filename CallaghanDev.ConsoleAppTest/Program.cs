@@ -5,6 +5,7 @@ using CallaghanDev.Utilities.ConsoleHelper;
 using CallaghanDev.XML.Extensions;
 using CallaghanDev.ConsoleAppTest.TestClasses;
 using DocumentFormat.OpenXml.InkML;
+using CallaghanDev.Utilities.Math;
 
 namespace CallaghanDev.ConsoleAppTest
 {
@@ -13,9 +14,22 @@ namespace CallaghanDev.ConsoleAppTest
     {
         public static void Main(string[] args)
         {
-            TestMatrix();
+            //TestMatrix();
+            TestFractions();
             Console.WriteLine("Complete");
             cnsl.Exit();
+        }
+
+        public static void TestFractions()
+        {
+            Fraction a ="1/2";
+
+
+            Fraction d = "1,1/3";
+            Fraction e = d ^ "2/3";
+
+            Console.WriteLine(e ^ "4/2");
+
         }
         public static void TestMatrix()
         {
@@ -40,8 +54,5 @@ namespace CallaghanDev.ConsoleAppTest
             };
             excelClassList.ExportListToExcel<ExcelTestClass>("File");
         }
-
     }
-
-
 }

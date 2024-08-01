@@ -1,11 +1,8 @@
 ﻿using CallaghanDev.Utilities.MathTools;
 using MathNet.Symbolics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 
 namespace CallaghanDev.Utilities.Math
 {

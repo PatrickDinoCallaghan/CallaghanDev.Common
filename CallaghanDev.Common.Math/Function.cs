@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Expr = MathNet.Symbolics.SymbolicExpression;
 
-namespace CallaghanDev.Utilities.MathTools
+namespace CallaghanDev.Common.Math
 {
     
     public static class Function

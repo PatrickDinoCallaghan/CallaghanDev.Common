@@ -2,7 +2,7 @@
 using ILGPU.Runtime;
 using ILGPU.Runtime.OpenCL;
 
-namespace CallaghanDev.Utilities.GPU
+namespace CallaghanDev.Utilities.Math.GPU
 {
     public class GPUAcceleratedArrayTensor
     {

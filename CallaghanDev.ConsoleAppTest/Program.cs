@@ -28,7 +28,7 @@ namespace CallaghanDev.ConsoleAppTest
             Fraction d = "1,1/3";
             Fraction e = d ^ "2/3";
 
-            Console.WriteLine(e ^ "4/2");
+            Console.WriteLine(e.DecimalValue);
 
         }
         public static void TestMatrix()

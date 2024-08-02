@@ -125,7 +125,7 @@ namespace CallaghanDev.Utilities.Math
         private BigInteger _denominator;
         private int _integerPart;
 
-        public int RootBase { get; private set; } = 0;
+        public int RootBase { get; private set; } = 1;
 
         public BigInteger Numerator
         {
@@ -150,12 +150,11 @@ namespace CallaghanDev.Utilities.Math
             private set => _integerPart = value;
         }
 
-
         public double DecimalValue
         {
             get
             {
-                return (double)_integerPart + ((double)_numerator / (double)_denominator);
+                return System.Math.Pow((double)_integerPart + ((double)_numerator / (double)_denominator), (1 / (double)RootBase));
             }
             set
             {
@@ -190,6 +189,13 @@ namespace CallaghanDev.Utilities.Math
             _denominator = fraction._denominator;
             _integerPart = fraction._integerPart;
         }
+        public Fraction(int value)
+        {
+            _numerator = 0;
+            _denominator =1;
+            _integerPart = value;
+        }
+
 
         public Fraction(decimal value)
         {

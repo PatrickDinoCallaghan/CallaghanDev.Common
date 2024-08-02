@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 
 
-namespace CallaghanDev.Utilities.MathTools
+namespace CallaghanDev.Common.Math
 {
     [TypeConverter(typeof(MatrixKeyTypeConverter))]
     public struct MatrixKey : IEquatable<MatrixKey>

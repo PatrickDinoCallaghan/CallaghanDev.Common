@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /CallaghanDev.Utilities/CallaghanDev.Utilities.csproj
 /CallaghanDev.XML/CallaghanDev.XML.csproj
+/CallaghanDev.IG.Trade/CallaghanDev.IG.Trade.ConsoleApp/App.config

@@ -1,12 +1,7 @@
-﻿using CallaghanDev.Utilities.MathTools;
+﻿using CallaghanDev.Common.Math;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CallaghanDev.Utilities.Math
 {

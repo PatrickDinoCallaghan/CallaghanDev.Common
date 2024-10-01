@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CallaghanDev.ConfigManagement\CallaghanDev.ConfigManagement.csproj" />
+    <ProjectReference Include="..\CallaghanDev.Common.Math\CallaghanDev.Common.Math.csproj" />
     <ProjectReference Include="..\CallaghanDev.Utilities\CallaghanDev.Utilities.csproj" />
     <ProjectReference Include="..\CallaghanDev.XML\CallaghanDev.XML.csproj" />
   </ItemGroup>

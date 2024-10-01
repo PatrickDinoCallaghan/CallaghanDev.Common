@@ -2,6 +2,8 @@
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Text;
+using CallaghanDev.Common.Math;
+using ILGPU.IR.Values;
 
 namespace CallaghanDev.Utilities.Math
 {
@@ -150,18 +152,35 @@ namespace CallaghanDev.Utilities.Math
             private set => _integerPart = value;
         }
 
+        private bool _HasBeenApproximated = false;
+        public bool HasBeenApproximated { get { return _HasBeenApproximated; } }
+
         public double DecimalValue
         {
             get
             {
-                return System.Math.Pow((double)_integerPart + ((double)_numerator / (double)_denominator), (1 / (double)RootBase));
+                if (RootBase == 1)
+                {
+                    return (double)_integerPart + ((double)_numerator / (double)_denominator);
+                }
+                if (RootBase == 2)
+                {
+                    return System.Math.Sqrt((double)_integerPart + ((double)_numerator / (double)_denominator));
+
+                }
+                else if (RootBase == 3)
+                {
+                    return System.Math.Cbrt((double)_integerPart + ((double)_numerator / (double)_denominator));
+                }
+                else
+                {
+                    return System.Math.Pow((double)_integerPart + ((double)_numerator / (double)_denominator), (1 / (double)RootBase));
+
+                }
             }
             set
             {
-                if (IsIrrational(value))
-                    throw new ArgumentException("Cannot convert an irrational number to a fraction.");
-
-                var fraction = FromDecimal((decimal)value);
+                var fraction = ApproximateIrrational(value);
                 _numerator = fraction._numerator;
                 _denominator = fraction._denominator;
                 _integerPart = fraction._integerPart;
@@ -181,13 +200,12 @@ namespace CallaghanDev.Utilities.Math
 
         public Fraction(double value)
         {
-            if (IsIrrational(value))
-                throw new ArgumentException("Cannot convert an irrational number to a fraction.");
+            Fraction fraction = ApproximateIrrational(value);
 
-            var fraction = FromDecimal((decimal)value);
-            _numerator = fraction._numerator;
-            _denominator = fraction._denominator;
-            _integerPart = fraction._integerPart;
+            RootBase = fraction.RootBase;
+            IntegerPart = fraction.IntegerPart;
+            Denominator = fraction.Denominator;
+            Numerator = fraction.Numerator;
         }
         public Fraction(int value)
         {
@@ -233,6 +251,8 @@ namespace CallaghanDev.Utilities.Math
 
             string[] parts;
 
+            fractionString = fractionString.Replace(" ", "");
+
             if (fractionString.Contains(","))
             {
                 var mainParts = fractionString.Split(',');
@@ -270,7 +290,6 @@ namespace CallaghanDev.Utilities.Math
 
             return new Fraction(integerPart, numerator, denominator);
         }
-
         private void Simplify()
         {
             // Convert the integer part to a fraction and add it to the numerator
@@ -299,51 +318,100 @@ namespace CallaghanDev.Utilities.Math
                 _denominator = -_denominator;
             }
         }
-
         public static Fraction FromDecimal(decimal value)
         {
             int sign = System.Math.Sign(value);
             value = System.Math.Abs(value);
 
-            int[] bits = decimal.GetBits(value);
-            BigInteger numerator = (BigInteger)((long)bits[2] << 32 | bits[1]) << 32 | (uint)bits[0];
-            BigInteger denominator = BigInteger.Pow(10, bits[3] >> 16);
+            string[] parts = value.ToString(System.Globalization.CultureInfo.InvariantCulture).Split('.');
+            BigInteger integerPart = BigInteger.Parse(parts[0]);
 
-            int integerPart = (int)(numerator / denominator);
-            numerator %= denominator;
+            BigInteger numerator;
+            BigInteger denominator;
 
-            numerator *= sign;
+            if (parts.Length == 2)
+            {
+                string fractionalPart = parts[1];
+                numerator = BigInteger.Parse(fractionalPart);
+                denominator = BigInteger.Pow(10, fractionalPart.Length);
+            }
+            else
+            {
+                numerator = BigInteger.Zero;
+                denominator = BigInteger.One;
+            }
 
-            return new Fraction(integerPart, numerator, denominator);
+            numerator += integerPart * denominator;
+            
+            return new Fraction(numerator, denominator);
         }
-
-        private static bool IsIrrational(double value)
+      
+        private Fraction ApproximateIrrational(double value)
         {
             if (double.IsNaN(value) || double.IsInfinity(value))
-                return false;
+                throw new ArgumentException("Cannot approximate NaN or Infinity as a fraction.");
 
             const double tolerance = 1e-10;
             BigInteger denominator = 1;
+            BigInteger numerator = 0;
+            int integerPart = (int)System.Math.Truncate(value); // Get the integer part
+
+            // Adjust the value by subtracting the integer part to work with the fractional part only
+            double fractionalPart = value - integerPart;
 
             while (denominator < BigInteger.Pow(10, 100))
             {
-                double fraction = System.Math.Round(value * (double)denominator) / (double)denominator;
-                if (System.Math.Abs(value - fraction) < tolerance)
-                    return false;
+                numerator = (BigInteger)System.Math.Round(fractionalPart * (double)denominator);
+                double fraction = (double)numerator / (double)denominator;
+
+                // If the difference between the original value and the fraction is within tolerance
+                if (System.Math.Abs(fractionalPart - fraction) < tolerance)
+                    return new Fraction(integerPart, numerator, denominator);
+
                 denominator *= 10;
             }
 
-            return true;
+            // If no exact fraction is found within the tolerance, return an approximation
+            return new Fraction(integerPart, numerator, denominator) { _HasBeenApproximated = true };
         }
 
         #region Operator Overloads
         public static Fraction operator *(Fraction a, Fraction b)
         {
             int NewIntegerPart = a.IntegerPart * b.IntegerPart;
-            BigInteger numerator = a.Numerator * b.Numerator;
-            BigInteger denominator = a.Denominator * b.Denominator;
+            //Same base, different exponents:
+            if (a.IntegerPart == b.IntegerPart
+                && a.Numerator == b.Numerator
+                && a.Denominator == b.Denominator)
+            {
 
-            return new Fraction(NewIntegerPart, numerator, denominator);
+                int RootBase = a.RootBase * b.RootBase;
+
+                int Power = a.RootBase + b.RootBase;
+                int gcd = MathExtensions.GreatestCommonDivisor(int.Abs(Power), int.Abs(RootBase));
+                Power /= gcd;
+                RootBase /= gcd;
+
+
+                return new Fraction(BigInteger.Pow((a.IntegerPart * a.Denominator + a.Numerator), Power), BigInteger.Pow(a.Denominator, Power) ) { RootBase = RootBase };
+            }
+            if (a.RootBase == b.RootBase)
+            {
+                int RootBase = a.RootBase * b.RootBase;
+                int Power = a.RootBase + b.RootBase;
+
+                int gcd = MathExtensions.GreatestCommonDivisor(int.Abs(Power), int.Abs(RootBase));
+                Power /= gcd;
+                RootBase /= gcd;
+
+                return new Fraction(BigInteger.Pow((a.IntegerPart * a.Denominator + a.Numerator), Power), BigInteger.Pow(a.Denominator, Power)) { RootBase = RootBase };
+            }
+            else
+            {
+
+                return new Fraction(a.DecimalValue * b.DecimalValue);
+            }
+
         }
 
         public static Fraction operator /(Fraction a, Fraction b)
@@ -351,26 +419,42 @@ namespace CallaghanDev.Utilities.Math
             if (b.DecimalValue == 0)
                 throw new DivideByZeroException("Cannot divide by zero fraction.");
 
-            int NewIntegerPart = a.IntegerPart * b.IntegerPart;
-            BigInteger numerator = a.Numerator * b.Denominator + b.Numerator * a.Denominator;
-            BigInteger denominator = a.Denominator * b.Denominator;
+            Fraction b_inverse = new Fraction(b.Denominator, (a.Numerator+ (b.IntegerPart*b.Denominator)));
 
-            return new Fraction(NewIntegerPart, numerator, denominator);
+            return a * b_inverse;
         }
 
         public static Fraction operator +(Fraction a, Fraction b)
         {
-            return new Fraction(a.DecimalValue + b.DecimalValue);
+            if (a.RootBase == 1 && b.RootBase == 1)
+            {
+                BigInteger Numerator = (a.Numerator  + b.Numerator * a.Denominator ) * b.Denominator + (b.Numerator + a.Numerator * b.Denominator) * a.Denominator;
+                BigInteger Denominator = a.Denominator * b.Denominator;
+                return new Fraction(Numerator, Denominator);
+            }
+            else
+            {
+                return new Fraction(a.DecimalValue + b.DecimalValue);
+            }
         }
 
         public static Fraction operator -(Fraction a, Fraction b)
         {
-            return new Fraction(a.DecimalValue - b.DecimalValue);
+            if (a.RootBase == 1 && b.RootBase == 1)
+            {
+                BigInteger Numerator = (a.Numerator + a.Numerator * a.Denominator) * b.Denominator - (b.Numerator + b.Numerator * b.Denominator) * a.Denominator;
+                BigInteger Denominator = a.Denominator * b.Denominator;
+                return new Fraction(Numerator, Denominator);
+            }
+            else
+            {
+                return new Fraction(a.DecimalValue - b.DecimalValue);
+            }
         }
 
         public static bool operator ==(Fraction a, Fraction b)
         {
-            if (a.IntegerPart == b.IntegerPart && a.Numerator == b.Numerator && b.Denominator == a.Denominator)
+            if (a.IntegerPart == b.IntegerPart && a.Numerator == b.Numerator && b.Denominator == a.Denominator && a.RootBase == b.RootBase)
             {
                 return true;
             }
@@ -387,14 +471,7 @@ namespace CallaghanDev.Utilities.Math
 
         public static bool operator >(Fraction a, Fraction b)
         {
-            if (a.IntegerPart > b.IntegerPart || a.IntegerPart < b.IntegerPart)
-            {
-                return (a.IntegerPart > b.IntegerPart);
-            }
-            else
-            {
-                return a.DecimalValue > b.DecimalValue;
-            }
+            return (a.DecimalValue > b.DecimalValue);
         }
 
         public static bool operator <(Fraction a, Fraction b)
@@ -444,7 +521,6 @@ namespace CallaghanDev.Utilities.Math
             BigInteger Temp_Denominator;
             if ((BigInteger)a.RootBase > 0)
             {
-
                 Temp_Denominator = pow.Denominator * (BigInteger)a.RootBase;
             }
             else
@@ -484,6 +560,11 @@ namespace CallaghanDev.Utilities.Math
             return new Fraction(value);
         }
 
+        public static implicit operator Fraction(decimal value)
+        {
+            return new Fraction(value);
+        }
+
         public static implicit operator Fraction(string value)
         {
             return FromString(value);
@@ -495,7 +576,7 @@ namespace CallaghanDev.Utilities.Math
         #region Public Methods
         public override string ToString()
         {
-              if (RootBase != 0)
+              if (RootBase > 1)
                 {
                     return $"{SuperscriptDictionary.CreateRootWithBase((int)RootBase)}({InnerString()})"; 
                 }
@@ -568,7 +649,7 @@ namespace CallaghanDev.Utilities.Math
     {
         public Fraction Term;
 
-        private List<MixedNumber> Terms;
+        private Tuple<MixedNumber, MixedNumber> Terms;
 
         public Operator? Operator;
     }

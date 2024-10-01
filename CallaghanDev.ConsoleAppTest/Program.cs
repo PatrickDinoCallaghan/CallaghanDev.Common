@@ -1,11 +1,8 @@
-﻿using System;
-using CallaghanDev.XML.Excel;
-using System.Reflection;
-using CallaghanDev.Utilities.ConsoleHelper;
+﻿using CallaghanDev.Utilities.ConsoleHelper;
 using CallaghanDev.XML.Extensions;
 using CallaghanDev.ConsoleAppTest.TestClasses;
-using DocumentFormat.OpenXml.InkML;
 using CallaghanDev.Utilities.Math;
+using CallaghanDev.Common.Math;
 
 namespace CallaghanDev.ConsoleAppTest
 {
@@ -22,24 +19,59 @@ namespace CallaghanDev.ConsoleAppTest
 
         public static void TestFractions()
         {
-            Fraction a ="1/2";
+            // Test constructors
+            Fraction a = "1/2";  // From string constructor
+            Fraction b = 1.5;    // From double constructor
+            Fraction c = new Fraction(3, 4);  // From numerator and denominator constructor
+            Fraction d = "1,1/3";  // From string with integer part constructor
+            Fraction e = new Fraction(2);  // From int constructor
+            Fraction f = (double)0.75;  // From decimal constructor
 
+            // Test basic arithmetic operators
+            Fraction sum = a + b;
+            Fraction difference = c - a;
+            Fraction product = a * b;
+            Fraction quotient = c / a;
 
-            Fraction d = "1,1/3";
-            Fraction e = d ^ "2/3";
+            // Test exponentiation
+            Fraction exp = d ^ "2/3";
 
-            Console.WriteLine(e.DecimalValue);
+            // Test comparisons
+            bool isEqual = a == new Fraction(1, 2);
+            bool isNotEqual = b != new Fraction(3, 2);
+            bool isGreater = c > a;
+            bool isLess = b < d;
 
+            // Output results
+            Console.WriteLine($"a = {a} (Decimal: {a.DecimalValue})");
+            Console.WriteLine($"b = {b} (Decimal: {b.DecimalValue})");
+            Console.WriteLine($"c = {c} (Decimal: {c.DecimalValue})");
+            Console.WriteLine($"d = {d} (Decimal: {d.DecimalValue})");
+            Console.WriteLine($"e = {e} (Decimal: {e.DecimalValue})");
+            Console.WriteLine($"f = {f} (Decimal: {f.DecimalValue})");
+
+            Console.WriteLine($"Sum (a + b) = {sum} (Decimal: {sum.DecimalValue})");
+            Console.WriteLine($"Difference (c - a) = {difference} (Decimal: {difference.DecimalValue})");
+            Console.WriteLine($"Product (a * b) = {product} (Decimal: {product.DecimalValue})");
+            Console.WriteLine($"Quotient (c / a) = {quotient} (Decimal: {quotient.DecimalValue})");
+
+            Console.WriteLine($"Exponentiation (d ^ 2/3) = {exp} (Decimal: {exp.DecimalValue})");
+
+            Console.WriteLine($"a == 1/2: {isEqual}");
+            Console.WriteLine($"b != 3/2: {isNotEqual}");
+            Console.WriteLine($"c > a: {isGreater}");
+            Console.WriteLine($"b < d: {isLess}");
         }
+
         public static void TestMatrix()
         {
-            CallaghanDev.Utilities.MathTools.Matrix<int> matrix = new CallaghanDev.Utilities.MathTools.Matrix<int>();
+            Matrix<int> matrix = new  Matrix<int>();
             matrix[1, 2] = 5;
             matrix[1, 1] = 6;
 
             matrix.ExportToFile("Cool");
 
-            matrix = CallaghanDev.Utilities.MathTools.Matrix<int>.LoadFromFile("Cool");
+            matrix = Matrix<int>.LoadFromFile("Cool");
             Console.WriteLine(matrix.ToString());
         }
         public static void TestXML()

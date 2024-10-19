@@ -7,6 +7,9 @@ using System.Diagnostics;
 using Lightstreamer.DotNet.Client;
 using CallaghanDev.IG.Trade.IGStreaming.Enums;
 using System.Net.Http.Headers;
+using CallaghanDev.IG.Trade.IGStreaming.Listerners;
+using System.ComponentModel;
+using CallaghanDev.IG.Trade.Extensions;
 
 namespace CallaghanDev.IG
 {
@@ -99,29 +102,55 @@ namespace CallaghanDev.IG
         /// <summary>
         /// Subscribes to market details updates
         /// </summary>
-        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener)
+        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
         {
             if (epics.Count() > 40)
             {
-                throw new ArgumentOutOfRangeException("You can only subscribe to up to 40 different market streams at the same time for live data. Create a new connection to add more");
+                throw new ArgumentOutOfRangeException("You can only subscribe to up to 40 different market streams at the same time for live data. Create a new connection to add more. Consider using the method SubscribeToMarketDetailsInBatches");
             }
             // Default fields to subscribe to
             var fields = new[] {
                 "MID_OPEN", "HIGH", "LOW", "CHANGE", "CHANGE_PCT", "UPDATE_TIME",
                 "MARKET_DELAY", "MARKET_STATE", "BID", "OFFER"
             };
-            return SubscribeToMarketDetails(epics, tableListener, fields); // Call the overloaded method
+            return SubscribeToMarketDetails(epics, tableListener, fields, subscriptionMode); // Call the overloaded method
         }
+        /// <summary>
+        /// Subscribes to market details updates
+        /// </summary>
+        public List<SubscribedTableKey> SubscribeToMarketDetailsInBatches(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
+        {
+            // Batch size is 40 as per the limit in SubscribeToMarketDetails method
+            const int batchSize = 40;
 
+            // Split epics into batches of 40
+            var epicBatches = epics.Select((epic, index) => new { epic, index })
+                                   .GroupBy(x => x.index / batchSize)
+                                   .Select(group => group.Select(x => x.epic).ToList())
+                                   .ToList();
+
+            // List to hold all subscribed keys
+            var subscribedKeys = new List<SubscribedTableKey>();
+
+            // Subscribe for each batch of epics
+            foreach (var batch in epicBatches)
+            {
+                // Call the original SubscribeToMarketDetails method for each batch
+                var subscribedKey = SubscribeToMarketDetails(batch, tableListener, subscriptionMode);
+                subscribedKeys.Add(subscribedKey);
+            }
+
+            return subscribedKeys;
+        }
         /// <summary>
         /// Subscribes to market details updates with specified fields
         /// </summary>
-        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener, IEnumerable<string> fields)
+        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener, IEnumerable<string> fields, SubscriptionMode subscriptionMode = SubscriptionMode.Merge)
         {
             string[] items = epics.Select(e => $"L1:{e}").ToArray(); // Create item names for subscription
             var extTableInfo = new ExtendedTableInfo(
                 items,                       // Items to subscribe to
-                "MERGE",                     // Mode of subscription
+                subscriptionMode.GetDescription(),// Mode of subscription
                                              //     -- DISTINCT indicates that each update should yield a notification and is required for trade notifications.
                                              //     -- MERGE indicates that updates occurring very close together should only yield one update, and is used for account and price notifications to regulate the update rate) 
                 fields.ToArray(),            // Fields to subscribe to

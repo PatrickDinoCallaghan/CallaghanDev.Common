@@ -1,6 +1,8 @@
-﻿using Lightstreamer.DotNet.Client;
+﻿using CallaghanDev.IG.Trade.IGRest;
+using Lightstreamer.DotNet.Client;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -285,15 +287,21 @@ namespace CallaghanDev.IG
         /// <summary>
         /// Searches markets by keyword.
         /// </summary>
-        public async Task<string> SearchMarketsAsync(string searchTerm)
+        public async Task<List<Market>> SearchMarketsAsync(string searchTerm)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiBase}/gateway/deal/markets?searchTerm={searchTerm}");
             request.Headers.Add("Version", "1");
 
             var response = await httpClient.SendAsync(request);
-            return await response.Content.ReadAsStringAsync();
-        }
+            response.EnsureSuccessStatusCode();
 
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
+
+            // Deserialize the 'markets' property to List<Market>
+            var marketsJson = responseObject.markets.ToString();
+            return JsonConvert.DeserializeObject<List<Market>>(marketsJson);
+        }
         /// <summary>
         /// Retrieves historical prices for a market.
         /// </summary>
@@ -305,7 +313,27 @@ namespace CallaghanDev.IG
             var response = await httpClient.SendAsync(request);
             return await response.Content.ReadAsStringAsync();
         }
+        public async Task<string> GetHistoricalPricesAsync(string epic, string resolution = "MINUTE", DateTime? from = null, DateTime? to = null, int max = 10)
+        {
+            // Construct the base URL with the epic, resolution, and max parameters
+            var url = $"{ApiBase}/gateway/deal/prices/{epic}?resolution={resolution}&max={max}";
 
+            // Add the from and to parameters if they are specified
+            if (from.HasValue)
+            {
+                url += $"&from={from.Value.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            }
+            if (to.HasValue)
+            {
+                url += $"&to={to.Value.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Version", "3");
+
+            var response = await httpClient.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
+        }
         /// <summary>
         /// Confirms a trade order.
         /// </summary>

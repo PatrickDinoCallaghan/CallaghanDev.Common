@@ -1,10 +1,5 @@
-﻿using MathNet.Symbolics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MathNet.Numerics;
+using MathNet.Symbolics;
 using Expr = MathNet.Symbolics.SymbolicExpression;
 
 namespace CallaghanDev.Common.Math
@@ -14,6 +9,11 @@ namespace CallaghanDev.Common.Math
     {
         private static readonly Dictionary<string, Expr> ExpressionCache = new Dictionary<string, Expr>();
 
+        public static double NormalCdf(double d)
+        {
+            // Formula: N(d) = 0.5 * (1 + erf(d / sqrt(2)))
+            return 0.5 * (1.0 + SpecialFunctions.Erf(d / System.Math.Sqrt(2.0)));
+        }
         public static float EvaluateExpression(string expression, string variableName, float variableValue)
         {
             // Check if the expression has been parsed before

@@ -107,7 +107,6 @@ namespace CallaghanDev.IG
             }
         }
 
-
         /// <summary>
         /// Logs out the current session.
         /// </summary>

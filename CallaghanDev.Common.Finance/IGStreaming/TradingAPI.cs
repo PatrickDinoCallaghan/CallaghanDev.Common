@@ -99,6 +99,22 @@ namespace CallaghanDev.IG
             return lsClient.SubscribeTable(extTableInfo, tableListener, false); // Subscribe to the table
         }
 
+
+        /// <summary>
+        /// Subscribes to market details updates
+        /// </summary>
+        public SubscribedTableKey SubscribeToMarketDetails(string epic, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
+        {
+            // Default fields to subscribe to
+            var fields = new[] {
+                "MID_OPEN", "HIGH", "LOW", "CHANGE", "CHANGE_PCT", "UPDATE_TIME",
+                "MARKET_DELAY", "MARKET_STATE", "BID", "OFFER"
+            };
+
+            List<string> extTableInfo = new List<string>() { epic };
+            return SubscribeToMarketDetails(extTableInfo, tableListener, fields, subscriptionMode); // Call the overloaded method
+        }
+
         /// <summary>
         /// Subscribes to market details updates
         /// </summary>

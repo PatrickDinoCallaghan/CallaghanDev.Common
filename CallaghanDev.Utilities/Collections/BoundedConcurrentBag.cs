@@ -10,7 +10,7 @@ namespace CallaghanDev.Utilities.Collections
 
         public BoundedConcurrentBag(int maxSize) => _maxSize = maxSize;
 
-        public int Count => _bag.Count;
+        public int Count => _queue.Count;
         public void Add(T item)
         {
             _queue.Enqueue(item);

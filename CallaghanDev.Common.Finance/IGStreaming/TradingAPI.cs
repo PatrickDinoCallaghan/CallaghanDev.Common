@@ -103,7 +103,7 @@ namespace CallaghanDev.IG
         /// <summary>
         /// Subscribes to market details updates
         /// </summary>
-        public SubscribedTableKey SubscribeToMarketDetails(string epic, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
+        public SubscribedTableKey SubscribeToMarketDetails(string epic, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Merge)
         {
             // Default fields to subscribe to
             var fields = new[] {
@@ -118,7 +118,7 @@ namespace CallaghanDev.IG
         /// <summary>
         /// Subscribes to market details updates
         /// </summary>
-        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
+        public SubscribedTableKey SubscribeToMarketDetails(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Merge)
         {
             if (epics.Count() > 40)
             {
@@ -134,7 +134,7 @@ namespace CallaghanDev.IG
         /// <summary>
         /// Subscribes to market details updates
         /// </summary>
-        public List<SubscribedTableKey> SubscribeToMarketDetailsInBatches(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Distinct)
+        public List<SubscribedTableKey> SubscribeToMarketDetailsInBatches(IEnumerable<string> epics, IHandyTableListener tableListener, SubscriptionMode subscriptionMode = SubscriptionMode.Merge)
         {
             // Batch size is 40 as per the limit in SubscribeToMarketDetails method
             const int batchSize = 40;

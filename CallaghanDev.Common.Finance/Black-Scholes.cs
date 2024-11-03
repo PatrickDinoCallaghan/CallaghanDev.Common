@@ -19,14 +19,24 @@ namespace CallaghanDev.Common.Finance
         public decimal StrikePrice { get; set; }
         public decimal OptionPrice { get; set; }
         public DateTime Maturity { get; set; }
-
         public Option type { get; set; }
     }
-    public class BlackScholes
-    {
-        private readonly DateTime _maturity;
-        private readonly decimal _riskFreeRate;
 
+    public class ThreadSafeDecimal
+    {
+        private double _value;
+
+        public decimal Value
+        {
+            get => (decimal)_value; // Convert to decimal when reading
+            set => Interlocked.Exchange(ref _value, (double)value); // Convert to double and set atomically
+        }
+    }
+    public class BlackScholes
+    { 
+        private DateTime _maturity;
+        private ThreadSafeDecimal _riskFreeRate;
+        private ThreadSafeDecimal _Volatility;
         /// <summary>
         /// Initializes a new instance of the BlackScholes class with the given maturity date and risk-free interest rate.
         /// </summary>
@@ -35,7 +45,27 @@ namespace CallaghanDev.Common.Finance
         public BlackScholes(DateTime maturity, decimal r)
         {
             _maturity = maturity;
-            _riskFreeRate = r;
+            _riskFreeRate.Value = r;
+        }
+        /// <summary>
+        /// Initializes a new instance of the BlackScholes class with the given maturity date and risk-free interest rate.
+        /// </summary>
+        /// <param name="maturity">The date of option maturity.</param>
+        /// <param name="r">The annualized risk-free interest rate.</param>
+        public BlackScholes(List<OptionData> optionsData)
+        {
+            DateTime maturity = optionsData.First().Maturity;
+            if (optionsData.Count ==0)
+            {
+                throw new ArgumentException("at least one datapoint required to calculate Volatility and Risk Free rate of return");
+            }
+            if (!optionsData.Select(r=>r.Maturity).Any(r=>optionsData.First().Maturity == r))
+            {
+                throw new ArgumentException("Maturity ");
+            }
+            (decimal Volatility, decimal RiskFreeRate) VolatilityAndRiskFreeRate = FindVolatilityAndRiskFreeRate(optionsData);
+            _maturity = maturity;
+            _riskFreeRate.Value = VolatilityAndRiskFreeRate.RiskFreeRate;
         }
 
         /// <summary>
@@ -48,7 +78,7 @@ namespace CallaghanDev.Common.Finance
         /// <returns>The calculated d1 value.</returns>
         private double CalculateD1(decimal S, decimal K, decimal sigma, decimal t)
         {
-            return (System.Math.Log((double)(S / K)) + (double)((_riskFreeRate + (sigma * sigma) / (decimal)2) * t)) / ((double)sigma * System.Math.Sqrt((double)t));
+            return (System.Math.Log((double)(S / K)) + (double)((_riskFreeRate.Value + (sigma * sigma) / (decimal)2) * t)) / ((double)sigma * System.Math.Sqrt((double)t));
         }
 
         /// <summary>
@@ -63,22 +93,10 @@ namespace CallaghanDev.Common.Finance
             return d1 - (double)sigma * System.Math.Sqrt((double)t);
         }
 
-        /// <summary>
-        /// Calculates the price of a European call option using the Black-Scholes formula.
-        /// </summary>
-        /// <param name="AssetPrice">Current stock price.</param>
-        /// <param name="StrikePrice">Strike price of the option.</param>
-        /// <param name="sigma">Volatility of the stock price.</param>
-        /// <returns>The calculated call option price.</returns>
-        public decimal CalculateCallPrice(decimal AssetPrice, decimal StrikePrice, decimal sigma)
+        public decimal CalculateCallPrice(decimal AssetPrice, decimal StrikePrice)
         {
-            decimal t = (decimal)(_maturity - DateTime.Now).TotalDays / 365;
-            double d1 = CalculateD1(AssetPrice, StrikePrice, sigma, t);
-            double d2 = CalculateD2(d1, sigma, t);
-
-            return AssetPrice * (decimal)Function.NormalCdf(d1) - StrikePrice * (decimal)System.Math.Exp((double)(-_riskFreeRate * t)) * (decimal)Function.NormalCdf(d2);
+            return CalculateCallPrice(AssetPrice, StrikePrice, _Volatility.Value);
         }
-
         /// <summary>
         /// Calculates the price of a European put option using the Black-Scholes formula.
         /// </summary>
@@ -86,16 +104,50 @@ namespace CallaghanDev.Common.Finance
         /// <param name="StrikePrice">Strike price of the option.</param>
         /// <param name="sigma">Volatility of the stock price.</param>
         /// <returns>The calculated put option price.</returns>
-        public decimal CalculatePutPrice(decimal AssetPrice, decimal StrikePrice, decimal sigma)
+        /// <summary>
+        /// Calculates the price of a European call option using the Black-Scholes formula.
+        /// </summary>
+        /// <param name="AssetPrice">Current stock price.</param>
+        /// <param name="StrikePrice">Strike price of the option.</param>
+        /// <param name="sigma">Volatility of the stock price.</param>
+        /// <returns>The calculated call option price.</returns>
+        private decimal CalculateCallPrice(decimal AssetPrice, decimal StrikePrice, decimal sigma)
         {
             decimal t = (decimal)(_maturity - DateTime.Now).TotalDays / 365;
             double d1 = CalculateD1(AssetPrice, StrikePrice, sigma, t);
             double d2 = CalculateD2(d1, sigma, t);
 
-            return StrikePrice * (decimal)System.Math.Exp((double)(-_riskFreeRate * t)) * (decimal)Function.NormalCdf(-d2) - AssetPrice * (decimal)Function.NormalCdf(-d1);
+            return AssetPrice * (decimal)Function.NormalCdf(d1) - StrikePrice * (decimal)System.Math.Exp((double)(-_riskFreeRate.Value * t)) * (decimal)Function.NormalCdf(d2);
         }
 
-        public static (decimal Volatility, decimal RiskFreeRate) FindVolatilityAndRiskFreeRate(List<OptionData> optionDataList)
+        public decimal CalculatePutPrice(decimal AssetPrice, decimal StrikePrice)
+        {
+            return CalculatePutPrice(AssetPrice, StrikePrice, _Volatility.Value);
+        }
+        /// <summary>
+        /// Calculates the price of a European put option using the Black-Scholes formula.
+        /// </summary>
+        /// <param name="AssetPrice">Current stock price.</param>
+        /// <param name="StrikePrice">Strike price of the option.</param>
+        /// <param name="sigma">Volatility of the stock price.</param>
+        /// <returns>The calculated put option price.</returns>
+        private decimal CalculatePutPrice(decimal AssetPrice, decimal StrikePrice, decimal sigma)
+        {
+            decimal t = (decimal)(_maturity - DateTime.Now).TotalDays / 365;
+            double d1 = CalculateD1(AssetPrice, StrikePrice, sigma, t);
+            double d2 = CalculateD2(d1, sigma, t);
+
+            return StrikePrice * (decimal)System.Math.Exp((double)(-_riskFreeRate.Value * t)) * (decimal)Function.NormalCdf(-d2) - AssetPrice * (decimal)Function.NormalCdf(-d1);
+        }
+
+        public void UpdateVolatilityAndRiskFreeRate(List<OptionData> optionDataList)
+        {
+            (decimal Volatility, decimal RiskFreeRate) data = FindVolatilityAndRiskFreeRate(optionDataList);
+
+            _riskFreeRate.Value = data.RiskFreeRate;
+            _Volatility.Value = data.Volatility;
+        }
+        private (decimal Volatility, decimal RiskFreeRate) FindVolatilityAndRiskFreeRate(List<OptionData> optionDataList)
         {
             decimal sigma = 0.2m; // Initial guess for volatility
             decimal riskFreeRate = 0.05m; // Initial guess for risk-free rate

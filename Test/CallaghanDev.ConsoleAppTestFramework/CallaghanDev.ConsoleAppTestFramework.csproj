@@ -51,8 +51,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CallaghanDev.XML\CallaghanDev.XML.csproj">
-      <Project>{2418f300-2acb-4586-8b34-5335e4fac0f1}</Project>
+    <ProjectReference Include="..\..\CallaghanDev.XML\CallaghanDev.XML.csproj">
+      <Project>{d38fa27e-7fa5-44a9-90a5-cc201a9479ed}</Project>
       <Name>CallaghanDev.XML</Name>
     </ProjectReference>
   </ItemGroup>

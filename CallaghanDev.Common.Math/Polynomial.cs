@@ -71,7 +71,7 @@ namespace CallaghanDev.Utilities.Math
                     string coefficientStr = match.Groups[1].Value == "" || match.Groups[1].Value == "+" ? "1" :
                                             match.Groups[1].Value == "-" ? "-1" : match.Groups[1].Value;
                     double coefficient = double.Parse(coefficientStr);
-                    terms.Add(new Term(new Fraction(coefficientStr), exponent));
+                    terms.Add(new Term(new Scalar(coefficientStr), exponent));
                 }
                 else if (match.Groups[3].Success)
                 {
@@ -79,14 +79,14 @@ namespace CallaghanDev.Utilities.Math
                     string coefficientStr = match.Groups[3].Value == "" || match.Groups[3].Value == "+" ? "1" :
                                             match.Groups[3].Value == "-" ? "-1" : match.Groups[3].Value;
                     double coefficient = double.Parse(coefficientStr);
-                    terms.Add(new Term(new Fraction(coefficientStr), exponent));
+                    terms.Add(new Term(new Scalar(coefficientStr), exponent));
                 }
                 else if (match.Groups[4].Success)
                 {
                     int exponent = 0;
                     string coefficientStr = match.Groups[4].Value;
                     double constant = double.Parse(coefficientStr);
-                    terms.Add(new Term(new Fraction(coefficientStr), exponent));
+                    terms.Add(new Term(new Scalar(coefficientStr), exponent));
                 }
             }
 
@@ -123,8 +123,8 @@ namespace CallaghanDev.Utilities.Math
         {
             public double Coefficient { get; }
 
-            private Fraction? _FractionCoefficent;
-            public Fraction? FractionCoefficent 
+            private Scalar? _FractionCoefficent;
+            public Scalar? FractionCoefficent 
             {
                 get
                 {
@@ -133,7 +133,7 @@ namespace CallaghanDev.Utilities.Math
 
                         try
                         {
-                            _FractionCoefficent = new Fraction(Coefficient);
+                            _FractionCoefficent = new Scalar(Coefficient);
                         }
                         catch (Exception)
                         {
@@ -151,7 +151,7 @@ namespace CallaghanDev.Utilities.Math
                 Exponent = exponent;
             }
 
-            public Term(Fraction coefficient, int exponent)
+            public Term(Scalar coefficient, int exponent)
             {
                 _FractionCoefficent = coefficient;
                 Coefficient = coefficient.DecimalValue;

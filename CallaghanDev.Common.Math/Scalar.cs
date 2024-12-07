@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CallaghanDev.Common.Math;
 using ILGPU.IR.Values;
+using System.Text.RegularExpressions;
+using Microsoft.FSharp.Collections;
+using ILGPU.Runtime.Cuda;
 
 namespace CallaghanDev.Utilities.Math
 {
@@ -20,18 +23,18 @@ namespace CallaghanDev.Utilities.Math
         private SuperscriptDictionary()
         {
             Dictionary = new Dictionary<int, char>
-        {
-            { 0, '\u2070' },
-            { 1, '\u00B9' },
-            { 2, '\u00B2' },
-            { 3, '\u00B3' },
-            { 4, '\u2074' },
-            { 5, '\u2075' },
-            { 6, '\u2076' },
-            { 7, '\u2077' },
-            { 8, '\u2078' },
-            { 9, '\u2079' }
-        };
+            {
+                { 0, '\u2070' },
+                { 1, '\u00B9' },
+                { 2, '\u00B2' },
+                { 3, '\u00B3' },
+                { 4, '\u2074' },
+                { 5, '\u2075' },
+                { 6, '\u2076' },
+                { 7, '\u2077' },
+                { 8, '\u2078' },
+                { 9, '\u2079' }
+            };
         }
 
         public static string ConvertToSuperscript(string input)
@@ -68,7 +71,7 @@ namespace CallaghanDev.Utilities.Math
             var superscriptDict = SuperscriptDictionary.Instance.Dictionary;
             StringBuilder sb = new StringBuilder();
 
-            if (n != 2) // Square root usually omits the base if it is 2
+            if (n > 2) // Square root usually omits the base if it is 2
             {
                 string baseStr = n.ToString();
                 foreach (char c in baseStr)
@@ -86,12 +89,18 @@ namespace CallaghanDev.Utilities.Math
             sb.Append(RootSymbol);
             return sb.ToString();
         }
+
     }
 
     public static class BigIntegerExtensions
     {
         public static bool TryNthRoot(BigInteger number, int root, out BigInteger result)
         {
+            if (root <= 1)
+            {
+                throw new ArgumentException("Root must be greater than 1.", nameof(root));
+            }
+
             if (number < 0 && root % 2 == 0)
             {
                 throw new ArgumentException("Cannot compute even root of a negative number.");
@@ -103,14 +112,22 @@ namespace CallaghanDev.Utilities.Math
                 return true;
             }
 
-            BigInteger n = number;
             BigInteger x0 = number;
-            BigInteger x1 = (BigInteger.Divide(n, root) + n) / root;
+            BigInteger x1 = (number / root + BigInteger.One) / root;
 
             while (x1 < x0)
             {
                 x0 = x1;
-                x1 = (BigInteger.Divide(BigInteger.Multiply(x1, root - 1) + BigInteger.Divide(n, BigInteger.Pow(x1, root - 1)), root));
+                BigInteger divisor = BigInteger.Pow(x1, root - 1);
+
+                // Check for zero divisor to avoid DivideByZeroException
+                if (divisor.IsZero)
+                {
+                    result = 0;
+                    return false;
+                }
+
+                x1 = ((root - 1) * x1 + number / divisor) / root;
             }
 
             result = x0;
@@ -118,10 +135,11 @@ namespace CallaghanDev.Utilities.Math
             // Verify if the result is an exact integer root
             return BigInteger.Pow(result, root) == number;
         }
+
     }
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class Fraction : ISerializable
+    public class Scalar : ISerializable
     {
         private BigInteger _numerator;
         private BigInteger _denominator;
@@ -152,9 +170,6 @@ namespace CallaghanDev.Utilities.Math
             private set => _integerPart = value;
         }
 
-        private bool _HasBeenApproximated = false;
-        public bool HasBeenApproximated { get { return _HasBeenApproximated; } }
-
         public double DecimalValue
         {
             get
@@ -175,19 +190,18 @@ namespace CallaghanDev.Utilities.Math
                 else
                 {
                     return System.Math.Pow((double)_integerPart + ((double)_numerator / (double)_denominator), (1 / (double)RootBase));
-
                 }
             }
             set
             {
-                var fraction = ApproximateIrrational(value);
+                var fraction = FromDecimalValue(value);
                 _numerator = fraction._numerator;
                 _denominator = fraction._denominator;
                 _integerPart = fraction._integerPart;
             }
         }
 
-        public Fraction(BigInteger numerator, BigInteger denominator)
+        public Scalar(BigInteger numerator, BigInteger denominator)
         {
             if (denominator == 0)
                 throw new ArgumentException("Denominator cannot be zero.");
@@ -195,44 +209,46 @@ namespace CallaghanDev.Utilities.Math
             _integerPart = 0;
             _numerator = numerator;
             _denominator = denominator;
-            Simplify();
+            if (numerator > denominator)
+            {
+                Simplify();
+            }
         }
 
-        public Fraction(double value)
+        public Scalar(double value)
         {
-            Fraction fraction = ApproximateIrrational(value);
+            Scalar fraction = FromDecimalValue(value);
 
             RootBase = fraction.RootBase;
             IntegerPart = fraction.IntegerPart;
             Denominator = fraction.Denominator;
             Numerator = fraction.Numerator;
         }
-        public Fraction(int value)
+        public Scalar(int value)
         {
             _numerator = 0;
-            _denominator =1;
+            _denominator = 1;
             _integerPart = value;
         }
 
-
-        public Fraction(decimal value)
+        public Scalar(decimal value)
         {
-            var fraction = FromDecimal(value);
+            var fraction = FromDecimalValue(value);
             _numerator = fraction._numerator;
             _denominator = fraction._denominator;
             _integerPart = fraction._integerPart;
         }
 
-        public Fraction(string fractionString)
+        public Scalar(string fractionString)
         {
-            Fraction temp = FromString(fractionString);
+            Scalar temp = FromString(fractionString);
 
             _numerator = temp.Numerator;
             _denominator = temp.Denominator;
             RootBase = temp.RootBase;
             _integerPart = temp.IntegerPart;
         }
-        private Fraction(int integerPart, BigInteger numerator, BigInteger denominator)
+        private Scalar(int integerPart, BigInteger numerator, BigInteger denominator)
         {
             _integerPart = integerPart;
             _numerator = numerator;
@@ -240,22 +256,32 @@ namespace CallaghanDev.Utilities.Math
             Simplify();
         }
 
-        private static Fraction FromString(string fractionString)
+        private static Scalar FromString(string fractionString)
         {
+            bool negative = false;
             if (string.IsNullOrWhiteSpace(fractionString))
                 throw new ArgumentException("Input string cannot be null or empty.");
 
+            if (fractionString[0] == '+')
+            {
+                fractionString= fractionString.Substring(1);
+            }
+            else if (fractionString[0] == '-')
+            {
+                fractionString = fractionString.Substring(1);
+                negative = true;
+            }
             BigInteger numerator;
             BigInteger denominator;
             int integerPart = 0;
 
             string[] parts;
 
-            fractionString = fractionString.Replace(" ", "");
+            fractionString = fractionString.Replace(" ", "").Replace("(", "").Replace(")", "");
 
-            if (fractionString.Contains(","))
+            if (fractionString.Contains("+"))
             {
-                var mainParts = fractionString.Split(',');
+                var mainParts = fractionString.Split('+');
                 if (mainParts.Length != 2)
                     throw new FormatException("Input string is not in the correct format 'integerPart*(numerator/denominator)'.");
 
@@ -263,7 +289,7 @@ namespace CallaghanDev.Utilities.Math
                     throw new FormatException("Integer part is not a valid integer.");
 
                 // Remove parentheses from the fractional part
-                string fractionPart = mainParts[1].Trim('(', ')');
+                string fractionPart = mainParts[1].Replace('(', ')');
                 parts = fractionPart.Split('/');
             }
             else if (fractionString.Contains("/"))
@@ -275,7 +301,7 @@ namespace CallaghanDev.Utilities.Math
                 if (!decimal.TryParse(fractionString, out decimal decimalValue))
                     throw new FormatException("Input string is not a valid decimal.");
 
-                var fraction = FromDecimal(decimalValue);
+                var fraction = FromDecimalValue(decimalValue);
                 return fraction;
             }
 
@@ -288,8 +314,17 @@ namespace CallaghanDev.Utilities.Math
             if (denominator == 0)
                 throw new ArgumentException("Denominator cannot be zero.");
 
-            return new Fraction(integerPart, numerator, denominator);
+            if(negative)
+            {
+                if (integerPart != 0)
+                {
+                    integerPart = integerPart * -1;
+                }
+                else { numerator = numerator *-1; }
+            }
+            return new Scalar(integerPart, numerator, denominator);
         }
+
         private void Simplify()
         {
             // Convert the integer part to a fraction and add it to the numerator
@@ -318,141 +353,114 @@ namespace CallaghanDev.Utilities.Math
                 _denominator = -_denominator;
             }
         }
-        public static Fraction FromDecimal(decimal value)
+        private static Scalar FromDecimalValue(decimal value)
         {
-            int sign = System.Math.Sign(value);
-            value = System.Math.Abs(value);
-
-            string[] parts = value.ToString(System.Globalization.CultureInfo.InvariantCulture).Split('.');
-            BigInteger integerPart = BigInteger.Parse(parts[0]);
-
-            BigInteger numerator;
-            BigInteger denominator;
-
-            if (parts.Length == 2)
-            {
-                string fractionalPart = parts[1];
-                numerator = BigInteger.Parse(fractionalPart);
-                denominator = BigInteger.Pow(10, fractionalPart.Length);
-            }
-            else
-            {
-                numerator = BigInteger.Zero;
-                denominator = BigInteger.One;
-            }
-
-            numerator += integerPart * denominator;
-            
-            return new Fraction(numerator, denominator);
+            return Scalar.FromDecimalValue((double)value);
         }
-      
-        private Fraction ApproximateIrrational(double value)
+        private static Scalar FromDecimalValue(double value)
         {
+            // Handle NaN or Infinity inputs
             if (double.IsNaN(value) || double.IsInfinity(value))
-                throw new ArgumentException("Cannot approximate NaN or Infinity as a fraction.");
+                throw new ArgumentException("Cannot convert NaN or Infinity to a fraction.");
 
-            const double tolerance = 1e-10;
-            BigInteger denominator = 1;
-            BigInteger numerator = 0;
-            int integerPart = (int)System.Math.Truncate(value); // Get the integer part
+            // Separate the integer and fractional parts
+            int integerPart = (int)System.Math.Truncate(value);
+            double fractionalPart = System.Math.Abs(value - integerPart);
 
-            // Adjust the value by subtracting the integer part to work with the fractional part only
-            double fractionalPart = value - integerPart;
-
-            while (denominator < BigInteger.Pow(10, 100))
+            // If there is no fractional part, return a fraction with only the integer part
+            if (fractionalPart == 0)
             {
-                numerator = (BigInteger)System.Math.Round(fractionalPart * (double)denominator);
-                double fraction = (double)numerator / (double)denominator;
-
-                // If the difference between the original value and the fraction is within tolerance
-                if (System.Math.Abs(fractionalPart - fraction) < tolerance)
-                    return new Fraction(integerPart, numerator, denominator);
-
-                denominator *= 10;
+                return new Scalar(integerPart, 0, 1); // Integer part with numerator 0 and denominator 1
             }
 
-            // If no exact fraction is found within the tolerance, return an approximation
-            return new Fraction(integerPart, numerator, denominator) { _HasBeenApproximated = true };
+            // Continued fraction approximation
+            BigInteger numerator = 1;
+            BigInteger prevNumerator = 0;
+            BigInteger denominator = 0;
+            BigInteger prevDenominator = 1;
+            double remaining = fractionalPart;
+            const double tolerance = 1e-10;
+
+            // Use continued fraction to approximate the fractional part
+            while (System.Math.Abs(fractionalPart - ((double)numerator / (double)denominator)) > tolerance)
+            {
+                int intPart = (int)System.Math.Floor(remaining);
+                BigInteger tempNumerator = numerator;
+                BigInteger tempDenominator = denominator;
+
+                numerator = intPart * numerator + prevNumerator;
+                prevNumerator = tempNumerator;
+
+                denominator = intPart * denominator + prevDenominator;
+                prevDenominator = tempDenominator;
+
+                remaining = 1.0 / (remaining - intPart);
+
+                // Break if denominator becomes too large
+                if (denominator > BigInteger.Pow(10, 6))
+                    break;
+            }
+
+            return new Scalar(integerPart, numerator, denominator);
         }
 
         #region Operator Overloads
-        public static Fraction operator *(Fraction a, Fraction b)
+        public static Scalar operator *(Scalar a, Scalar b)
         {
-            int NewIntegerPart = a.IntegerPart * b.IntegerPart;
-            //Same base, different exponents:
-            if (a.IntegerPart == b.IntegerPart
-                && a.Numerator == b.Numerator
-                && a.Denominator == b.Denominator)
+            if (a.RootBase == 1 && b.RootBase == 1)
             {
-
-                int RootBase = a.RootBase * b.RootBase;
-
-                int Power = a.RootBase + b.RootBase;
-                int gcd = MathExtensions.GreatestCommonDivisor(int.Abs(Power), int.Abs(RootBase));
-                Power /= gcd;
-                RootBase /= gcd;
-
-
-                return new Fraction(BigInteger.Pow((a.IntegerPart * a.Denominator + a.Numerator), Power), BigInteger.Pow(a.Denominator, Power) ) { RootBase = RootBase };
-            }
-            if (a.RootBase == b.RootBase)
-            {
-                int RootBase = a.RootBase * b.RootBase;
-                int Power = a.RootBase + b.RootBase;
-
-                int gcd = MathExtensions.GreatestCommonDivisor(int.Abs(Power), int.Abs(RootBase));
-                Power /= gcd;
-                RootBase /= gcd;
-
-                return new Fraction(BigInteger.Pow((a.IntegerPart * a.Denominator + a.Numerator), Power), BigInteger.Pow(a.Denominator, Power)) { RootBase = RootBase };
+                BigInteger Numerator = ((a.IntegerPart * a.Denominator) + a.Numerator) * ((b.IntegerPart * b.Denominator) + b.Numerator);
+                BigInteger Denominator = a.Denominator * b.Denominator;
+                return new Scalar(Numerator, Denominator);
             }
             else
             {
 
-                return new Fraction(a.DecimalValue * b.DecimalValue);
+                return new Scalar(a.DecimalValue * b.DecimalValue);
             }
 
         }
 
-        public static Fraction operator /(Fraction a, Fraction b)
+        public static Scalar operator /(Scalar a, Scalar b)
         {
             if (b.DecimalValue == 0)
                 throw new DivideByZeroException("Cannot divide by zero fraction.");
 
-            Fraction b_inverse = new Fraction(b.Denominator, (a.Numerator+ (b.IntegerPart*b.Denominator)));
+            Scalar b_inverse = new Scalar(b.Denominator, (b.Numerator + (b.IntegerPart * b.Denominator)));
 
             return a * b_inverse;
         }
 
-        public static Fraction operator +(Fraction a, Fraction b)
+        public static Scalar operator +(Scalar a, Scalar b)
         {
             if (a.RootBase == 1 && b.RootBase == 1)
             {
-                BigInteger Numerator = (a.Numerator  + b.Numerator * a.Denominator ) * b.Denominator + (b.Numerator + a.Numerator * b.Denominator) * a.Denominator;
+                BigInteger Numerator = (a.Numerator * b.Denominator) + (b.Numerator * a.Denominator);
                 BigInteger Denominator = a.Denominator * b.Denominator;
-                return new Fraction(Numerator, Denominator);
+                return new Scalar(a.IntegerPart + b.IntegerPart, Numerator, Denominator);
             }
             else
             {
-                return new Fraction(a.DecimalValue + b.DecimalValue);
+                return new Scalar(a.DecimalValue + b.DecimalValue);
             }
         }
 
-        public static Fraction operator -(Fraction a, Fraction b)
+        public static Scalar operator -(Scalar a, Scalar b)
         {
             if (a.RootBase == 1 && b.RootBase == 1)
             {
-                BigInteger Numerator = (a.Numerator + a.Numerator * a.Denominator) * b.Denominator - (b.Numerator + b.Numerator * b.Denominator) * a.Denominator;
+
+                BigInteger Numerator = (a.Numerator * b.Denominator) - (b.Numerator * a.Denominator);
                 BigInteger Denominator = a.Denominator * b.Denominator;
-                return new Fraction(Numerator, Denominator);
+                return new Scalar(a.IntegerPart - b.IntegerPart, Numerator, Denominator);
             }
             else
             {
-                return new Fraction(a.DecimalValue - b.DecimalValue);
+                return new Scalar(a.DecimalValue - b.DecimalValue);
             }
         }
 
-        public static bool operator ==(Fraction a, Fraction b)
+        public static bool operator ==(Scalar a, Scalar b)
         {
             if (a.IntegerPart == b.IntegerPart && a.Numerator == b.Numerator && b.Denominator == a.Denominator && a.RootBase == b.RootBase)
             {
@@ -464,17 +472,17 @@ namespace CallaghanDev.Utilities.Math
             }
         }
 
-        public static bool operator !=(Fraction a, Fraction b)
+        public static bool operator !=(Scalar a, Scalar b)
         {
             return !(a == b);
         }
 
-        public static bool operator >(Fraction a, Fraction b)
+        public static bool operator >(Scalar a, Scalar b)
         {
             return (a.DecimalValue > b.DecimalValue);
         }
 
-        public static bool operator <(Fraction a, Fraction b)
+        public static bool operator <(Scalar a, Scalar b)
         {
             if (a.IntegerPart < b.IntegerPart || a.IntegerPart > b.IntegerPart)
             {
@@ -486,35 +494,35 @@ namespace CallaghanDev.Utilities.Math
             }
         }
 
-        public static Fraction operator ^(Fraction a, int pow)
+        public static Scalar operator ^(Scalar a, int pow)
         {
             if (pow > 0)
             {
                 BigInteger Temp_Numerator = BigInteger.Pow(a.IntegerPart * a.Denominator + a.Numerator, pow);
                 BigInteger Temp_Denominator = BigInteger.Pow(a.Denominator, pow);
-                return new Fraction(Temp_Numerator, Temp_Denominator);
+                return new Scalar(Temp_Numerator, Temp_Denominator);
             }
             else if (pow == 0)
             {
-                return new Fraction(1, 0, 1);
+                return new Scalar(1, 0, 1);
             }
             else
             {
                 BigInteger Temp_Numerator = BigInteger.Pow(a.IntegerPart * a.Denominator + a.Numerator, pow);
                 BigInteger Temp_Denominator = BigInteger.Pow(a.Denominator, pow);
-                return new Fraction(Temp_Denominator, Temp_Numerator);
+                return new Scalar(Temp_Denominator, Temp_Numerator);
             }
         }
 
-        public static Fraction operator ^(Fraction a, double pow)
+        public static Scalar operator ^(Scalar a, double pow)
         {
             double PowerVal = System.Math.Pow(a.DecimalValue, pow);
 
 
-            return new Fraction(PowerVal);
+            return new Scalar(PowerVal);
         }
 
-        public static Fraction operator ^(Fraction a, Fraction pow)
+        public static Scalar operator ^(Scalar a, Scalar pow)
         {
 
             BigInteger Temp_PowNumerator = pow.IntegerPart * pow.Denominator + pow.Numerator;
@@ -533,11 +541,11 @@ namespace CallaghanDev.Utilities.Math
 
                 Temp_Denominator = 1;
             }
-            Fraction returnFraction;
+            Scalar returnFraction;
 
             if (BigIntegerExtensions.TryNthRoot(a.IntegerPart * a.Denominator + a.Numerator, (int)pow.Denominator, out BigInteger NumeratorSqrt) && BigIntegerExtensions.TryNthRoot(a.Denominator, (int)pow.Denominator, out BigInteger DenominatorSqrt) && (int)pow.Denominator > 1)
             {
-                returnFraction = new Fraction(BigInteger.Pow(NumeratorSqrt, (int)Temp_PowNumerator), BigInteger.Pow(DenominatorSqrt, (int)Temp_PowNumerator));
+                returnFraction = new Scalar(BigInteger.Pow(NumeratorSqrt, (int)Temp_PowNumerator), BigInteger.Pow(DenominatorSqrt, (int)Temp_PowNumerator));
                 returnFraction.RootBase = a.RootBase;
             }
             else
@@ -550,38 +558,38 @@ namespace CallaghanDev.Utilities.Math
         }
 
 
-        public static implicit operator Fraction(int value)
+        public static implicit operator Scalar(int value)
         {
-            return new Fraction(value, 1);
+            return new Scalar(value, 1);
         }
 
-        public static implicit operator Fraction(double value)
+        public static implicit operator Scalar(double value)
         {
-            return new Fraction(value);
+            return new Scalar(value);
         }
 
-        public static implicit operator Fraction(decimal value)
+        public static implicit operator Scalar(decimal value)
         {
-            return new Fraction(value);
+            return new Scalar(value);
         }
 
-        public static implicit operator Fraction(string value)
+        public static implicit operator Scalar(string value)
         {
             return FromString(value);
         }
 
- 
+
         #endregion
 
         #region Public Methods
         public override string ToString()
         {
-              if (RootBase > 1)
-                {
-                    return $"{SuperscriptDictionary.CreateRootWithBase((int)RootBase)}({InnerString()})"; 
-                }
+            if (RootBase > 1)
+            {
+                return $"({SuperscriptDictionary.CreateRootWithBase((int)RootBase)}({InnerString()}))";
+            }
 
-            return InnerString();
+            return $"({InnerString()})";
         }
 
         private string InnerString()
@@ -603,13 +611,13 @@ namespace CallaghanDev.Utilities.Math
             }
             else
             {
-                return $"{_integerPart},({_numerator}/{_denominator})";
+                return $"{_integerPart}+({_numerator}/{_denominator})";
             }
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is Fraction other)
+            if (obj is Scalar other)
                 return this == other;
 
             return false;
@@ -622,7 +630,7 @@ namespace CallaghanDev.Utilities.Math
         #endregion
 
         #region Serialization
-        private Fraction(SerializationInfo info, StreamingContext context)
+        private Scalar(SerializationInfo info, StreamingContext context)
         {
             _integerPart = info.GetInt32("IntegerPart");
             _numerator = (BigInteger)info.GetValue("Numerator", typeof(BigInteger));
@@ -638,19 +646,161 @@ namespace CallaghanDev.Utilities.Math
         #endregion
     }
 
-    public enum Operator
+    public struct PolynomialDegree
     {
-        Add,
-        Subtract,
-        Multiply,
-        Divide
+        public int Degree { get; set; }
+
+        // Constructor for easy initialization
+        public PolynomialDegree(int degree)
+        {
+            Degree = degree;
+        }
+
+        // Implicit conversion from int to PolynomialDegree
+        public static implicit operator PolynomialDegree(int degree)
+        {
+            return new PolynomialDegree(degree);
+        }
+
+        // Implicit conversion from PolynomialDegree to int
+        public static implicit operator int(PolynomialDegree degree)
+        {
+            return degree.Degree;
+        }
+
+        // Override ToString for better debugging and readability
+        public override string ToString()
+        {
+            return Degree.ToString();
+        }
     }
-    public class MixedNumber
+
+    //All functions will be kept in expanded form
+    public class PolynomialFunction
     {
-        public Fraction Term;
+        public char Variable { get; set; } = 'x';
+        public Dictionary<PolynomialDegree, Scalar> Terms { get; set; } = new Dictionary<PolynomialDegree, Scalar>();
 
-        private Tuple<MixedNumber, MixedNumber> Terms;
+        public static implicit operator PolynomialFunction(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Input string cannot be null or whitespace.", nameof(value));
 
-        public Operator? Operator;
+            var polynomial = new PolynomialFunction();
+            value = value.Replace(" ", ""); // Remove all whitespace
+            var terms = Regex.Split(value, @"(?=[+-])"); // Split by '+' or '-' keeping the operators
+
+            foreach (var term in terms)
+            {
+                if (string.IsNullOrWhiteSpace(term))
+                    continue;
+
+                // Regex pattern to extract coefficient, variable, and degree
+                var match = Regex.Match(term, @"^([+-]?(\(?\d*\.?\d+|\(?\d+/\d+\)?|[+-]))?\*?([a-zA-Z])?\^?(\d+)?$");
+                if (!match.Success)
+                    throw new FormatException($"Invalid term format: '{term}'");
+
+                // Extract coefficient
+                string coefficientPart = match.Groups[1].Value;
+                Scalar coefficient = coefficientPart switch
+                {
+                    "+" => 1,
+                    "-" => -1,
+                    "" => 1,
+                    _ => new Scalar(coefficientPart)
+                };
+
+                // Extract variable and degree
+                string variablePart = match.Groups[3].Value;
+                string degreePart = match.Groups[4].Value;
+
+                PolynomialDegree degree = 0;
+                if (!string.IsNullOrEmpty(variablePart))
+                {
+                    // Ensure all variables in the polynomial are consistent
+                    if (polynomial.Variable != null && variablePart != polynomial.Variable.ToString())
+                        throw new ArgumentException($"Unexpected variable '{variablePart}' in term '{term}'. Expected variable '{polynomial.Variable}'.");
+
+                    // Assign the variable name if it hasn't been set
+                    if (polynomial.Variable == null)
+                        polynomial.Variable = variablePart[0];
+
+                    degree = string.IsNullOrEmpty(degreePart) ? 1 : int.Parse(degreePart);
+                }
+
+                // Add or update the term in the polynomial
+                if (polynomial.Terms.ContainsKey(degree))
+                    polynomial.Terms[degree] += coefficient;
+                else
+                    polynomial.Terms[degree] = coefficient;
+            }
+
+            return polynomial;
+        }
+
+        public override string ToString()
+        {
+            if (Terms == null || Terms.Count == 0)
+                return "0";
+
+            var builder = new StringBuilder();
+
+            foreach (var term in Terms.OrderByDescending(t => t.Key.Degree))
+            {
+                var degree = term.Key;
+                var coefficient = term.Value;
+
+                if (coefficient == 0)
+                    continue;
+
+                var sign = coefficient > 0 && builder.Length > 0 ? "+" : "";
+
+                if (degree.Degree == 0)
+                {
+                    builder.Append($"{sign}{coefficient}");
+                }
+                else if (degree.Degree == 1)
+                {
+                    builder.Append($"{sign}{(coefficient == 1 ? "" : coefficient.ToString())}{Variable}");
+                }
+                else
+                {
+                    builder.Append($"{sign}{(coefficient == 1 ? "" : coefficient.ToString())}{Variable}^{degree.Degree}");
+                }
+            }
+
+            return builder.Length > 0 ? builder.ToString() : "0";
+        }
+
+        public void Integrate()
+        {
+            var integratedTerms = new Dictionary<PolynomialDegree, Scalar>();
+
+            foreach (var term in Terms)
+            {
+                var degree = term.Key.Degree + 1;
+                var coefficient = term.Value / degree;
+                integratedTerms[new PolynomialDegree(degree)] = coefficient;
+            }
+
+            Terms = integratedTerms;
+        }
+
+        public void Differentiate()
+        {
+            var differentiatedTerms = new Dictionary<PolynomialDegree, Scalar>();
+
+            foreach (var term in Terms)
+            {
+                if (term.Key.Degree == 0)
+                    continue;
+
+                var degree = term.Key.Degree - 1;
+                var coefficient = term.Value * term.Key.Degree;
+                differentiatedTerms[new PolynomialDegree(degree)] = coefficient;
+            }
+
+            Terms = differentiatedTerms;
+        }
     }
 }

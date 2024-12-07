@@ -13,7 +13,11 @@ namespace CallaghanDev.ConsoleAppTest
         {
             PolynomialFunction polynomial ="x^2+(1/2)x^2+x+3";
 
-            Console.WriteLine(polynomial);
+            PolynomialFunction polynomial2 = "x^2+(1/2)x^2+x+3";
+
+            Console.WriteLine(polynomial+ polynomial2);
+
+            Console.WriteLine(polynomial.Integrate());
             cnsl.Exit();
         }
         public static void TestFractions()

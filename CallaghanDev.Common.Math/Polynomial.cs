@@ -1,5 +1,6 @@
 ﻿using CallaghanDev.Common.Math;
 using CallaghanDev.Utilities.MathTools;
+using MathNet.Numerics;
 using MathNet.Symbolics;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -48,13 +49,15 @@ namespace CallaghanDev.Utilities.Math
 
         public static implicit operator PolynomialFunction(string value)
         {
+            return new PolynomialFunction(value); ;
+        }
+        private void FromString(string value)
+        {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Input string cannot be null or whitespace.", nameof(value));
+                return;
 
-            var polynomial = new PolynomialFunction();
             value = value.Replace(" ", ""); // Remove all whitespace
             var terms = Regex.Split(value, @"(?=[+-])"); // Split by '+' or '-' keeping the operators
-
             foreach (var term in terms)
             {
                 if (string.IsNullOrWhiteSpace(term))
@@ -67,14 +70,21 @@ namespace CallaghanDev.Utilities.Math
 
                 // Extract coefficient
                 string coefficientPart = match.Groups[1].Value;
-                Scalar coefficient = coefficientPart switch
-                {
-                    "+" => 1,
-                    "-" => -1,
-                    "" => 1,
-                    _ => new Scalar(coefficientPart)
-                };
+                Scalar coefficient;
 
+                if (string.IsNullOrEmpty(coefficientPart) || coefficientPart == "+")
+                {
+                    coefficient = new Scalar(1);
+                }
+                else if(coefficientPart == "-")
+                {
+                    coefficient = new Scalar(-1);
+                }
+                else
+                {
+                    coefficient = new Scalar(coefficientPart);
+                }
+  
                 // Extract variable and degree
                 string variablePart = match.Groups[3].Value;
                 string degreePart = match.Groups[4].Value;
@@ -83,24 +93,36 @@ namespace CallaghanDev.Utilities.Math
                 if (!string.IsNullOrEmpty(variablePart))
                 {
                     // Ensure all variables in the polynomial are consistent
-                    if (polynomial.Variable != null && variablePart != polynomial.Variable.ToString())
-                        throw new ArgumentException($"Unexpected variable '{variablePart}' in term '{term}'. Expected variable '{polynomial.Variable}'.");
+                    if (Variable != '\0' && variablePart != Variable.ToString())
+                        throw new ArgumentException($"Unexpected variable '{variablePart}' in term '{term}'. Expected variable '{Variable}'.");
 
                     // Assign the variable name if it hasn't been set
-                    if (polynomial.Variable == null)
-                        polynomial.Variable = variablePart[0];
+                    if (Variable == '\0')
+                        Variable = variablePart[0];
 
                     degree = string.IsNullOrEmpty(degreePart) ? 1 : int.Parse(degreePart);
                 }
 
                 // Add or update the term in the polynomial
-                if (polynomial.Terms.ContainsKey(degree))
-                    polynomial.Terms[degree] += coefficient;
+                if (Terms.ContainsKey(degree))
+                {
+                    Terms[degree] += coefficient;
+                }
                 else
-                    polynomial.Terms[degree] = coefficient;
+                {
+                    Terms[degree] = coefficient;
+                }
             }
+        }
 
-            return polynomial;
+        public PolynomialFunction(string FunctionString)
+        {
+            FromString(FunctionString);
+
+        }
+        public PolynomialFunction()
+        {
+
         }
 
         public static PolynomialFunction operator +(PolynomialFunction left, PolynomialFunction right)
@@ -135,6 +157,75 @@ namespace CallaghanDev.Utilities.Math
                     term.Key,
                     term.Value,
                     (key, existingValue) => existingValue - term.Value);
+            });
+
+            return new PolynomialFunction { Terms = combined };
+        }
+        public static PolynomialFunction operator *(PolynomialFunction left, PolynomialFunction right)
+        {
+            if (right.Variable != left.Variable)
+                throw new Exception("Polynomial functions must have the same variable.");
+
+            var combined = new ConcurrentDictionary<PolynomialDegree, Scalar>();
+
+            // Parallelize the outer loop for term1
+            Parallel.ForEach(left.Terms, term1 =>
+            {
+                foreach (var term2 in right.Terms)
+                {
+                    Scalar scalar = term1.Value * term2.Value;
+                    PolynomialDegree polynomialDegree = term1.Key + term2.Key;
+
+                    // Safely add or update the combined dictionary
+                    combined.AddOrUpdate(
+                        polynomialDegree,
+                        scalar,
+                        (key, existingValue) => existingValue + scalar);
+                }
+            });
+
+            return new PolynomialFunction { Terms = combined };
+        }
+        public static PolynomialFunction operator *(PolynomialFunction left, Scalar right)
+        {
+            if (right == 0)
+                return new PolynomialFunction();
+
+            var combined = new ConcurrentDictionary<PolynomialDegree, Scalar>();
+
+            // Parallelize the outer loop for term1
+            Parallel.ForEach(left.Terms, term1 =>
+            {
+                Scalar scalar = term1.Value * right;
+                PolynomialDegree polynomialDegree = term1.Key;
+
+                // Safely add or update the combined dictionary
+                combined.AddOrUpdate(
+                    polynomialDegree,
+                    scalar,
+                    (key, existingValue) => scalar);
+            });
+
+            return new PolynomialFunction { Terms = combined };
+        }
+        public static PolynomialFunction operator /(PolynomialFunction left, Scalar right)
+        {
+            if (right == 0)
+                throw new Exception("Cannot divide by zero.");
+
+            var combined = new ConcurrentDictionary<PolynomialDegree, Scalar>();
+
+            // Parallelize the outer loop for term1
+            Parallel.ForEach(left.Terms, term1 =>
+            {
+                Scalar scalar = term1.Value / right;
+                PolynomialDegree polynomialDegree = term1.Key;
+
+                // Safely add or update the combined dictionary
+                combined.AddOrUpdate(
+                    polynomialDegree,
+                    scalar,
+                    (key, existingValue) => scalar);
             });
 
             return new PolynomialFunction { Terms = combined };
@@ -251,5 +342,40 @@ namespace CallaghanDev.Utilities.Math
 
             return builder.Length > 0 ? builder.ToString() : "0";
         }
+        public bool Zero { get { return Terms.Count() == 0; } }
+        public static PolynomialFunction GenerateLagrangePolynomial(List<(decimal x, decimal y)> points)
+        {
+            if (points == null || points.Count == 0)
+                throw new ArgumentException("Points cannot be null or empty.");
+
+            PolynomialFunction result = new PolynomialFunction();
+
+            // Iterate over each point to calculate basis polynomials
+            Parallel.For(0, points.Count, i =>
+            {
+                var numerator = new PolynomialFunction("1"); // Start with a constant polynomial
+                decimal denominator = 1;
+
+                for (int j = 0; j < points.Count; j++)
+                {
+                    if (i == j) continue;
+
+                    // Update numerator: Multiply by (x - points[j].x)
+                    numerator *= new PolynomialFunction($"x - {points[j].x}");
+
+                    // Update denominator: Multiply by (points[i].x - points[j].x)
+                    denominator *= (points[i].x - points[j].x);
+                }
+
+                // Scale the basis polynomial and add to the result
+                lock (result)
+                {
+                    result += numerator * (points[i].y / denominator);
+                }
+            });
+
+            return result;
+        }
+
     }
 }

@@ -259,8 +259,8 @@ namespace CallaghanDev.Utilities.Math
         private static Scalar FromString(string fractionString)
         {
             bool negative = false;
-            if (string.IsNullOrWhiteSpace(fractionString))
-                throw new ArgumentException("Input string cannot be null or empty.");
+            if (string.IsNullOrEmpty(fractionString))
+                return new Scalar(0);
 
             if (fractionString[0] == '+')
             {
@@ -301,8 +301,7 @@ namespace CallaghanDev.Utilities.Math
                 if (!decimal.TryParse(fractionString, out decimal decimalValue))
                     throw new FormatException("Input string is not a valid decimal.");
 
-                var fraction = FromDecimalValue(decimalValue);
-                return fraction;
+                return negative == true ? FromDecimalValue(-decimalValue) : FromDecimalValue(decimalValue); 
             }
 
             if (parts.Length != 2)
@@ -589,11 +588,19 @@ namespace CallaghanDev.Utilities.Math
                 return $"({SuperscriptDictionary.CreateRootWithBase((int)RootBase)}({InnerString()}))";
             }
 
-            return $"({InnerString()})";
+            return $"{InnerString()}";
         }
 
         private string InnerString()
         {
+            if (_numerator == _denominator)
+            {
+                return "1";
+            }
+            if (-_numerator == _denominator)
+            {
+                return "-1";
+            }
             if (_integerPart == 0)
             {
                 if (_numerator == 0)

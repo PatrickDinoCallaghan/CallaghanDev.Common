@@ -9,15 +9,31 @@ namespace CallaghanDev.ConsoleAppTest
 
     public static class Program
     {
+        public static void Mai2n(string[] args)
+        {
+            Scalar cool = new Scalar(-1);
+            PolynomialFunction polynomial ="x-1+x^2-x";
+
+           PolynomialFunction polynomial2 = "x+1";
+
+            Console.WriteLine(polynomial* polynomial2);
+
+
+            cnsl.Exit();
+        }
+
         public static void Main(string[] args)
         {
-            PolynomialFunction polynomial ="x^2+(1/2)x^2+x+3";
+            // Example points: (1, 2), (2, 3), (3, 5)
+            var points = new List<(decimal x, decimal y)>
+            {
+                (1, 2),
+                (2, 3),
+                (3, 5)
+            };
 
-            PolynomialFunction polynomial2 = "x^2+(1/2)x^2+x+3";
+            Console.WriteLine(PolynomialFunction.GenerateLagrangePolynomial(points));
 
-            Console.WriteLine(polynomial+ polynomial2);
-
-            Console.WriteLine(polynomial.Integrate());
             cnsl.Exit();
         }
         public static void TestFractions()

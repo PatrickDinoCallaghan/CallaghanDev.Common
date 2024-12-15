@@ -56,16 +56,23 @@ namespace CallaghanDev.Common.Math
             }
         }
     
-        public T[] Column(int Index)
+        public T[] Column(int Index, bool Ordered)
         {
             return  Data.AsParallel().Where(kvp => kvp.Key.Column == Index)
-               .Select(kvp => kvp.Value).ToArray();
+               .AsSequential()
+               .OrderBy(kvp => kvp.Key.Row)
+               .Select(kvp => kvp.Value)
+               .ToArray();
         }
         public T[] Row(int Index)
         {
             return Data.AsParallel().Where(kvp => kvp.Key.Row == Index)
-               .Select(kvp => kvp.Value).ToArray();
+               .AsSequential()
+               .OrderBy(kvp => kvp.Key.Column)
+               .Select(kvp => kvp.Value)
+               .ToArray();
         }
+
 
         #region Private Helpers
         private T GetElement(int row, int col)

@@ -56,7 +56,7 @@ namespace CallaghanDev.Common.Math
             }
         }
     
-        public T[] Column(int Index, bool Ordered)
+        public T[] Column(int Index)
         {
             return  Data.AsParallel().Where(kvp => kvp.Key.Column == Index)
                .AsSequential()

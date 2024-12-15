@@ -55,24 +55,46 @@ namespace CallaghanDev.Common.Math
                 SetElement(Row, Column, value);
             }
         }
-    
         public T[] Column(int Index)
         {
-            return  Data.AsParallel().Where(kvp => kvp.Key.Column == Index)
-               .AsSequential()
-               .OrderBy(kvp => kvp.Key.Row)
-               .Select(kvp => kvp.Value)
-               .ToArray();
-        }
-        public T[] Row(int Index)
-        {
-            return Data.AsParallel().Where(kvp => kvp.Key.Row == Index)
-               .AsSequential()
-               .OrderBy(kvp => kvp.Key.Column)
-               .Select(kvp => kvp.Value)
-               .ToArray();
+            return Data.Where(kvp => kvp.Key.Column == Index).Select(kvp => kvp.Value).ToArray();
         }
 
+        public T[] Row(int Index)
+        {
+            return Data.Where(kvp => kvp.Key.Row == Index).Select(kvp => kvp.Value).ToArray();
+        }
+        /*
+          public T[] Column(int Index)
+          {
+              return (from kvp in Data.AsParallel()
+                      where kvp.Key.Column == Index
+                      select kvp.Value).ToArray();
+          }
+
+          public T[] Row(int Index)
+          {
+              return (from kvp in Data.AsParallel()
+                      where kvp.Key.Row == Index
+                      select kvp.Value).ToArray();
+          }  
+          public T[] Column(int Index)
+          {
+              return  Data.AsParallel().Where(kvp => kvp.Key.Column == Index)
+                 .AsSequential()
+                 .OrderBy(kvp => kvp.Key.Row)
+                 .Select(kvp => kvp.Value)
+                 .ToArray();
+          }
+          public T[] Row(int Index)
+          {
+              return Data.AsParallel().Where(kvp => kvp.Key.Row == Index)
+                 .AsSequential()
+                 .OrderBy(kvp => kvp.Key.Column)
+                 .Select(kvp => kvp.Value)
+                 .ToArray();
+          }
+          */
 
         #region Private Helpers
         private T GetElement(int row, int col)

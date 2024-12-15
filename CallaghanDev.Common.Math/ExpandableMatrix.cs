@@ -57,12 +57,16 @@ namespace CallaghanDev.Common.Math
         }
         public T[] Column(int Index)
         {
-            return Data.Where(kvp => kvp.Key.Column == Index).Select(kvp => kvp.Value).ToArray();
+            return Data.Where(kvp => kvp.Key.Column == Index)
+                .OrderBy(kvp => kvp.Key.Row)
+                .Select(kvp => kvp.Value).ToArray();
         }
 
         public T[] Row(int Index)
         {
-            return Data.Where(kvp => kvp.Key.Row == Index).Select(kvp => kvp.Value).ToArray();
+            return Data.Where(kvp => kvp.Key.Row == Index)
+                .OrderBy(kvp => kvp.Key.Column)
+                .Select(kvp => kvp.Value).ToArray();
         }
         /*
           public T[] Column(int Index)

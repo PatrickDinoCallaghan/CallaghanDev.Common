@@ -9,15 +9,14 @@ namespace CallaghanDev.ConsoleAppTest
 
     public static class Program
     {
-        public static void Mai2n(string[] args)
+        public static void TestPolynomialFunction( )
         {
             Scalar cool = new Scalar(-1);
             PolynomialFunction polynomial ="x-1+x^2-x";
 
-           PolynomialFunction polynomial2 = "x+1";
+            PolynomialFunction polynomial2 = "x+1";
 
             Console.WriteLine(polynomial* polynomial2);
-
 
             cnsl.Exit();
         }
@@ -30,7 +29,7 @@ namespace CallaghanDev.ConsoleAppTest
                 (1, 2),
                 (2, 3),
                 (3, 5)
-            };
+            }; TestPolynomialFunction();
 
             Console.WriteLine(PolynomialFunction.GenerateLagrangePolynomial(points));
 

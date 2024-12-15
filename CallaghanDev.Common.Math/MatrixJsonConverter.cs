@@ -1,5 +1,6 @@
 ﻿using CallaghanDev.Common.Math;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -33,13 +34,16 @@ namespace CallaghanDev.Utilities.Math
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var list = new List<Matrix<T>>();
-            reader.Read(); // StartArray
-            while (reader.TokenType != JsonToken.EndArray)
+
+            if (reader.TokenType != JsonToken.StartArray)
+                throw new JsonSerializationException("Expected StartArray token.");
+
+            while (reader.Read() && reader.TokenType != JsonToken.EndArray)
             {
                 var matrix = _matrixConverter.ReadJson(reader, typeof(Matrix<T>), null, serializer);
                 list.Add((Matrix<T>)matrix);
-                reader.Read(); // Next token
             }
+
             return list.ToArray();
         }
     }
@@ -55,33 +59,74 @@ namespace CallaghanDev.Utilities.Math
         {
             var matrix = (Matrix<T>)value;
 
+            // Access the private 'Data' field
             var dataField = typeof(Matrix<T>).GetField("Data", BindingFlags.NonPublic | BindingFlags.Instance);
             var data = (ConcurrentDictionary<MatrixKey, T>)dataField.GetValue(matrix);
 
-
-            var tempDict = new Dictionary<string, T>();
+            // Convert matrix data into a dictionary
+            var tempDict = new Dictionary<string, object>(); // Use object to store type metadata
             foreach (var kvp in data)
             {
                 tempDict[$"{kvp.Key.Row},{kvp.Key.Column}"] = kvp.Value;
             }
 
-            serializer.Serialize(writer, tempDict);
+            // Serialize with type metadata
+            var floatHandlingSettings = new JsonSerializerSettings
+            {
+                FloatFormatHandling = FloatFormatHandling.String, // Preserve precision
+                TypeNameHandling = TypeNameHandling.Objects // Include type information
+            };
+
+            var customSerializer = JsonSerializer.Create(floatHandlingSettings);
+            customSerializer.Serialize(writer, tempDict);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var tempDict = serializer.Deserialize<Dictionary<string, T>>(reader);
+            if (reader.TokenType != JsonToken.StartObject)
+                throw new JsonSerializationException("Expected StartObject token.");
+
+            // Deserialize the dictionary with object values
+            var tempDict = serializer.Deserialize<Dictionary<string, object>>(reader);
+
+            // Initialize the matrix
             var matrix = new Matrix<T>();
 
             foreach (var kvp in tempDict)
             {
                 var keys = kvp.Key.Split(',');
+                if (keys.Length != 2)
+                    throw new JsonSerializationException($"Invalid matrix key: {kvp.Key}");
+
                 var row = int.Parse(keys[0]);
                 var column = int.Parse(keys[1]);
-                matrix[row, column] = kvp.Value;
+
+                // Resolve type metadata if T is an interface or abstract class
+                if (kvp.Value is JObject jObject)
+                {
+                    var concreteValue = jObject.ToObject<T>(serializer);
+                    matrix[row, column] = concreteValue;
+                }
+                else if (typeof(T) == typeof(double))
+                {
+                    // Handle floating-point precision
+                    matrix[row, column] = (T)(object)Convert.ToDouble(kvp.Value);
+                }
+                else if (typeof(T) == typeof(float))
+                {
+                    matrix[row, column] = (T)(object)Convert.ToSingle(kvp.Value);
+                }
+                else
+                {
+                    // Directly assign other types
+                    matrix[row, column] = (T)kvp.Value;
+                }
             }
 
             return matrix;
         }
+
+
     }
+
 }

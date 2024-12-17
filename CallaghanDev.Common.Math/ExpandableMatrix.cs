@@ -55,16 +55,20 @@ namespace CallaghanDev.Common.Math
                 SetElement(Row, Column, value);
             }
         }
-        public T[] Column(int Index)
+        public IEnumerable<T> Column(int Index)
         {
-            return Data.Where(kvp => kvp.Key.Column == Index)
+            return Data.AsParallel()
+                .Where(kvp => kvp.Key.Column == Index)
+                .AsSequential()
                 .OrderBy(kvp => kvp.Key.Row)
-                .Select(kvp => kvp.Value).ToArray();
+                .Select(kvp => kvp.Value);
         }
 
-        public T[] Row(int Index)
+        public IEnumerable<T> Row(int Index)
         {
-            return Data.Where(kvp => kvp.Key.Row == Index)
+            return Data.AsParallel()
+                .Where(kvp => kvp.Key.Row == Index)
+                .AsSequential()
                 .OrderBy(kvp => kvp.Key.Column)
                 .Select(kvp => kvp.Value).ToArray();
         }
@@ -679,6 +683,12 @@ namespace CallaghanDev.Common.Math
             });
 
             return clone;
+        }
+        public void Clear()
+        {
+            Data.Clear();
+            _ColumnCount = 0;
+            _RowCount = 0;
         }
         private void DeleteRow(int rowIndex)
         {

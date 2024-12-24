@@ -1016,7 +1016,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	///  Multi-line text editing <see cref="View"/>.
 	/// </summary>
-	/// <remarks>
+	
 	///  <para>
 	///   <see cref="TextView"/> provides a multi-line text editor. Users interact
 	///   with it with the standard Windows, Mac, and Linux (Emacs) commands. 
@@ -1127,7 +1127,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///    </description>
 	///   </item>
 	///  </list>
-	/// </remarks>
+	
 	public class TextView : View {
 		TextModel model = new TextModel ();
 		int topRow;
@@ -1150,20 +1150,20 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Raised when the <see cref="Text"/> property of the <see cref="TextView"/> changes.
 		/// </summary>
-		/// <remarks>
+		
 		/// The <see cref="Text"/> property of <see cref="TextView"/> only changes when it is explicitly
 		/// set, not as the user types. To be notified as the user changes the contents of the TextView
 		/// see <see cref="IsDirty"/>.
-		/// </remarks>
+		
 		public event Action TextChanged;
 
 		/// <summary>
 		///  Raised when the contents of the <see cref="TextView"/> are changed. 
 		/// </summary>
-		/// <remarks>
+		
 		/// Unlike the <see cref="TextChanged"/> event, this event is raised whenever the user types or
 		/// otherwise changes the contents of the <see cref="TextView"/>.
-		/// </remarks>
+		
 		public event Action<ContentsChangedEventArgs> ContentsChanged;
 
 		/// <summary>
@@ -1180,8 +1180,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///  Initializes a <see cref="TextView"/> on the specified area, with absolute position and size.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public TextView (Rect frame) : base (frame)
 		{
 			Initialize ();
@@ -1473,10 +1473,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///  Sets or gets the text in the <see cref="TextView"/>.
 		/// </summary>
-		/// <remarks>
+		
 		/// The <see cref="TextChanged"/> event is fired whenever this property is set. Note, however,
 		/// that Text is not set by <see cref="TextView"/> as the user types.
-		/// </remarks>
+		
 		public override ustring Text {
 			get {
 				if (wordWrap) {

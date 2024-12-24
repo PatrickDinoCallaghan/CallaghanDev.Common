@@ -14,9 +14,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Colors that can be used to set the foreground and background colors in console applications.
 	/// </summary>
-	/// <remarks>
+	
 	/// The <see cref="Attribute.HasValidColors"/> value indicates either no-color has been set or the color is invalid.
-	/// </remarks>
+	
 	public enum Color {
 		/// <summary>
 		/// The black color.
@@ -165,11 +165,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Attributes are used as elements that contain both a foreground and a background or platform specific features.
 	/// </summary>
-	/// <remarks>
+	
 	///   <see cref="Attribute"/>s are needed to map colors to terminal capabilities that might lack colors. 
 	///   They encode both the foreground and the background color and are used in the <see cref="ColorScheme"/>
 	///   class to define color schemes that can be used in an application.
-	/// </remarks>
+	
 	public struct Attribute {
 		/// <summary>
 		/// The <see cref="ConsoleDriver"/>-specific color attribute value. If <see cref="Initialized"/> is <see langword="false"/> 
@@ -265,10 +265,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Creates an <see cref="Attribute"/> from the specified foreground and background colors.
 		/// </summary>
-		/// <remarks>
+		
 		/// If a <see cref="ConsoleDriver"/> has not been loaded (<c>Application.Driver == null</c>) this
 		/// method will return an attribute with <see cref="Initialized"/> set to  <see langword="false"/>.
-		/// </remarks>
+		
 		/// <returns>The new attribute.</returns>
 		/// <param name="foreground">Foreground color to use.</param>
 		/// <param name="background">Background color to use.</param>
@@ -300,9 +300,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// and <see cref="Background"/> colors may have been set '-1' but
 		/// the attribute has not been mapped to a <see cref="ConsoleDriver"/> specific color value.
 		/// </summary>
-		/// <remarks>
+		
 		/// Attributes that have not been initialized must eventually be initialized before being passed to a driver.
-		/// </remarks>
+		
 		public bool Initialized { get; internal set; }
 
 		/// <summary>
@@ -317,9 +317,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// Containers such as <see cref="Window"/> and <see cref="FrameView"/> use <see cref="ColorScheme"/> to determine
 	/// the colors used by sub-views.
 	/// </summary>
-	/// <remarks>
+	
 	/// See also: <see cref="Colors.ColorSchemes"/>.
-	/// </remarks>
+	
 	public class ColorScheme : IEquatable<ColorScheme> {
 		Attribute _normal = new Attribute (Color.White, Color.Black);
 		Attribute _focus = new Attribute (Color.White, Color.Black);
@@ -485,9 +485,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// The default <see cref="ColorScheme"/>s for the application.
 	/// </summary>
-	/// <remarks>
+	
 	/// This property can be set in a Theme to change the default <see cref="Colors"/> for the application.
-	/// </remarks>
+	
 	public static class Colors {
 		private class SchemeNameComparerIgnoreCase : IEqualityComparer<string> {
 			public bool Equals (string x, string y)
@@ -525,51 +525,51 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// The application toplevel color scheme, for the default toplevel views.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///	This API will be deprecated in the future. Use <see cref="Colors.ColorSchemes"/> instead (e.g. <c>edit.ColorScheme = Colors.ColorSchemes["TopLevel"];</c>
 		/// </para>
-		/// </remarks>
+		
 		public static ColorScheme TopLevel { get => GetColorScheme (); set => SetColorScheme (value); }
 
 		/// <summary>
 		/// The base color scheme, for the default toplevel views.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///	This API will be deprecated in the future. Use <see cref="Colors.ColorSchemes"/> instead (e.g. <c>edit.ColorScheme = Colors.ColorSchemes["Base"];</c>
 		/// </para>
-		/// </remarks>
+		
 		public static ColorScheme Base { get => GetColorScheme (); set => SetColorScheme (value); }
 
 		/// <summary>
 		/// The dialog color scheme, for standard popup dialog boxes
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///	This API will be deprecated in the future. Use <see cref="Colors.ColorSchemes"/> instead (e.g. <c>edit.ColorScheme = Colors.ColorSchemes["Dialog"];</c>
 		/// </para>
-		/// </remarks>
+		
 		public static ColorScheme Dialog { get => GetColorScheme (); set => SetColorScheme (value); }
 
 		/// <summary>
 		/// The menu bar color
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///	This API will be deprecated in the future. Use <see cref="Colors.ColorSchemes"/> instead (e.g. <c>edit.ColorScheme = Colors.ColorSchemes["Menu"];</c>
 		/// </para>
-		/// </remarks>
+		
 		public static ColorScheme Menu { get => GetColorScheme (); set => SetColorScheme (value); }
 
 		/// <summary>
 		/// The color scheme for showing errors.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///	This API will be deprecated in the future. Use <see cref="Colors.ColorSchemes"/> instead (e.g. <c>edit.ColorScheme = Colors.ColorSchemes["Error"];</c>
 		/// </para>
-		/// </remarks>
+		
 		public static ColorScheme Error { get => GetColorScheme (); set => SetColorScheme (value); }
 
 		static ColorScheme GetColorScheme ([CallerMemberName] string schemeBeingSet = null)
@@ -604,7 +604,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///	Cursor caret has default
 		/// </summary>
-		/// <remarks>Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/>. This default directly depends of the XTerm user configuration settings so it could be Block, I-Beam, Underline with possible blinking.</remarks>
+		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/>. This default directly depends of the XTerm user configuration settings so it could be Block, I-Beam, Underline with possible blinking.</remarks>
 		Default = 0x00010119,
 
 		/// <summary>
@@ -620,19 +620,19 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///	Cursor caret is normally shown as a underline bar _
 		/// </summary>
-		/// <remarks>Under Windows, this is equivalent to <see ref="UnderscoreBlinking"/></remarks>
+		Under Windows, this is equivalent to <see ref="UnderscoreBlinking"/></remarks>
 		UnderlineFix = 0x04010119,
 
 		/// <summary>
 		///	Cursor caret is displayed a blinking vertical bar |
 		/// </summary>
-		/// <remarks>Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
+		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
 		Vertical = 0x05010119,
 
 		/// <summary>
 		///	Cursor caret is displayed a blinking vertical bar |
 		/// </summary>
-		/// <remarks>Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
+		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
 		VerticalFix = 0x06010119,
 
 		/// <summary>
@@ -643,7 +643,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///	Cursor caret is displayed a block ▉
 		/// </summary>
-		/// <remarks>Works under Xterm-like terminal otherwise this is equivalent to <see ref="Block"/></remarks>
+		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Block"/></remarks>
 		BoxFix = 0x02020164,
 	}
 	
@@ -695,9 +695,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// as the console scrolls. 
 		/// </para>
 		/// </summary>
-		/// <remarks>
+		
 		/// NOTE: Changes to Windows ConsoleHelper prevents this functionality from working. It only really worked on Windows 'conhost' previously.
-		/// </remarks>
+		
 		[Obsolete ("This API is deprecated and has no impact when enabled.", false)]
 		public abstract bool EnableConsoleScrolling { get; set; }
 		/// <summary>
@@ -841,9 +841,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Selects the specified attribute as the attribute to use for future calls to AddRune and AddString.
 		/// </summary>
-		/// <remarks>
+		
 		/// Implementations should call <c>base.SetAttribute(c)</c>.
-		/// </remarks>
+		
 		/// <param name="c">C.</param>
 		public virtual void SetAttribute (Attribute c)
 		{
@@ -905,7 +905,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="paddingRight">Number of columns to pad on the right (if 0 the border will not appear on the right).</param>
 		/// <param name="paddingBottom">Number of rows to pad on the bottom (if 0 the border will not appear on the bottom).</param>
 		/// <param name="textAlignment">Not yet implemented.</param>
-		/// <remarks></remarks>
+		</remarks>
 		public virtual void DrawWindowTitle (Rect region, ustring title, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom, TextAlignment textAlignment = TextAlignment.Left)
 		{
 			var width = region.Width - (paddingLeft + 2) * 2;
@@ -1144,10 +1144,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="region">Screen relative region where the frame will be drawn.</param>
 		/// <param name="padding">Padding to add on the sides.</param>
 		/// <param name="fill">If set to <c>true</c> it will clear the contents with the current color, otherwise the contents will be left untouched.</param>
-		/// <remarks>This API has been superseded by <see cref="DrawWindowFrame(Rect, int, int, int, int, bool, bool, Border)"/>.</remarks>
-		/// <remarks>This API is equivalent to calling <c>DrawWindowFrame(Rect, p - 1, p - 1, p - 1, p - 1)</c>. In other words,
+		This API has been superseded by <see cref="DrawWindowFrame(Rect, int, int, int, int, bool, bool, Border)"/>.</remarks>
+		This API is equivalent to calling <c>DrawWindowFrame(Rect, p - 1, p - 1, p - 1, p - 1)</c>. In other words,
 		/// A padding value of 0 means there is actually a one cell border.
-		/// </remarks>
+		
 		public virtual void DrawFrame (Rect region, int padding, bool fill)
 		{
 			// DrawFrame assumes the border is always at least one row/col thick

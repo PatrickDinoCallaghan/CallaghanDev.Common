@@ -53,7 +53,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// A Progress Bar view that can indicate progress of an activity visually.
 	/// </summary>
-	/// <remarks>
+	
 	///   <para>
 	///     <see cref="ProgressBar"/> can operate in two modes, percentage mode, or
 	///     activity mode.  The progress bar starts in percentage mode and
@@ -62,7 +62,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///     way of knowing how much time is left, and is started when the <see cref="Pulse"/> method is called.  
 	///     Call <see cref="Pulse"/> repeatedly as progress is made.
 	///   </para>
-	/// </remarks>
+	
 	public class ProgressBar : View {
 		bool isActivity;
 		int [] activityPos;
@@ -237,10 +237,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Notifies the <see cref="ProgressBar"/> that some progress has taken place.
 		/// </summary>
-		/// <remarks>
+		
 		/// If the <see cref="ProgressBar"/> is percentage mode, it switches to activity
 		/// mode. If is in activity mode, the marker is moved.
-		/// </remarks>
+		
 		public void Pulse ()
 		{
 			if (activityPos == null) {

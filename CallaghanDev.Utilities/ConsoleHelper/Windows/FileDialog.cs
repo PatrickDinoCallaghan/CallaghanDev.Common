@@ -893,14 +893,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///  The <see cref="SaveDialog"/> provides an interactive dialog box for users to pick a file to 
 	///  save.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   To use, create an instance of <see cref="SaveDialog"/>, and pass it to
 	///   <see cref="Application.Run(Func{Exception, bool})"/>. This will run the dialog modally,
 	///   and when this returns, the <see cref="FileName"/>property will contain the selected file name or 
 	///   null if the user canceled. 
 	/// </para>
-	/// </remarks>
+	
 	public class SaveDialog : FileDialog {
 		/// <summary>
 		/// Initializes a new <see cref="SaveDialog"/>.
@@ -933,7 +933,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// The <see cref="OpenDialog"/>provides an interactive dialog box for users to select files or directories.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   The open dialog can be used to select files for opening, it can be configured to allow
 	///   multiple items to be selected (based on the AllowsMultipleSelection) variable and
@@ -947,7 +947,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <para>
 	/// To select more than one file, users can use the spacebar, or control-t.
 	/// </para>
-	/// </remarks>
+	
 	public class OpenDialog : FileDialog {
 		OpenMode openMode;
 

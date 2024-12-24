@@ -5,11 +5,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Represents the state of an ANSI escape sequence request.
 	/// </summary>
-	/// <remarks>
+	
 	/// This is needed because there are some escape sequence requests responses that are equal
 	/// with some normal escape sequences and thus, will be only considered the responses to the
 	/// requests that were registered with this object.
-	/// </remarks>
+	
 	public class EscSeqReqStatus {
 		/// <summary>
 		/// Gets the terminating.

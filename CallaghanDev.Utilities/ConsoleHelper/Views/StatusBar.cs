@@ -45,11 +45,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Gets or sets the title.
 		/// </summary>
 		/// <value>The title.</value>
-		/// <remarks>
+		
 		/// The colour of the <see cref="StatusItem.Title"/> will be changed after each ~. 
 		/// A <see cref="StatusItem.Title"/> set to `~F1~ Help` will render as *F1* using <see cref="ColorScheme.HotNormal"/> and
 		/// *Help* as <see cref="ColorScheme.HotNormal"/>.
-		/// </remarks>
+		
 		public ustring Title { get; set; }
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Gets or sets arbitrary data for the status item.
 		/// </summary>
-		/// <remarks>This property is not used internally.</remarks>
+		This property is not used internally.</remarks>
 		public object Data { get; set; }
 	};
 

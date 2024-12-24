@@ -21,11 +21,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Toggled event, raised when the <see cref="CheckBox"/>  is toggled.
 		/// </summary>
-		/// <remarks>
+		
 		///   Client code can hook up to this event, it is
 		///   raised when the <see cref="CheckBox"/> is activated either with
 		///   the mouse or the keyboard. The passed <c>bool</c> contains the previous state. 
-		/// </remarks>
+		
 		public event Action<bool> Toggled;
 
 		/// <summary>
@@ -54,10 +54,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Initializes a new instance of <see cref="CheckBox"/> using <see cref="LayoutStyle.Absolute"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		///   The size of <see cref="CheckBox"/> is computed based on the
 		///   text length. This <see cref="CheckBox"/> is not toggled.
-		/// </remarks>
+		
 		public CheckBox (int x, int y, ustring s) : this (x, y, s, false)
 		{
 		}
@@ -65,10 +65,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Initializes a new instance of <see cref="CheckBox"/> using <see cref="LayoutStyle.Absolute"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		///   The size of <see cref="CheckBox"/> is computed based on the
 		///   text length. 
-		/// </remarks>
+		
 		public CheckBox (int x, int y, ustring s, bool is_checked) : base (new Rect (x, y, s.Length, 1))
 		{
 			Initialize (s, is_checked);

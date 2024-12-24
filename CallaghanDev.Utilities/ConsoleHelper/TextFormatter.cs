@@ -301,12 +301,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Gets the formatted lines.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// Upon a 'get' of this property, if the text needs to be formatted (if <see cref="NeedsFormat"/> is <c>true</c>)
 		/// <see cref="Format(ustring, int, bool, bool, bool, int, TextDirection)"/> will be called internally. 
 		/// </para>
-		/// </remarks>
+		
 		public List<ustring> Lines {
 			get {
 				// With this check, we protect against subclasses with overrides of Text
@@ -354,11 +354,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets whether the <see cref="TextFormatter"/> needs to format the text when <see cref="Draw(Rect, Attribute, Attribute, Rect, bool)"/> is called.
 		/// If it is <c>false</c> when Draw is called, the Draw call will be faster.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// This is set to true when the properties of <see cref="TextFormatter"/> are set.
 		/// </para>
-		/// </remarks>
+		
 		public bool NeedsFormat { get => needsFormat; set => needsFormat = value; }
 
 		static ustring StripCRLF (ustring str, bool keepNewLine = false)
@@ -493,14 +493,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="tabWidth">The tab width.</param>
 		/// <param name="textDirection">The text direction.</param>
 		/// <returns>Returns a list of word wrapped lines.</returns>
-		/// <remarks>
+		
 		/// <para>
 		/// This method does not do any justification.
 		/// </para>
 		/// <para>
 		/// This method strips Newline ('\n' and '\r\n') sequences before processing.
 		/// </para>
-		/// </remarks>
+		
 		public static List<ustring> WordWrap (ustring text, int width, bool preserveTrailingSpaces = false, int tabWidth = 0,
 			TextDirection textDirection = TextDirection.LeftRight_TopBottom)
 		{
@@ -724,7 +724,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="tabWidth">The tab width.</param>
 		/// <param name="textDirection">The text direction.</param>
 		/// <returns>A list of word wrapped lines.</returns>
-		/// <remarks>
+		
 		/// <para>
 		/// An empty <c>text</c> string will result in one empty line.
 		/// </para>
@@ -734,7 +734,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <para>
 		/// If <c>width</c> is int.MaxValue, the text will be formatted to the maximum width possible. 
 		/// </para>
-		/// </remarks>
+		
 		public static List<ustring> Format (ustring text, int width, TextAlignment talign, bool wordWrap, bool preserveTrailingSpaces = false, int tabWidth = 0, TextDirection textDirection = TextDirection.LeftRight_TopBottom)
 		{
 			return Format (text, width, talign == TextAlignment.Justified, wordWrap, preserveTrailingSpaces, tabWidth, textDirection);
@@ -751,7 +751,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="tabWidth">The tab width.</param>
 		/// <param name="textDirection">The text direction.</param>
 		/// <returns>A list of word wrapped lines.</returns>
-		/// <remarks>
+		
 		/// <para>
 		/// An empty <c>text</c> string will result in one empty line.
 		/// </para>
@@ -761,7 +761,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <para>
 		/// If <c>width</c> is int.MaxValue, the text will be formatted to the maximum width possible. 
 		/// </para>
-		/// </remarks>
+		
 		public static List<ustring> Format (ustring text, int width, bool justify, bool wordWrap,
 			bool preserveTrailingSpaces = false, int tabWidth = 0, TextDirection textDirection = TextDirection.LeftRight_TopBottom)
 		{
@@ -1106,9 +1106,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="text">The text to tag the hotkey in.</param>
 		/// <param name="hotPos">The Rune index of the hotkey in <c>text</c>.</param>
 		/// <returns>The text with the hotkey tagged.</returns>
-		/// <remarks>
+		
 		/// The returned string will not render correctly without first un-doing the tag. To undo the tag, search for 
-		/// </remarks>
+		
 		public ustring ReplaceHotKeyWithTag (ustring text, int hotPos)
 		{
 			// Set the high bit

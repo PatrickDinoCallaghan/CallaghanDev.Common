@@ -11,13 +11,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// arbitrary <see cref="View"/>s, much like a <see cref="Dialog"/>. Each step also has a pane for help text. Along the
 	/// bottom of the Wizard view are customizable buttons enabling the user to navigate forward and backward through the Wizard. 
 	/// </summary>
-	/// <remarks>
+	
 	/// The Wizard can be displayed either as a modal (pop-up) <see cref="Window"/> (like <see cref="Dialog"/>) or as an embedded <see cref="View"/>. 
 	/// 
 	/// By default, <see cref="Wizard.Modal"/> is <c>true</c>. In this case launch the Wizard with <c>Application.Run(wizard)</c>. 
 	/// 
 	/// See <see cref="Wizard.Modal"/> for more details.
-	/// </remarks>
+	
 	/// <example>
 	/// <code>
 	/// using CallaghanDev.Utilities.ConsoleHelper;
@@ -63,7 +63,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// 
 		/// If there are no Views added to the WizardStep the <see cref="HelpText"/> (if not empty) will fill the wizard step. 
 		/// </summary>
-		/// <remarks>
+		
 		/// If <see cref="Button"/>s are added, do not set <see cref="Button.IsDefault"/> to true as this will conflict
 		/// with the Next button of the Wizard.
 		/// 
@@ -71,12 +71,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// 
 		/// To enable or disable a step from being shown to the user, set <see cref="View.Enabled"/>.
 		/// 
-		/// </remarks>
+		
 		public class WizardStep : FrameView {
 			/// <summary>
 			/// The title of the <see cref="WizardStep"/>. 
 			/// </summary>
-			/// <remarks>The Title is only displayed when the <see cref="Wizard"/> is used as a modal pop-up (see <see cref="Wizard.Modal"/>.</remarks>
+			The Title is only displayed when the <see cref="Wizard"/> is used as a modal pop-up (see <see cref="Wizard.Modal"/>.</remarks>
 			public new ustring Title {
 				get => title;
 				set {
@@ -171,7 +171,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// Sets or gets help text for the <see cref="WizardStep"/>.If <see cref="WizardStep.HelpText"/> is empty
 			/// the help pane will not be visible and the content will fill the entire WizardStep.
 			/// </summary>
-			/// <remarks>The help text is displayed using a read-only <see cref="TextView"/>.</remarks>
+			The help text is displayed using a read-only <see cref="TextView"/>.</remarks>
 			public ustring HelpText {
 				get => helpTextView.Text;
 				set {
@@ -186,13 +186,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// Sets or gets the text for the back button. The back button will only be visible on 
 			/// steps after the first step.
 			/// </summary>
-			/// <remarks>The default text is "Back"</remarks>
+			The default text is "Back"</remarks>
 			public ustring BackButtonText { get; set; } = ustring.Empty;
 
 			/// <summary>
 			/// Sets or gets the text for the next/finish button.
 			/// </summary>
-			/// <remarks>The default text is "Next..." if the Pane is not the last pane. Otherwise it is "Finish"</remarks>
+			The default text is "Next..." if the Pane is not the last pane. Otherwise it is "Finish"</remarks>
 			public ustring NextButtonText { get; set; } = ustring.Empty;
 
 			/// <summary>
@@ -200,8 +200,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// </summary>
 			/// <param name="title">Title for the Step. Will be appended to the containing Wizard's title as 
 			/// "Wizard Title - Wizard Step Title" when this step is active.</param>
-			/// <remarks>
-			/// </remarks>
+			
+			
 			public WizardStep (ustring title)
 			{
 				this.Title = title; // this.Title holds just the "Wizard Title"; base.Title holds "Wizard Title - Step Title"
@@ -307,8 +307,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// <summary>
 			///   Removes a <see cref="View"/> from <see cref="WizardStep"/>.
 			/// </summary>
-			/// <remarks>
-			/// </remarks>
+			
+			
 			public override void Remove (View view)
 			{
 				if (view == null)
@@ -330,8 +330,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// <summary>
 			///   Removes all <see cref="View"/>s from the <see cref="WizardStep"/>.
 			/// </summary>
-			/// <remarks>
-			/// </remarks>
+			
+			
 			public override void RemoveAll ()
 			{
 				contentView.RemoveAll ();
@@ -343,10 +343,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Wizard"/> class using <see cref="LayoutStyle.Computed"/> positioning.
 		/// </summary>
-		/// <remarks>
+		
 		/// The Wizard will be vertically and horizontally centered in the container.
 		/// After initialization use <c>X</c>, <c>Y</c>, <c>Width</c>, and <c>Height</c> change size and position.
-		/// </remarks>
+		
 		public Wizard () : this (ustring.Empty)
 		{
 		}
@@ -355,10 +355,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Initializes a new instance of the <see cref="Wizard"/> class using <see cref="LayoutStyle.Computed"/> positioning.
 		/// </summary>
 		/// <param name="title">Sets the <see cref="Title"/> for the Wizard.</param>
-		/// <remarks>
+		
 		/// The Wizard will be vertically and horizontally centered in the container.
 		/// After initialization use <c>X</c>, <c>Y</c>, <c>Width</c>, and <c>Height</c> change size and position.
-		/// </remarks>
+		
 		public Wizard (ustring title) : base (title)
 		{
 			wizardTitle = title;
@@ -573,9 +573,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// If the <see cref="CurrentStep"/> is not the first step in the wizard, this button causes
 		/// the <see cref="MovingBack"/> event to be fired and the wizard moves to the previous step. 
 		/// </summary>
-		/// <remarks>
+		
 		/// Use the <see cref="MovingBack"></see> event to be notified when the user attempts to go back.
-		/// </remarks>
+		
 		public Button BackButton { get => backBtn; }
 		private Button backBtn;
 
@@ -584,10 +584,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// the <see cref="Finished"/> event to be fired and the wizard to close. If the step is not the last step,
 		/// the <see cref="MovingNext"/> event will be fired and the wizard will move next step. 
 		/// </summary>
-		/// <remarks>
+		
 		/// Use the <see cref="MovingNext"></see> and <see cref="Finished"></see> events to be notified 
 		/// when the user attempts go to the next step or finish the wizard.
-		/// </remarks>
+		
 		public Button NextFinishButton { get => nextfinishBtn; }
 		private Button nextfinishBtn;
 
@@ -596,7 +596,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// order they were added.
 		/// </summary>
 		/// <param name="newStep"></param>
-		/// <remarks>The "Next..." button of the last step added will read "Finish" (unless changed from default).</remarks>
+		The "Next..." button of the last step added will read "Finish" (unless changed from default).</remarks>
 		public void AddStep (WizardStep newStep)
 		{
 			SizeStep (newStep);
@@ -611,9 +611,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// The title of the Wizard, shown at the top of the Wizard with " - currentStep.Title" appended.
 		/// </summary>
-		/// <remarks>
+		
 		/// The Title is only displayed when the <see cref="Wizard"/> <see cref="Wizard.Modal"/> is set to <c>false</c>.
-		/// </remarks>
+		
 		public new ustring Title {
 			get {
 				// The base (Dialog) Title holds the full title ("Wizard Title - Step Title")

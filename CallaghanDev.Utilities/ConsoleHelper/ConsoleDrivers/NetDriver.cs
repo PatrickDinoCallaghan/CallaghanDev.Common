@@ -1420,9 +1420,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// be used on Windows and Unix, it is cross platform but lacks things like
 	/// file descriptor monitoring.
 	/// </summary>
-	/// <remarks>
+	
 	/// This implementation is used for NetDriver.
-	/// </remarks>
+	
 	internal class NetMainLoop : IMainLoopDriver {
 		ManualResetEventSlim keyReady = new ManualResetEventSlim (false);
 		ManualResetEventSlim waitForProbe = new ManualResetEventSlim (false);
@@ -1439,9 +1439,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Initializes the class with the console driver.
 		/// </summary>
-		/// <remarks>
+		
 		///   Passing a consoleDriver is provided to capture windows resizing.
-		/// </remarks>
+		
 		/// <param name="consoleDriver">The console driver used by this Net main loop.</param>
 		public NetMainLoop (ConsoleDriver consoleDriver = null)
 		{

@@ -18,9 +18,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper.Trees {
 		/// <see cref="SupportsCanExpand"/> should return false (in which case this method will not
 		/// be called)
 		/// </summary>
-		/// <remarks>Only implement this method if you have a very fast way of determining whether 
+		Only implement this method if you have a very fast way of determining whether 
 		/// an object can have children e.g. checking a Type (directories can always be expanded)
-		/// </remarks>
+		
 		/// <param name="toExpand"></param>
 		/// <returns></returns>
 		bool CanExpand (T toExpand);

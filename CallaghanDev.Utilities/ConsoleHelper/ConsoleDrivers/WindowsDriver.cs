@@ -1816,9 +1816,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// Mainloop intended to be used with the <see cref="WindowsDriver"/>, and can
 	/// only be used on Windows.
 	/// </summary>
-	/// <remarks>
+	
 	/// This implementation is used for WindowsDriver.
-	/// </remarks>
+	
 	internal class WindowsMainLoop : IMainLoopDriver {
 		ManualResetEventSlim eventReady = new ManualResetEventSlim (false);
 		ManualResetEventSlim waitForProbe = new ManualResetEventSlim (false);

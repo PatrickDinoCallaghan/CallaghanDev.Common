@@ -75,7 +75,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///     want to provide accelerator functionality
 		///     (Alt-key for example).
 		/// </summary>
-		/// <remarks>
+		
 		///   <para>
 		///     Before keys are sent to the subview on the
 		///     current view, all the views are
@@ -90,7 +90,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///     keystroke from being dispatched to other
 		///     views.
 		///  </para>
-		/// </remarks>
+		
 
 		public virtual bool ProcessHotKey (KeyEvent kb)
 		{
@@ -101,7 +101,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///   If the view is focused, gives the view a
 		///   chance to process the keystroke.
 		/// </summary>
-		/// <remarks>
+		
 		///   <para>
 		///     Views can override this method if they are
 		///     interested in processing the given keystroke.
@@ -118,7 +118,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///     derive directly from View, but you should if you derive
 		///     other View subclasses.
 		///   </para>
-		/// </remarks>
+		
 		/// <param name="keyEvent">Contains the details about the key that produced the event.</param>
 		public virtual bool ProcessKey (KeyEvent keyEvent)
 		{
@@ -131,7 +131,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///     (Alt-key for example), but without
 		///     interefering with normal ProcessKey behavior.
 		/// </summary>
-		/// <remarks>
+		
 		///   <para>
 		///     After keys are sent to the subviews on the
 		///     current view, all the view are
@@ -145,7 +145,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///    non-default buttons from consuming the enter
 		///    keypress when they have the focus.
 		///  </para>
-		/// </remarks>
+		
 		/// <param name="keyEvent">Contains the details about the key that produced the event.</param>
 		public virtual bool ProcessColdKey (KeyEvent keyEvent)
 		{
@@ -259,14 +259,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
-		/// <remarks>
+		
 		/// If disposing equals true, the method has been called directly
 		/// or indirectly by a user's code. Managed and unmanaged resources
 		/// can be disposed.
 		/// If disposing equals false, the method has been called by the
 		/// runtime from inside the finalizer and you should not reference
 		/// other objects. Only unmanaged resources can be disposed.		
-		/// </remarks>
+		
 		/// <param name="disposing"></param>
 		protected virtual void Dispose (bool disposing)
 		{

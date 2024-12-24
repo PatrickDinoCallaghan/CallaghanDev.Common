@@ -104,7 +104,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Horizontal scroll offset.  The index of the first column in <see cref="Table"/> to display when when rendering the view.
 		/// </summary>
-		/// <remarks>This property allows very wide tables to be rendered with horizontal scrolling</remarks>
+		This property allows very wide tables to be rendered with horizontal scrolling</remarks>
 		public int ColumnOffset {
 			get => columnOffset;
 
@@ -893,7 +893,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Returns all cells in any <see cref="MultiSelectedRegions"/> (if <see cref="MultiSelect"/> is enabled) and the selected cell
 		/// </summary>
-		/// <remarks>Return value is not affected by <see cref="FullRowSelect"/> (i.e. returned <see cref="Point"/>s are not expanded to 
+		Return value is not affected by <see cref="FullRowSelect"/> (i.e. returned <see cref="Point"/>s are not expanded to 
 		/// include all points on row).</remarks>
 		/// <returns></returns>
 		public IEnumerable<Point> GetAllSelectedCells ()
@@ -971,7 +971,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <para>
 		/// Returns true if the given cell is selected either because it is the active cell or part of a multi cell selection (e.g. <see cref="FullRowSelect"/>).
 		/// </para>
-		/// <remarks>Returns <see langword="false"/> if <see cref="ColumnStyle.Visible"/> is <see langword="false"/>.</remarks>
+		Returns <see langword="false"/> if <see cref="ColumnStyle.Visible"/> is <see langword="false"/>.</remarks>
 		/// </summary>
 		/// <param name="col"></param>
 		/// <param name="row"></param>
@@ -1205,7 +1205,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Updates the view to reflect changes to <see cref="Table"/> and to (<see cref="ColumnOffset"/> / <see cref="RowOffset"/>) etc
 		/// </summary>
-		/// <remarks>This always calls <see cref="View.SetNeedsDisplay()"/></remarks>
+		This always calls <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void Update ()
 		{
 			if (TableIsNullOrInvisible ()) {
@@ -1224,7 +1224,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Updates <see cref="ColumnOffset"/> and <see cref="RowOffset"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
 		/// </summary>
-		/// <remarks>Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void EnsureValidScrollOffsets ()
 		{
 			if (TableIsNullOrInvisible ()) {
@@ -1239,7 +1239,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Updates <see cref="SelectedColumn"/>, <see cref="SelectedRow"/> and <see cref="MultiSelectedRegions"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
 		/// </summary>
-		/// <remarks>Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void EnsureValidSelection ()
 		{
 			if (TableIsNullOrInvisible()) {
@@ -1305,7 +1305,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// the indexed <see cref="DataColumn"/>.  If so then the index returned is nudged to the nearest visible
 		/// column.
 		/// </summary>
-		/// <remarks>Returns <paramref name="columnIndex"/> unchanged if it is invalid (e.g. out of bounds).</remarks>
+		Returns <paramref name="columnIndex"/> unchanged if it is invalid (e.g. out of bounds).</remarks>
 		/// <param name="columnIndex">The input column index.</param>
 		/// <param name="lookRight">When nudging invisible selections look right first.
 		/// <see langword="true"/> to look right, <see langword="false"/> to look left.</param>
@@ -1382,7 +1382,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Updates scroll offsets to ensure that the selected cell is visible.  Has no effect if <see cref="Table"/> has not been set.
 		/// </summary>
-		/// <remarks>Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void EnsureSelectedCellIsVisible ()
 		{
 			if (Table == null || Table.Columns.Count <= 0) {
@@ -1661,10 +1661,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// <para>This value will be ignored if more than the tables <see cref="TableView.MaxCellWidth"/> 
 			/// or the <see cref="MaxWidth"/>
 			/// </para>
-			/// <remarks>
+			
 			/// For setting a flexible column width (down to a lower limit) use <see cref="MinAcceptableWidth"/>
 			/// instead
-			/// </remarks>
+			
 			/// </summary>
 			public int MinWidth { get; set; }
 
@@ -1678,7 +1678,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// This affects both whether it is rendered and whether it can be selected. Defaults to
 			/// true.
 			/// </summary>
-			/// <remarks>If <see cref="MaxWidth"/> is 0 then <see cref="Visible"/> will always return false.</remarks>
+			If <see cref="MaxWidth"/> is 0 then <see cref="Visible"/> will always return false.</remarks>
 			public bool Visible { get => MaxWidth >= 0 && visible; set => visible = value; }
 
 

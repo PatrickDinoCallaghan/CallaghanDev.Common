@@ -1064,9 +1064,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///  A clipboard implementation for Linux.
 	///  This implementation uses the xclip command to access the clipboard.
 	/// </summary>	
-	/// <remarks>
+	
 	/// If xclip is not installed, this implementation will not work.
-	/// </remarks>
+	
 	class CursesClipboard : ClipboardBase {
 		public CursesClipboard ()
 		{

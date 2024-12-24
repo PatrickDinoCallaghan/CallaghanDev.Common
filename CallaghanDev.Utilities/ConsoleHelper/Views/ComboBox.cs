@@ -173,9 +173,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Gets or sets the <see cref="IListDataSource"/> backing this <see cref="ComboBox"/>, enabling custom rendering.
 		/// </summary>
 		/// <value>The source.</value>
-		/// <remarks>
+		
 		///  Use <see cref="SetSource"/> to set a new <see cref="IList"/> source.
-		/// </remarks>
+		
 		public IListDataSource Source {
 			get => source;
 			set {
@@ -195,9 +195,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Sets the source of the <see cref="ComboBox"/> to an <see cref="IList"/>.
 		/// </summary>
 		/// <value>An object implementing the IList interface.</value>
-		/// <remarks>
+		
 		///  Use the <see cref="Source"/> property to set a new <see cref="IListDataSource"/> source and use custome rendering.
-		/// </remarks>
+		
 		public void SetSource (IList source)
 		{
 			if (source == null) {

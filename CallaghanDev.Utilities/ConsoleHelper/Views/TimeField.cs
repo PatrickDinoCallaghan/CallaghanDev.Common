@@ -13,9 +13,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	///   Time editing <see cref="View"/>
 	/// </summary>
-	/// <remarks>
+	
 	///   The <see cref="TimeField"/> <see cref="View"/> provides time editing functionality with mouse support.
-	/// </remarks>
+	
 	public class TimeField : TextField {
 		TimeSpan time;
 		bool isShort;
@@ -32,12 +32,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   TimeChanged event, raised when the Date has changed.
 		/// </summary>
-		/// <remarks>
+		
 		///   This event is raised when the <see cref="Time"/> changes.
-		/// </remarks>
-		/// <remarks>
+		
+		
 		///   The passed <see cref="EventArgs"/> is a <see cref="DateTimeEventArgs{T}"/> containing the old value, new value, and format string.
-		/// </remarks>
+		
 		public event Action<DateTimeEventArgs<TimeSpan>> TimeChanged;
 
 		/// <summary>
@@ -119,8 +119,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Gets or sets the time of the <see cref="TimeField"/>.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public TimeSpan Time {
 			get {
 				return time;

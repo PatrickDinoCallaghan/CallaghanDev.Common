@@ -38,7 +38,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Gets or sets arbitrary data for the menu item.
 		/// </summary>
-		/// <remarks>This property is not used internally.</remarks>
+		This property is not used internally.</remarks>
 		public object Data { get; set; }
 
 		/// <summary>
@@ -880,7 +880,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// drawn within a single frame below the MenuBar.
 	/// </para>
 	/// </summary>
-	/// <remarks>
+	
 	///	<para>
 	///	The <see cref="MenuBar"/> appears on the first row of the parent <see cref="Toplevel"/> View and uses the full width.
 	///	</para>
@@ -890,7 +890,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///	<para>
 	///	See also: <see cref="ContextMenu"/>
 	///	</para>
-	/// </remarks>
+	
 	public class MenuBar : View {
 		internal int selected;
 		internal int selectedSub;

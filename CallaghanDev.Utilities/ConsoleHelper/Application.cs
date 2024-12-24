@@ -42,7 +42,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// Application.Shutdown();
 	/// </code>
 	/// </example>
-	/// <remarks>
+	
 	///   <para>
 	///     Creates a instance of <see cref="CallaghanDev.Utilities.ConsoleHelper.MainLoop"/> to process input events, handle timers and
 	///     other sources of data. It is accessible via the <see cref="MainLoop"/> property.
@@ -55,7 +55,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///     When invoked sets the SynchronizationContext to one that is tied
 	///     to the mainloop, allowing user code to use async/await.
 	///   </para>
-	/// </remarks>
+	
 	public static class Application {
 		static readonly Stack<Toplevel> toplevels = new Stack<Toplevel> ();
 
@@ -113,7 +113,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// The current <see cref="ConsoleDriver.EnableConsoleScrolling"/> used in the terminal.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// If <see langword="false"/> (the default) the height of the CallaghanDev.Utilities.ConsoleHelper application (<see cref="ConsoleDriver.Rows"/>) 
 		/// tracks to the height of the visible console view when the console is resized. In this case 
@@ -127,7 +127,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// </para>
 		/// <para>This API is deprecated and has no impact when enabled.</para>
 		/// <para>This API was previously named 'HeightAsBuffer` but was renamed to make its purpose more clear.</para>
-		/// </remarks>
+		
 		[Obsolete ("This API is deprecated and has no impact when enabled.", false)]
 		public static bool EnableConsoleScrolling { get; set; }
 
@@ -235,29 +235,29 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Notify that a new <see cref="RunState"/> was created (<see cref="Begin(Toplevel)"/> was called). The token is created in 
 		/// <see cref="Begin(Toplevel)"/> and this event will be fired before that function exits.
 		/// </summary>
-		/// <remarks>
+		
 		///	If <see cref="ExitRunLoopAfterFirstIteration"/> is <see langword="true"/> callers to
 		///	<see cref="Begin(Toplevel)"/> must also subscribe to <see cref="NotifyStopRunState"/>
 		///	and manually dispose of the <see cref="RunState"/> token when the application is done.
-		/// </remarks>
+		
 		public static event Action<RunState> NotifyNewRunState;
 
 		/// <summary>
 		/// Notify that a existent <see cref="RunState"/> is stopping (<see cref="End(RunState)"/> was called).
 		/// </summary>
-		/// <remarks>
+		
 		///	If <see cref="ExitRunLoopAfterFirstIteration"/> is <see langword="true"/> callers to
 		///	<see cref="Begin(Toplevel)"/> must also subscribe to <see cref="NotifyStopRunState"/>
 		///	and manually dispose of the <see cref="RunState"/> token when the application is done.
-		/// </remarks>
+		
 		public static event Action<Toplevel> NotifyStopRunState;
 
 		/// <summary>
 		///   This event is raised on each iteration of the <see cref="MainLoop"/>. 
 		/// </summary>
-		/// <remarks>
+		
 		///   See also <see cref="Timeout"/>
-		/// </remarks>
+		
 		public static Action Iteration;
 
 		/// <summary>
@@ -491,15 +491,15 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			/// <summary>
 			/// Releases all resource used by the <see cref="Application.RunState"/> object.
 			/// </summary>
-			/// <remarks>
+			
 			/// Call <see cref="Dispose()"/> when you are finished using the <see cref="Application.RunState"/>. 
-			/// </remarks>
-			/// <remarks>
+			
+			
 			/// <see cref="Dispose()"/> method leaves the <see cref="Application.RunState"/> in an unusable state. After
 			/// calling <see cref="Dispose()"/>, you must release all references to the
 			/// <see cref="Application.RunState"/> so the garbage collector can reclaim the memory that the
 			/// <see cref="Application.RunState"/> was occupying.
-			/// </remarks>
+			
 			public void Dispose ()
 			{
 				Dispose (true);
@@ -949,14 +949,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// </summary>
 		/// <returns>The <see cref="RunState"/> handle that needs to be passed to the <see cref="End(RunState)"/> method upon completion.</returns>
 		/// <param name="toplevel">The <see cref="Toplevel"/> to prepare execution for.</param>
-		/// <remarks>
+		
 		///  This method prepares the provided toplevel for running with the focus,
 		///  it adds this to the list of toplevels, sets up the mainloop to process the
 		///  event, lays out the subviews, focuses the first element, and draws the
 		///  toplevel in the screen. This is usually followed by executing
 		///  the <see cref="RunLoop"/> method, and then the <see cref="End(RunState)"/> method upon termination which will
 		///   undo these changes.
-		/// </remarks>
+		
 		public static RunState Begin (Toplevel toplevel)
 		{
 			if (toplevel == null) {
@@ -1106,10 +1106,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Shutdown an application initialized with <see cref="Init(ConsoleDriver, IMainLoopDriver)"/>.
 		/// </summary>
-		/// <remarks>
+		
 		/// Shutdown must be called for every call to <see cref="Init(ConsoleDriver, IMainLoopDriver)"/> or <see cref="Application.Run(Toplevel, Func{Exception, bool})"/>
 		/// to ensure all resources are cleaned up (Disposed) and terminal settings are restored.
-		/// </remarks>
+		
 		public static void Shutdown ()
 		{
 			ResetState ();
@@ -1185,9 +1185,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Building block API: Runs the <see cref="MainLoop"/> for the created <see cref="Toplevel"/>.
 		/// </summary>
-		/// <remarks>
+		
 		///   Use the <paramref name="wait"/> parameter to control whether this is a blocking or non-blocking call.
-		/// </remarks>
+		
 		/// <param name="state">The state returned by the <see cref="Begin(Toplevel)"/> method.</param>
 		/// <param name="wait">By default this is <see langword="true"/> which will execute the runloop waiting for events, 
 		/// if set to <see langword="false"/>, a single iteration will execute.</param>
@@ -1361,9 +1361,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Runs the application by calling <see cref="Run(Toplevel, Func{Exception, bool})"/> with the value of <see cref="Top"/>.
 		/// </summary>
-		/// <remarks>
+		
 		/// See <see cref="Run(Toplevel, Func{Exception, bool})"/> for more details.
-		/// </remarks>
+		
 		public static void Run (Func<Exception, bool> errorHandler = null)
 		{
 			Run (Top, errorHandler);
@@ -1380,9 +1380,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// returned) to ensure resources are cleaned up and terminal settings restored.
 		/// </para>
 		/// </summary>
-		/// <remarks>
+		
 		/// See <see cref="Run(Toplevel, Func{Exception, bool})"/> for more details.
-		/// </remarks>
+		
 		/// <param name="errorHandler"></param>
 		/// <param name="driver">The <see cref="ConsoleDriver"/> to use. If not specified the default driver for the
 		/// platform will be used (<see cref="WindowsDriver"/>, <see cref="CursesDriver"/>, or <see cref="NetDriver"/>).
@@ -1417,7 +1417,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Runs the main loop on the given <see cref="Toplevel"/> container.
 		/// </summary>
-		/// <remarks>
+		
 		///   <para>
 		///     This method is used to start processing events
 		///     for the main application, but it is also used to
@@ -1443,7 +1443,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///     returns <see langword="true"/> the <see cref="RunLoop(RunState, bool)"/> will resume; otherwise 
 		///     this method will exit.
 		///   </para>
-		/// </remarks>
+		
 		/// <param name="view">The <see cref="Toplevel"/> to run modally.</param>
 		/// <param name="errorHandler">RELEASE builds only: Handler for any unhandled exceptions (resumes when returns true, rethrows when null).</param>
 		public static void Run (Toplevel view, Func<Exception, bool> errorHandler = null)
@@ -1479,14 +1479,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Stops running the most recent <see cref="Toplevel"/> or the <paramref name="top"/> if provided.
 		/// </summary>
 		/// <param name="top">The toplevel to request stop.</param>
-		/// <remarks>
+		
 		///   <para>
 		///   This will cause <see cref="Application.Run(Func{Exception, bool})"/> to return.
 		///   </para>
 		///   <para>
 		///     Calling <see cref="Application.RequestStop"/> is equivalent to setting the <see cref="Toplevel.Running"/> property on the currently running <see cref="Toplevel"/> to false.
 		///   </para>
-		/// </remarks>
+		
 		public static void RequestStop (Toplevel top = null)
 		{
 			if (MdiTop == null || top == null || (MdiTop == null && top != null)) {

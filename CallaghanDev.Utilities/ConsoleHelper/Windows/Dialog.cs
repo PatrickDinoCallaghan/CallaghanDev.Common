@@ -14,11 +14,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// The <see cref="Dialog"/> <see cref="View"/> is a <see cref="Window"/> that by default is centered and contains one 
 	/// or more <see cref="Button"/>s. It defaults to the <see cref="Colors.Dialog"/> color scheme and has a 1 cell padding around the edges.
 	/// </summary>
-	/// <remarks>
+	
 	///  To run the <see cref="Dialog"/> modally, create the <see cref="Dialog"/>, and pass it to <see cref="Application.Run(Func{Exception, bool})"/>. 
 	///  This will execute the dialog until it terminates via the [ESC] or [CTRL-Q] key, or when one of the views
 	///  or buttons added to the dialog calls <see cref="Application.RequestStop"/>.
-	/// </remarks>
+	
 	public class Dialog : Window {
 		internal List<Button> buttons = new List<Button> ();
 		const int padding = 0;
@@ -31,14 +31,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="width">Width for the dialog.</param>
 		/// <param name="height">Height for the dialog.</param>
 		/// <param name="buttons">Optional buttons to lay out at the bottom of the dialog.</param>
-		/// <remarks>
+		
 		/// if <c>width</c> and <c>height</c> are both 0, the Dialog will be vertically and horizontally centered in the
 		/// container and the size will be 85% of the container. 
 		/// After initialization use <c>X</c>, <c>Y</c>, <c>Width</c>, and <c>Height</c> to override this with a location or size.
-		/// </remarks>
-		/// <remarks>
+		
+		
 		/// Use the constructor that does not take a <c>width</c> and <c>height</c> instead.
-		/// </remarks>
+		
 		public Dialog (ustring title, int width, int height, params Button [] buttons) : base (title, padding: padding)
 		{
 			X = Pos.Center ();
@@ -71,7 +71,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Dialog"/> class using <see cref="LayoutStyle.Computed"/>.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// Te Dialog will be vertically and horizontally centered in the container and the size will be 85% of the container. 
 		/// After initialization use <c>X</c>, <c>Y</c>, <c>Width</c>, and <c>Height</c> to override this with a location or size.
@@ -79,7 +79,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <para>
 		/// Use <see cref="AddButton(Button)"/> to add buttons to the dialog.
 		/// </para>
-		/// </remarks>
+		
 		public Dialog () : this (title: string.Empty, width: 0, height: 0, buttons: null) { }
 
 		/// <summary>
@@ -88,10 +88,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		/// <param name="title">Title for the dialog.</param>
 		/// <param name="buttons">Optional buttons to lay out at the bottom of the dialog.</param>
-		/// <remarks>
+		
 		/// Te Dialog will be vertically and horizontally centered in the container and the size will be 85% of the container. 
 		/// After initialization use <c>X</c>, <c>Y</c>, <c>Width</c>, and <c>Height</c> to override this with a location or size.
-		/// </remarks>
+		
 		public Dialog (ustring title, params Button [] buttons) : this (title: title, width: 0, height: 0, buttons: buttons) { }
 
 		/// <summary>

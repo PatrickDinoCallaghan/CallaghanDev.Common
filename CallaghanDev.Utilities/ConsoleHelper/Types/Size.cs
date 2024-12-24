@@ -27,9 +27,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Addition Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Addition of two Size structures.
-		/// </remarks>
+		
 
 		public static Size operator + (Size sz1, Size sz2)
 		{
@@ -41,11 +41,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Equality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Size objects. The return value is
 		///	based on the equivalence of the Width and Height 
 		///	properties of the two Sizes.
-		/// </remarks>
+		
 
 		public static bool operator == (Size sz1, Size sz2)
 		{
@@ -57,11 +57,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Inequality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Size objects. The return value is
 		///	based on the equivalence of the Width and Height 
 		///	properties of the two Sizes.
-		/// </remarks>
+		
 
 		public static bool operator != (Size sz1, Size sz2)
 		{
@@ -73,9 +73,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Subtraction Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Subtracts two Size structures.
-		/// </remarks>
+		
 
 		public static Size operator - (Size sz1, Size sz2)
 		{
@@ -87,10 +87,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Size to Point Conversion
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Returns a Point based on the dimensions of a given 
 		///	Size. Requires explicit cast.
-		/// </remarks>
+		
 
 		public static explicit operator Point (Size size)
 		{
@@ -101,9 +101,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Size Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Size from a Point value.
-		/// </remarks>
+		
 
 		public Size (Point pt)
 		{
@@ -115,9 +115,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Size Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Size from specified dimensions.
-		/// </remarks>
+		
 
 		public Size (int width, int height)
 		{
@@ -132,9 +132,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	IsEmpty Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Indicates if both Width and Height are zero.
-		/// </remarks>
+		
 
 		public bool IsEmpty {
 			get {
@@ -146,9 +146,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Width Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Width coordinate of the Size.
-		/// </remarks>
+		
 
 		public int Width {
 			get {
@@ -165,9 +165,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Height Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Height coordinate of the Size.
-		/// </remarks>
+		
 
 		public int Height {
 			get {
@@ -184,9 +184,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	Equals Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks equivalence of this Size and another object.
-		/// </remarks>
+		
 
 		public override bool Equals (object obj)
 		{
@@ -200,9 +200,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///	GetHashCode Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Calculates a hashing value.
-		/// </remarks>
+		
 
 		public override int GetHashCode ()
 		{
@@ -213,9 +213,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
         ///	ToString Method
         /// </summary>
         ///
-        /// <remarks>
+        
         ///	Formats the Size as a string in coordinate notation.
-        /// </remarks>
+        
 
         public override string ToString() => string.Format("{{Width={0}, Height={1}}}", width, height);
 

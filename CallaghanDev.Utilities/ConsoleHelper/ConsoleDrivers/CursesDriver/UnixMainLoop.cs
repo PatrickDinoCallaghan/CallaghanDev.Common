@@ -9,10 +9,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// Unix main loop, suitable for using on Posix systems
 	/// </summary>
-	/// <remarks>
+	
 	/// In addition to the general functions of the mainloop, the Unix version
 	/// can watch file descriptors using the AddWatch methods.
-	/// </remarks>
+	
 	internal class UnixMainLoop : IMainLoopDriver {
 		public UnixMainLoop (ConsoleDriver consoleDriver = null)
 		{
@@ -105,9 +105,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///	Removes an active watch from the mainloop.
 		/// </summary>
-		/// <remarks>
+		
 		///	The token parameter is the value returned from AddWatch
-		/// </remarks>
+		
 		public void RemoveWatch (object token)
 		{
 			var watch = token as Watch;
@@ -119,14 +119,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///  Watches a file descriptor for activity.
 		/// </summary>
-		/// <remarks>
+		
 		///  When the condition is met, the provided callback
 		///  is invoked.  If the callback returns false, the
 		///  watch is automatically removed.
 		///
 		///  The return value is a token that represents this watch, you can
 		///  use this token to remove the watch by calling RemoveWatch.
-		/// </remarks>
+		
 		public object AddWatch (int fileDescriptor, Condition condition, Func<MainLoop, bool> callback)
 		{
 			if (callback == null)

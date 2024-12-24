@@ -14,7 +14,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// AnchorEnd, and Center. The <see cref="Pos"/> objects can be combined with the addition and 
 	/// subtraction operators.
 	/// </summary>
-	/// <remarks>
+	
 	///   <para>
 	///     Use the <see cref="Pos"/> objects on the X or Y properties of a view to control the position.
 	///   </para>
@@ -29,7 +29,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///     Left(View), Right(View), Bottom(View), Top(View). The X(View) and Y(View) are
 	///     aliases to Left(View) and Top(View) respectively.
 	///   </para>
-	/// </remarks>
+	
 	public class Pos {
 		internal virtual int Anchor (int width)
 		{
@@ -396,7 +396,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Dim properties of a <see cref="View"/> to control the position.
 	/// </summary>
-	/// <remarks>
+	
 	///   <para>
 	///     Use the Dim objects on the Width or Height properties of a <see cref="View"/> to control the position.
 	///   </para>
@@ -406,7 +406,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///     to produce more useful layouts, like: Pos.Center - 3, which would shift the position
 	///     of the <see cref="View"/> 3 characters to the left after centering for example.
 	///   </para>
-	/// </remarks>
+	
 	public class Dim {
 		internal virtual int Anchor (int width)
 		{

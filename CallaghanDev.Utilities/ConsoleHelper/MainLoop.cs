@@ -41,10 +41,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///   Simple main loop implementation that can be used to monitor
 	///   file descriptor, run timers and idle handlers.
 	/// </summary>
-	/// <remarks>
+	
 	///   Monitoring of file descriptors is only available on Unix, there
 	///   does not seem to be a way of supporting this on Windows.
-	/// </remarks>
+	
 	public class MainLoop {
 		/// <summary>
 		/// Provides data for timers running manipulation.
@@ -125,14 +125,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Adds specified idle handler function to mainloop processing. The handler function will be called once per iteration of the main loop after other events have been handled.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///   Remove an idle hander by calling <see cref="RemoveIdle(Func{bool})"/> with the token this method returns.
 		/// </para>
 		/// <para>
 		///   If the <c>idleHandler</c> returns <c>false</c> it will be removed and not called subsequently.
 		/// </para>
-		/// </remarks>
+		
 		/// <param name="idleHandler">Token that can be used to remove the idle handler with <see cref="RemoveIdle(Func{bool})"/> .</param>
 		public Func<bool> AddIdle (Func<bool> idleHandler)
 		{
@@ -168,14 +168,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Adds a timeout to the mainloop.
 		/// </summary>
-		/// <remarks>
+		
 		///   When time specified passes, the callback will be invoked.
 		///   If the callback returns true, the timeout will be reset, repeating
 		///   the invocation. If it returns false, the timeout will stop and be removed.
 		///
 		///   The returned value is a token that can be used to stop the timeout
 		///   by calling <see cref="RemoveTimeout(object)"/>.
-		/// </remarks>
+		
 		public object AddTimeout (TimeSpan time, Func<MainLoop, bool> callback)
 		{
 			if (callback == null)
@@ -191,9 +191,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Removes a previously scheduled timeout
 		/// </summary>
-		/// <remarks>
+		
 		///   The token parameter is the value returned by AddTimeout.
-		/// </remarks>
+		
 		/// Returns <c>true</c>if the timeout is successfully removed; otherwise, <c>false</c>.
 		/// This method also returns <c>false</c> if the timeout is not found.
 		public bool RemoveTimeout (object token)
@@ -281,11 +281,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Determines whether there are pending events to be processed.
 		/// </summary>
-		/// <remarks>
+		
 		///   You can use this method if you want to probe if events are pending.
 		///   Typically used if you need to flush the input queue while still
 		///   running some of your own code in your main thread.
-		/// </remarks>
+		
 		public bool EventsPending (bool wait = false)
 		{
 			return Driver.EventsPending (wait);
@@ -294,12 +294,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Runs one iteration of timers and file watches
 		/// </summary>
-		/// <remarks>
+		
 		///   You use this to process all pending events (timers, idle handlers and file watches).
 		///
 		///   You can use it like this:
 		///     while (main.EvensPending ()) MainIteration ();
-		/// </remarks>
+		
 		public void MainIteration ()
 		{
 			if (timeouts.Count > 0)

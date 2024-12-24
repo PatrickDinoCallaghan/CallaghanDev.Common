@@ -13,7 +13,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// An hex viewer and editor <see cref="View"/> over a <see cref="System.IO.Stream"/>
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	/// <see cref="HexView"/> provides a hex editor on top of a seekable <see cref="Stream"/> with the left side showing an hex
 	/// dump of the values in the <see cref="Stream"/> and the right side showing the contents (filtered to 
@@ -33,7 +33,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// Control the first byte shown by setting the <see cref="DisplayStart"/> property 
 	/// to an offset in the stream.
 	/// </para>
-	/// </remarks>
+	
 	public class HexView : View {
 		SortedDictionary<long, byte> edits = new SortedDictionary<long, byte> ();
 		Stream source;

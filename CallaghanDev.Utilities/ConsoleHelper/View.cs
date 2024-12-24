@@ -27,7 +27,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// View is the base class for all views on the screen and represents a visible element that can render itself and 
 	/// contains zero or more nested views.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///    The View defines the base functionality for user interface elements in CallaghanDev.Utilities.ConsoleHelper. Views
 	///    can contain one or more subviews, can respond to user input and render themselves on the screen.
@@ -98,7 +98,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///    for views that use the <see cref="LayoutStyle.Absolute"/>, and will recompute the
 	///    frames for the vies that use <see cref="LayoutStyle.Computed"/>.
 	/// </para>
-	/// </remarks>
+	
 	public partial class View : Responder, ISupportInitializeNotification {
 
 		internal enum Direction {
@@ -219,7 +219,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Gets or sets arbitrary data for the view.
 		/// </summary>
-		/// <remarks>This property is not used internally.</remarks>
+		This property is not used internally.</remarks>
 		public object Data { get; set; }
 
 		internal Direction FocusDirection {
@@ -410,7 +410,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets an identifier for the view;
 		/// </summary>
 		/// <value>The identifier.</value>
-		/// <remarks>The id should be unique across all Views that share a SuperView.</remarks>
+		The id should be unique across all Views that share a SuperView.</remarks>
 		public ustring Id { get; set; } = "";
 
 		/// <summary>
@@ -433,7 +433,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets the frame for the view. The frame is relative to the view's container (<see cref="SuperView"/>).
 		/// </summary>
 		/// <value>The frame.</value>
-		/// <remarks>
+		
 		/// <para>
 		///    Change the Frame when using the <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> layout style to move or resize views. 
 		/// </para>
@@ -441,7 +441,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///    Altering the Frame of a view will trigger the redrawing of the
 		///    view as well as the redrawing of the affected regions of the <see cref="SuperView"/>.
 		/// </para>
-		/// </remarks>
+		
 		public virtual Rect Frame {
 			get => frame;
 			set {
@@ -484,7 +484,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// The bounds represent the View-relative rectangle used for this view; the area inside of the view.
 		/// </summary>
 		/// <value>The bounds.</value>
-		/// <remarks>
+		
 		/// <para>
 		/// Updates to the Bounds update the <see cref="Frame"/>,
 		/// and has the same side effects as updating the <see cref="Frame"/>.
@@ -495,7 +495,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Use this property to obtain the size and coordinates of the client area of the 
 		/// control for tasks such as drawing on the surface of the control.
 		/// </para>
-		/// </remarks>
+		
 		public Rect Bounds {
 			get => new Rect (Point.Empty, Frame.Size);
 			set => Frame = new Rect (frame.Location, value.Size);
@@ -507,9 +507,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets the X position for the view (the column). Only used if the <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>.
 		/// </summary>
 		/// <value>The X Position.</value>
-		/// <remarks>
+		
 		/// If <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> changing this property has no effect and its value is indeterminate. 
-		/// </remarks>
+		
 		public Pos X {
 			get => x;
 			set {
@@ -527,9 +527,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets the Y position for the view (the row). Only used if the <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>.
 		/// </summary>
 		/// <value>The y position (line).</value>
-		/// <remarks>
+		
 		/// If <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> changing this property has no effect and its value is indeterminate. 
-		/// </remarks>
+		
 		public Pos Y {
 			get => y;
 			set {
@@ -548,9 +548,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Gets or sets the width of the view. Only used the <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>.
 		/// </summary>
 		/// <value>The width.</value>
-		/// <remarks>
+		
 		/// If <see cref="LayoutStyle"/> is <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> changing this property has no effect and its value is indeterminate. 
-		/// </remarks>
+		
 		public Dim Width {
 			get => width;
 			set {
@@ -675,10 +675,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// dimensions specified in the <see langword="frame"/> parameter. 
 		/// </summary>
 		/// <param name="frame">The region covered by this view.</param>
-		/// <remarks>
+		
 		/// This constructor initialize a View with a <see cref="LayoutStyle"/> of <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/>.
 		/// Use <see cref="View"/> to initialize a View with  <see cref="LayoutStyle"/> of <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/> 
-		/// </remarks>
+		
 		public View (Rect frame)
 		{
 			Initialize (ustring.Empty, frame, LayoutStyle.Absolute, TextDirection.LeftRight_TopBottom);
@@ -687,7 +687,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Initializes a new instance of <see cref="View"/> using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///   Use <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/>, and <see cref="Height"/> properties to dynamically control the size and location of the view.
 		///   The <see cref="View"/> will be created using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>
@@ -701,13 +701,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///   This constructor initialize a View with a <see cref="LayoutStyle"/> of <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>. 
 		///   Use <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/>, and <see cref="Height"/> properties to dynamically control the size and location of the view.
 		/// </para>
-		/// </remarks>
+		
 		public View () : this (text: string.Empty, direction: TextDirection.LeftRight_TopBottom) { }
 
 		/// <summary>
 		///   Initializes a new instance of <see cref="View"/> using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///   The <see cref="View"/> will be created at the given
 		///   coordinates with the given string. The size (<see cref="View.Frame"/>) will be 
@@ -716,7 +716,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <para>
 		///   No line wrapping is provided.
 		/// </para>
-		/// </remarks>
+		
 		/// <param name="x">column to locate the View.</param>
 		/// <param name="y">row to locate the View.</param>
 		/// <param name="text">text to initialize the <see cref="Text"/> property with.</param>
@@ -725,7 +725,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Initializes a new instance of <see cref="View"/> using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Absolute"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///   The <see cref="View"/> will be created at the given
 		///   coordinates with the given string. The initial size (<see cref="View.Frame"/>) will be 
@@ -734,7 +734,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <para>
 		///   If <c>rect.Height</c> is greater than one, word wrapping is provided.
 		/// </para>
-		/// </remarks>
+		
 		/// <param name="rect">Location.</param>
 		/// <param name="text">text to initialize the <see cref="Text"/> property with.</param>
 		/// <param name="border">The <see cref="Border"/>.</param>
@@ -746,7 +746,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Initializes a new instance of <see cref="View"/> using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///   The <see cref="View"/> will be created using <see cref="CallaghanDev.Utilities.ConsoleHelper.LayoutStyle.Computed"/>
 		///   coordinates with the given string. The initial size (<see cref="View.Frame"/>) will be 
@@ -755,7 +755,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <para>
 		///   If <see cref="Height"/> is greater than one, word wrapping is provided.
 		/// </para>
-		/// </remarks>
+		
 		/// <param name="text">text to initialize the <see cref="Text"/> property with.</param>
 		/// <param name="direction">The text direction.</param>
 		/// <param name="border">The <see cref="Border"/>.</param>
@@ -907,10 +907,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Adds a subview (child) to this view.
 		/// </summary>
-		/// <remarks>
+		
 		/// The Views that have been added to this view can be retrieved via the <see cref="Subviews"/> property. 
 		/// See also <seealso cref="Remove(View)"/> <seealso cref="RemoveAll"/> 
-		/// </remarks>
+		
 		public virtual void Add (View view)
 		{
 			if (view == null)
@@ -952,10 +952,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Adds the specified views (children) to the view.
 		/// </summary>
 		/// <param name="views">Array of one or more views (can be optional parameter).</param>
-		/// <remarks>
+		
 		/// The Views that have been added to this view can be retrieved via the <see cref="Subviews"/> property. 
 		/// See also <seealso cref="Remove(View)"/> <seealso cref="RemoveAll"/> 
-		/// </remarks>
+		
 		public void Add (params View [] views)
 		{
 			if (views == null)
@@ -980,8 +980,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Removes a subview added via <see cref="Add(View)"/> or <see cref="Add(View[])"/> from this View.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public virtual void Remove (View view)
 		{
 			if (view == null || subviews == null)
@@ -1018,9 +1018,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Brings the specified subview to the front so it is drawn on top of any other views.
 		/// </summary>
 		/// <param name="subview">The subview to send to the front</param>
-		/// <remarks>
+		
 		///   <seealso cref="SendSubviewToBack"/>.
-		/// </remarks>
+		
 		public void BringSubviewToFront (View subview)
 		{
 			PerformActionForSubview (subview, x => {
@@ -1033,9 +1033,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Sends the specified subview to the front so it is the first view drawn
 		/// </summary>
 		/// <param name="subview">The subview to send to the front</param>
-		/// <remarks>
+		
 		///   <seealso cref="BringSubviewToFront(View)"/>.
-		/// </remarks>
+		
 		public void SendSubviewToBack (View subview)
 		{
 			PerformActionForSubview (subview, x => {
@@ -1048,9 +1048,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Moves the subview backwards in the hierarchy, only one step
 		/// </summary>
 		/// <param name="subview">The subview to send backwards</param>
-		/// <remarks>
+		
 		/// If you want to send the view all the way to the back use SendSubviewToBack.
-		/// </remarks>
+		
 		public void SendSubviewBackwards (View subview)
 		{
 			PerformActionForSubview (subview, x => {
@@ -1066,9 +1066,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Moves the subview backwards in the hierarchy, only one step
 		/// </summary>
 		/// <param name="subview">The subview to send backwards</param>
-		/// <remarks>
+		
 		/// If you want to send the view all the way to the back use SendSubviewToBack.
-		/// </remarks>
+		
 		public void BringSubviewForward (View subview)
 		{
 			PerformActionForSubview (subview, x => {
@@ -1083,11 +1083,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Clears the view region with the current color.
 		/// </summary>
-		/// <remarks>
+		
 		///   <para>
 		///     This clears the entire region used by this view.
 		///   </para>
-		/// </remarks>
+		
 		public void Clear ()
 		{
 			var h = Frame.Height;
@@ -1102,8 +1102,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   Clears the specified region with the current color. 
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		/// <param name="regionScreen">The screen-relative region to clear.</param>
 		public void Clear (Rect regionScreen)
 		{
@@ -1184,9 +1184,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Sets the <see cref="ConsoleDriver"/>'s clip region to the current View's <see cref="Bounds"/>.
 		/// </summary>
 		/// <returns>The existing driver's clip region, which can be then re-applied by setting <c><see cref="Driver"/>.Clip</c> (<see cref="ConsoleDriver.Clip"/>).</returns>
-		/// <remarks>
+		
 		/// <see cref="Bounds"/> is View-relative.
-		/// </remarks>
+		
 		public Rect ClipToBounds ()
 		{
 			return SetClip (Bounds);
@@ -1224,10 +1224,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <param name="text">String to display, the hotkey specifier before a letter flags the next letter as the hotkey.</param>
 		/// <param name="hotColor">Hot color.</param>
 		/// <param name="normalColor">Normal color.</param>
-		/// <remarks>
+		
 		/// <para>The hotkey is any character following the hotkey specifier, which is the underscore ('_') character by default.</para>
 		/// <para>The hotkey specifier can be changed via <see cref="HotKeySpecifier"/></para>
-		/// </remarks>
+		
 		public void DrawHotString (ustring text, Attribute hotColor, Attribute normalColor)
 		{
 			var hotkeySpec = HotKeySpecifier == (Rune)0xffff ? (Rune)'_' : HotKeySpecifier;
@@ -1469,7 +1469,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Redraws this view and its subviews; only redraws the views that have been flagged for a re-display.
 		/// </summary>
 		/// <param name="bounds">The bounds (view-relative region) to redraw.</param>
-		/// <remarks>
+		
 		/// <para>
 		///    Always use <see cref="Bounds"/> (view-relative) when calling <see cref="Redraw(Rect)"/>, NOT <see cref="Frame"/> (superview-relative).
 		/// </para>
@@ -1481,7 +1481,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///    Overrides of <see cref="Redraw"/> must ensure they do not set <c>Driver.Clip</c> to a clip region
 		///    larger than the <ref name="bounds"/> parameter, as this will cause the driver to clip the entire region.
 		/// </para>
-		/// </remarks>
+		
 		public virtual void Redraw (Rect bounds)
 		{
 			if (!CanBeVisible (this)) {
@@ -1587,23 +1587,23 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Event invoked when the content area of the View is to be drawn.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// Will be invoked before any subviews added with <see cref="Add(View)"/> have been drawn.
 		/// </para>
 		/// <para>
 		/// Rect provides the view-relative rectangle describing the currently visible viewport into the <see cref="View"/>.
 		/// </para>
-		/// </remarks>
+		
 		public event Action<Rect> DrawContent;
 
 		/// <summary>
 		/// Enables overrides to draw infinitely scrolled content and/or a background behind added controls. 
 		/// </summary>
 		/// <param name="viewport">The view-relative rectangle describing the currently visible viewport into the <see cref="View"/></param>
-		/// <remarks>
+		
 		/// This method will be called before any subviews added with <see cref="Add(View)"/> have been drawn. 
-		/// </remarks>
+		
 		public virtual void OnDrawContent (Rect viewport)
 		{
 			DrawContent?.Invoke (viewport);
@@ -1612,23 +1612,23 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Event invoked when the content area of the View is completed drawing.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		/// Will be invoked after any subviews removed with <see cref="Remove(View)"/> have been completed drawing.
 		/// </para>
 		/// <para>
 		/// Rect provides the view-relative rectangle describing the currently visible viewport into the <see cref="View"/>.
 		/// </para>
-		/// </remarks>
+		
 		public event Action<Rect> DrawContentComplete;
 
 		/// <summary>
 		/// Enables overrides after completed drawing infinitely scrolled content and/or a background behind removed controls.
 		/// </summary>
 		/// <param name="viewport">The view-relative rectangle describing the currently visible viewport into the <see cref="View"/></param>
-		/// <remarks>
+		
 		/// This method will be called after any subviews removed with <see cref="Remove(View)"/> have been completed drawing.
-		/// </remarks>
+		
 		public virtual void OnDrawContentComplete (Rect viewport)
 		{
 			DrawContentComplete?.Invoke (viewport);
@@ -1770,7 +1770,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// </para>
 		/// <para>If the key is already bound to a different <see cref="Command"/> it will be
 		/// rebound to this one</para>
-		/// <remarks>Commands are only ever applied to the current <see cref="View"/>(i.e. this feature
+		Commands are only ever applied to the current <see cref="View"/>(i.e. this feature
 		/// cannot be used to switch focus to another view and perform multiple commands there) </remarks>
 		/// </summary>
 		/// <param name="key"></param>
@@ -2161,9 +2161,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Sets the View's <see cref="Frame"/> to the relative coordinates if its container, given the <see cref="Frame"/> for its container.
 		/// </summary>
 		/// <param name="hostFrame">The screen-relative frame for the host.</param>
-		/// <remarks>
+		
 		/// Reminder: <see cref="Frame"/> is superview-relative; <see cref="Bounds"/> is view-relative.
-		/// </remarks>
+		
 		internal void SetRelativeLayout (Rect hostFrame)
 		{
 			int actW, actH, actX, actY;
@@ -2329,9 +2329,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Fired after the View's <see cref="LayoutSubviews"/> method has completed. 
 		/// </summary>
-		/// <remarks>
+		
 		/// Subscribe to this event to perform tasks when the <see cref="View"/> has been resized or the layout has otherwise changed.
-		/// </remarks>
+		
 		public event Action<LayoutEventArgs> LayoutStarted;
 
 		/// <summary>
@@ -2345,9 +2345,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Fired after the View's <see cref="LayoutSubviews"/> method has completed. 
 		/// </summary>
-		/// <remarks>
+		
 		/// Subscribe to this event to perform tasks when the <see cref="View"/> has been resized or the layout has otherwise changed.
-		/// </remarks>
+		
 		public event Action<LayoutEventArgs> LayoutComplete;
 
 		/// <summary>
@@ -2369,9 +2369,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// Invoked when a view starts executing or when the dimensions of the view have changed, for example in
 		/// response to the container view or terminal resizing.
 		/// </summary>
-		/// <remarks>
+		
 		/// Calls <see cref="OnLayoutComplete"/> (which raises the <see cref="LayoutComplete"/> event) before it returns.
-		/// </remarks>
+		
 		public virtual void LayoutSubviews ()
 		{
 			if (!LayoutNeeded) {
@@ -2470,7 +2470,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		///   The text displayed by the <see cref="View"/>.
 		/// </summary>
-		/// <remarks>
+		
 		/// <para>
 		///  If provided, the text will be drawn before any subviews are drawn.
 		/// </para>
@@ -2484,7 +2484,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		///  Set the <see cref="HotKeySpecifier"/> to enable hotkey support. To disable hotkey support set <see cref="HotKeySpecifier"/> to
 		///  <c>(Rune)0xffff</c>.
 		/// </para>
-		/// </remarks>
+		
 		public virtual ustring Text {
 			get => text;
 			set {
@@ -2837,7 +2837,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			/// Indicates if the current mouse event has already been processed and the driver should stop notifying any other event subscriber.
 			/// Its important to set this value to true specially when updating any View's layout from inside the subscriber method.
 			/// </summary>
-			/// <remarks>This property forwards to the <see cref="MouseEvent.Handled"/> property and is provided as a convenience and for
+			This property forwards to the <see cref="MouseEvent.Handled"/> property and is provided as a convenience and for
 			/// backwards compatibility</remarks>
 			public bool Handled {
 				get => MouseEvent.Handled;

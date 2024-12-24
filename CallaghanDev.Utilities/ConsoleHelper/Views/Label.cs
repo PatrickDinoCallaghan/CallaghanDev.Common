@@ -13,9 +13,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// The Label <see cref="View"/> displays a string at a given position and supports multiple lines separated by newline characters.
 	/// Multi-line Labels support word wrap.
 	/// </summary>
-	/// <remarks>
+	
 	/// The <see cref="Label"/> view is functionality identical to <see cref="View"/> and is included for API backwards compatibility.
-	/// </remarks>
+	
 	public class Label : View {
 		/// <inheritdoc/>
 		public Label ()
@@ -63,11 +63,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///   Clicked <see cref="Action"/>, raised when the user clicks the primary mouse button within the Bounds of this <see cref="View"/>
 		///   or if the user presses the action key while this view is focused. (TODO: IsDefault)
 		/// </summary>
-		/// <remarks>
+		
 		///   Client code can hook up to this event, it is
 		///   raised when the button is activated either with
 		///   the mouse or the keyboard.
-		/// </remarks>
+		
 		public event Action Clicked;
 
 		///// <inheritdoc/>

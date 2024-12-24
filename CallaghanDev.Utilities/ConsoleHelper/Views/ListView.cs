@@ -33,9 +33,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <param name="line">The line where the rendering will be done.</param>
 		/// <param name="width">The width that must be filled out.</param>
 		/// <param name="start">The index of the string to be displayed.</param>
-		/// <remarks>
+		
 		///   The default color will be set before this method is invoked, and will be based on whether the item is selected or not.
-		/// </remarks>
+		
 		void Render (ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0);
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// ListView <see cref="View"/> renders a scrollable list of data where each item can be activated to perform an action.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   The <see cref="ListView"/> displays lists of data and allows the user to scroll through the data.
 	///   Items in the can be activated firing an event (with the ENTER key or a mouse double-click). 
@@ -93,7 +93,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///   Searching the ListView with the keyboard is supported. Users type the
 	///   first characters of an item, and the first item that starts with what the user types will be selected.
 	/// </para>
-	/// </remarks>
+	
 	public class ListView : View {
 		int top, left;
 		int selected;
@@ -103,9 +103,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Gets or sets the <see cref="IListDataSource"/> backing this <see cref="ListView"/>, enabling custom rendering.
 		/// </summary>
 		/// <value>The source.</value>
-		/// <remarks>
+		
 		///  Use <see cref="SetSource"/> to set a new <see cref="IList"/> source.
-		/// </remarks>
+		
 		public IListDataSource Source {
 			get => source;
 			set {
@@ -122,9 +122,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Sets the source of the <see cref="ListView"/> to an <see cref="IList"/>.
 		/// </summary>
 		/// <value>An object implementing the IList interface.</value>
-		/// <remarks>
+		
 		///  Use the <see cref="Source"/> property to set a new <see cref="IListDataSource"/> source and use custome rendering.
-		/// </remarks>
+		
 		public void SetSource (IList source)
 		{
 			if (source == null && (Source == null || !(Source is ListWrapper)))
@@ -138,9 +138,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Sets the source to an <see cref="IList"/> value asynchronously.
 		/// </summary>
 		/// <value>An item implementing the IList interface.</value>
-		/// <remarks>
+		
 		///  Use the <see cref="Source"/> property to set a new <see cref="IListDataSource"/> source and use custom rendering.
-		/// </remarks>
+		
 		public Task SetSourceAsync (IList source)
 		{
 			return Task.Factory.StartNew (() => {
@@ -157,10 +157,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Gets or sets whether this <see cref="ListView"/> allows items to be marked.
 		/// </summary>
 		/// <value>Set to <see langword="true"/> to allow marking elements of the list.</value>
-		/// <remarks>
+		
 		/// If set to <see langword="true"/>, <see cref="ListView"/> will render items marked items with "[x]", and unmarked items with "[ ]"
 		/// spaces. SPACE key will toggle marking. The default is <see langword="false"/>.
-		/// </remarks>
+		
 		public bool AllowsMarking {
 			get => allowsMarking;
 			set {

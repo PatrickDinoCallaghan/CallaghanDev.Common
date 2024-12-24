@@ -5,7 +5,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Provides cut, copy, and paste support for the OS clipboard.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	/// On Windows, the <see cref="Clipboard"/> class uses the Windows Clipboard APIs via P/Invoke.
 	/// </para>
@@ -23,7 +23,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// On the Mac, the <see cref="Clipboard"/> class uses the MacO OS X pbcopy and pbpaste command line tools
 	/// and the Mac clipboard APIs vai P/Invoke.
 	/// </para>
-	/// </remarks>
+	
 	public static class Clipboard {
 		static ustring contents;
 
@@ -62,8 +62,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Returns true if the environmental dependencies are in place to interact with the OS clipboard.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public static bool IsSupported { get => Application.Driver.Clipboard.IsSupported; }
 
 		/// <summary>

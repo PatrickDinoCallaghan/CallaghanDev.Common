@@ -36,9 +36,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Empty Shared Field
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	An uninitialized Point Structure.
-		/// </remarks>
+		
 		
 		public static readonly Point Empty;
 
@@ -46,10 +46,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Addition Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Translates a Point using the Width and Height
 		///	properties of the given <typeref>Size</typeref>.
-		/// </remarks>
+		
 
 		public static Point operator + (Point pt, Size sz)
 		{
@@ -60,11 +60,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Equality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Point objects. The return value is
 		///	based on the equivalence of the X and Y properties 
 		///	of the two points.
-		/// </remarks>
+		
 
 		public static bool operator == (Point left, Point right)
 		{
@@ -75,11 +75,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Inequality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Point objects. The return value is
 		///	based on the equivalence of the X and Y properties 
 		///	of the two points.
-		/// </remarks>
+		
 
 		public static bool operator != (Point left, Point right)
 		{
@@ -90,10 +90,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Subtraction Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Translates a Point using the negation of the Width 
 		///	and Height properties of the given Size.
-		/// </remarks>
+		
 
 		public static Point operator - (Point pt, Size sz)
 		{
@@ -104,10 +104,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Point to Size Conversion
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Returns a Size based on the Coordinates of a given 
 		///	Point. Requires explicit cast.
-		/// </remarks>
+		
 
 		public static explicit operator Size (Point p)
 		{
@@ -124,9 +124,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Point Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Point from a Size value.
-		/// </remarks>
+		
 		
 		public Point (Size sz)
 		{
@@ -138,9 +138,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Point Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Point from a specified x,y coordinate pair.
-		/// </remarks>
+		
 		
 		public Point (int x, int y)
 		{
@@ -156,9 +156,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	IsEmpty Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Indicates if both X and Y are zero.
-		/// </remarks>		
+				
 		public bool IsEmpty {
 			get {
 				return ((X == 0) && (Y == 0));
@@ -169,9 +169,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Equals Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks equivalence of this Point and another object.
-		/// </remarks>
+		
 		
 		public override bool Equals (object obj)
 		{
@@ -185,9 +185,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	GetHashCode Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Calculates a hashing value.
-		/// </remarks>
+		
 		
 		public override int GetHashCode ()
 		{
@@ -198,9 +198,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Offset Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Moves the Point a specified distance.
-		/// </remarks>
+		
 
 		public void Offset (int dx, int dy)
 		{
@@ -212,9 +212,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	ToString Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Formats the Point as a string in coordinate notation.
-		/// </remarks>
+		
 		
 		public override string ToString ()
 		{

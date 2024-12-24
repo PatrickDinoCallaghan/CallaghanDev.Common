@@ -296,7 +296,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		/// Updates <see cref="TabScrollOffset"/> to be a valid index of <see cref="Tabs"/>
 		/// </summary>
-		/// <remarks>Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
 		public void EnsureValidScrollOffsets ()
 		{
 			TabScrollOffset = System.Math.Max(System.Math.Min (TabScrollOffset, Tabs.Count - 1), 0);
@@ -788,7 +788,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// Gets the <see cref="TabView.Tab"/> (if any) that the mouse
 			/// was over when the <see cref="MouseEvent"/> occurred.
 			/// </summary>
-			/// <remarks>This will be null if the click is after last tab
+			This will be null if the click is after last tab
 			/// or before first.</remarks>
 			public Tab Tab { get; }
 

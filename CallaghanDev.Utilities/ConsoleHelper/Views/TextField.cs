@@ -18,9 +18,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	///   Single-line text entry <see cref="View"/>
 	/// </summary>
-	/// <remarks>
+	
 	///   The <see cref="TextField"/> <see cref="View"/> provides editing functionality and mouse support.
-	/// </remarks>
+	
 	public class TextField : View {
 		List<Rune> text;
 		int first, point;
@@ -47,12 +47,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Changed event, raised when the text has changed.
 		/// </summary>
-		/// <remarks>
+		
 		///   This event is raised when the <see cref="Text"/> changes. 
-		/// </remarks>
-		/// <remarks>
+		
+		
 		///   The passed <see cref="EventArgs"/> is a <see cref="ustring"/> containing the old value. 
-		/// </remarks>
+		
 		public event Action<ustring> TextChanged;
 
 		/// <summary>
@@ -278,8 +278,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Sets or gets the text held by the view.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public new ustring Text {
 			get {
 				return ustring.Make (text);
@@ -322,9 +322,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Sets the secret property.
 		/// </summary>
-		/// <remarks>
+		
 		///   This makes the text entry suitable for entering passwords.
-		/// </remarks>
+		
 		public bool Secret { get; set; }
 
 		/// <summary>
@@ -540,7 +540,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		/// <param name="kb"></param>
 		/// <returns></returns>
-		/// <remarks>
+		
 		/// The <see cref="TextField"/> control responds to the following keys:
 		/// <list type="table">
 		///    <listheader>
@@ -552,7 +552,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///        <description>Deletes the character before cursor.</description>
 		///    </item>
 		/// </list>
-		/// </remarks>
+		
 		public override bool ProcessKey (KeyEvent kb)
 		{
 			// remember current cursor position

@@ -14,9 +14,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	///   Simple Date editing <see cref="View"/>
 	/// </summary>
-	/// <remarks>
+	
 	///   The <see cref="DateField"/> <see cref="View"/> provides date editing functionality with mouse support.
-	/// </remarks>
+	
 	public class DateField : TextField {
 		DateTime date;
 		bool isShort;
@@ -32,12 +32,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   DateChanged event, raised when the <see cref="Date"/> property has changed.
 		/// </summary>
-		/// <remarks>
+		
 		///   This event is raised when the <see cref="Date"/> property changes.
-		/// </remarks>
-		/// <remarks>
+		
+		
 		///   The passed event arguments containing the old value, new value, and format string.
-		/// </remarks>
+		
 		public event Action<DateTimeEventArgs<DateTime>> DateChanged;
 
 		/// <summary>
@@ -143,8 +143,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Gets or sets the date of the <see cref="DateField"/>.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public DateTime Date {
 			get {
 				return date;

@@ -42,7 +42,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// The <see cref="Key"/> enumeration contains special encoding for some keys, but can also
 	/// encode all the unicode values that can be passed.   
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   If the <see cref="SpecialMask"/> is set, then the value is that of the special mask,
 	///   otherwise, the value is the one of the lower bits (as extracted by <see cref="CharMask"/>)
@@ -56,7 +56,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <para>
 	///   Unicode runes are also stored here, the letter 'A" for example is encoded as a value 65 (not surfaced in the enum).
 	/// </para>
-	/// </remarks>
+	
 	[Flags]
 	public enum Key : uint {
 		/// <summary>
@@ -643,9 +643,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// <summary>
 	/// Mouse flags reported in <see cref="MouseEvent"/>.
 	/// </summary>
-	/// <remarks>
+	
 	/// They just happen to map to the ncurses ones.
-	/// </remarks>
+	
 	[Flags]
 	public enum MouseFlags {
 		/// <summary>
@@ -771,7 +771,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// as coordinates and button state, from ConsoleDrivers up to <see cref="Application"/> and
 	/// Views.
 	/// </summary>
-	/// <remarks>The <see cref="Application"/> class includes the <see cref="Application.RootMouseEvent"/>
+	The <see cref="Application"/> class includes the <see cref="Application.RootMouseEvent"/>
 	/// Action which takes a MouseEvent argument.</remarks>
 	public class MouseEvent {
 		/// <summary>

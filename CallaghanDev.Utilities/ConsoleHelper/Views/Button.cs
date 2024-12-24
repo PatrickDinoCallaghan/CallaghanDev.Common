@@ -13,7 +13,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	///   Button is a <see cref="View"/> that provides an item that invokes an <see cref="Action"/> when activated by the user.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   Provides a button showing text invokes an <see cref="Action"/> when clicked on with a mouse
 	///   or when the user presses SPACE, ENTER, or hotkey. The hotkey is the first letter or digit following the first underscore ('_') 
@@ -30,7 +30,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///   the ENTER key, if no other <see cref="View"/> processes the <see cref="KeyEvent"/>, the <see cref="Button"/>'s
 	///   <see cref="Action"/> will be invoked.
 	/// </para>
-	/// </remarks>
+	
 	public class Button : View {
 		bool is_default;
 		Rune _leftBracket;
@@ -41,19 +41,19 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Initializes a new instance of <see cref="Button"/> using <see cref="LayoutStyle.Computed"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		///   The width of the <see cref="Button"/> is computed based on the
 		///   text length. The height will always be 1.
-		/// </remarks>
+		
 		public Button () : this (text: string.Empty, is_default: false) { }
 
 		/// <summary>
 		///   Initializes a new instance of <see cref="Button"/> using <see cref="LayoutStyle.Computed"/> layout.
 		/// </summary>
-		/// <remarks>
+		
 		///   The width of the <see cref="Button"/> is computed based on the
 		///   text length. The height will always be 1.
-		/// </remarks>
+		
 		/// <param name="text">The button's text</param>
 		/// <param name="is_default">
 		///   If <c>true</c>, a special decoration is used, and the user pressing the enter key 
@@ -67,10 +67,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Initializes a new instance of <see cref="Button"/> using <see cref="LayoutStyle.Absolute"/> layout, based on the given text
 		/// </summary>
-		/// <remarks>
+		
 		///   The width of the <see cref="Button"/> is computed based on the
 		///   text length. The height will always be 1.
-		/// </remarks>
+		
 		/// <param name="x">X position where the button will be shown.</param>
 		/// <param name="y">Y position where the button will be shown.</param>
 		/// <param name="text">The button's text</param>
@@ -79,10 +79,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Initializes a new instance of <see cref="Button"/> using <see cref="LayoutStyle.Absolute"/> layout, based on the given text.
 		/// </summary>
-		/// <remarks>
+		
 		///   The width of the <see cref="Button"/> is computed based on the
 		///   text length. The height will always be 1.
-		/// </remarks>
+		
 		/// <param name="x">X position where the button will be shown.</param>
 		/// <param name="y">Y position where the button will be shown.</param>
 		/// <param name="text">The button's text</param>
@@ -130,10 +130,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// Gets or sets whether the <see cref="Button"/> is the default action to activate in a dialog.
 		/// </summary>
 		/// <value><c>true</c> if is default; otherwise, <c>false</c>.</value>
-		/// <remarks>
+		
 		/// If is <see langword="true"/> the current focused view
 		/// will remain focused if the window is not closed.
-		/// </remarks>
+		
 		public bool IsDefault {
 			get => is_default;
 			set {
@@ -243,11 +243,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		///   Clicked <see cref="Action"/>, raised when the user clicks the primary mouse button within the Bounds of this <see cref="View"/>
 		///   or if the user presses the action key while this view is focused. (TODO: IsDefault)
 		/// </summary>
-		/// <remarks>
+		
 		///   Client code can hook up to this event, it is
 		///   raised when the button is activated either with
 		///   the mouse or the keyboard.
-		/// </remarks>
+		
 		public event Action Clicked;
 
 		///<inheritdoc/>

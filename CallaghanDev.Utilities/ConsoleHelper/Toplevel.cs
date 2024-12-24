@@ -8,7 +8,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	/// Toplevel views can be modally executed. They are used for both an application's main view (filling the entire screen and
 	/// for pop-up views such as <see cref="Dialog"/>, <see cref="MessageBox"/>, and <see cref="Wizard"/>.
 	/// </summary>
-	/// <remarks>
+	
 	///   <para>
 	///     Toplevels can be modally executing views, started by calling <see cref="Application.Run(Toplevel, Func{Exception, bool})"/>. 
 	///     They return control to the caller when <see cref="Application.RequestStop(Toplevel)"/> has 
@@ -33,14 +33,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 	///     to override base class layout code optimally by doing so only on first run,
 	///     instead of on every run.
 	///   </para>
-	/// </remarks>
+	
 	public class Toplevel : View {
 		/// <summary>
 		/// Gets or sets whether the <see cref="MainLoop"/> for this <see cref="Toplevel"/> is running or not. 
 		/// </summary>
-		/// <remarks>
+		
 		///    Setting this property directly is discouraged. Use <see cref="Application.RequestStop"/> instead. 
-		/// </remarks>
+		
 		public bool Running { get; set; }
 
 		/// <summary>

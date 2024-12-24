@@ -11,7 +11,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// ScrollBarViews are views that display a 1-character scrollbar, either horizontal or vertical
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   The scrollbar is drawn to be a representation of the Size, assuming that the 
 	///   scroll position is set at Position.
@@ -20,7 +20,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	///   If the region to display the scrollbar is larger than three characters, 
 	///   arrow indicators are drawn.
 	/// </para>
-	/// </remarks>
+	
 	public class ScrollBarView : View {
 		bool vertical;
 		int size, position;
@@ -191,7 +191,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// The size of content the scrollbar represents.
 		/// </summary>
 		/// <value>The size.</value>
-		/// <remarks>The <see cref="Size"/> is typically the size of the virtual content. E.g. when a Scrollbar is
+		The <see cref="Size"/> is typically the size of the virtual content. E.g. when a Scrollbar is
 		/// part of a <see cref="View"/> the Size is set to the appropriate dimension of <see cref="Host"/>.</remarks>
 		public int Size {
 			get => size;

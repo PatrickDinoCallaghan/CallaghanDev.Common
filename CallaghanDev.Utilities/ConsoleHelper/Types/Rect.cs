@@ -57,9 +57,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Empty Shared Field
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	An uninitialized Rectangle Structure.
-		/// </remarks>
+		
 
 		public static readonly Rect Empty;
 
@@ -67,10 +67,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	FromLTRB Shared Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Produces a Rectangle structure from left, top, right
 		///	and bottom coordinates.
-		/// </remarks>
+		
 
 		public static Rect FromLTRB (int left, int top,
 						  int right, int bottom)
@@ -83,10 +83,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Inflate Shared Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Produces a new Rectangle by inflating an existing 
 		///	Rectangle by the specified coordinate values.
-		/// </remarks>
+		
 
 		public static Rect Inflate (Rect rect, int x, int y)
 		{
@@ -99,9 +99,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Inflate Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Inflates the Rectangle by a specified width and height.
-		/// </remarks>
+		
 
 		public void Inflate (int width, int height)
 		{
@@ -112,9 +112,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Inflate Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Inflates the Rectangle by a specified Size.
-		/// </remarks>
+		
 
 		public void Inflate (Size size)
 		{
@@ -128,10 +128,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Intersect Shared Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Produces a new Rectangle by intersecting 2 existing 
 		///	Rectangles. Returns null if there is no	intersection.
-		/// </remarks>
+		
 
 		public static Rect Intersect (Rect a, Rect b)
 		{
@@ -151,10 +151,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Intersect Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Replaces the Rectangle with the intersection of itself
 		///	and another Rectangle.
-		/// </remarks>
+		
 
 		public void Intersect (Rect rect)
 		{
@@ -165,10 +165,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Union Shared Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Produces a new Rectangle from the union of 2 existing 
 		///	Rectangles.
-		/// </remarks>
+		
 
 		public static Rect Union (Rect a, Rect b)
 		{
@@ -182,11 +182,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Equality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Rectangle objects. The return value is
 		///	based on the equivalence of the Location and Size 
 		///	properties of the two Rectangles.
-		/// </remarks>
+		
 
 		public static bool operator == (Rect left, Rect right)
 		{
@@ -198,11 +198,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Inequality Operator
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Compares two Rectangle objects. The return value is
 		///	based on the equivalence of the Location and Size 
 		///	properties of the two Rectangles.
-		/// </remarks>
+		
 
 		public static bool operator != (Rect left, Rect right)
 		{
@@ -218,9 +218,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Rectangle Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Rectangle from Point and Size values.
-		/// </remarks>
+		
 
 		public Rect (Point location, Size size)
 		{
@@ -236,10 +236,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Rectangle Constructor
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Creates a Rectangle from a specified x,y location and
 		///	width and height values.
-		/// </remarks>
+		
 
 		public Rect (int x, int y, int width, int height)
 		{
@@ -257,10 +257,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Bottom Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Y coordinate of the bottom edge of the Rectangle.
 		///	Read only.
-		/// </remarks>		
+				
 		public int Bottom {
 			get {
 				return Y + Height;
@@ -271,9 +271,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	IsEmpty Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Indicates if the width or height are zero. Read only.
-		/// </remarks>		
+				
 		public bool IsEmpty {
 			get {
 				return ((X == 0) && (Y == 0) && (Width == 0) && (Height == 0));
@@ -284,10 +284,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Left Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The X coordinate of the left edge of the Rectangle.
 		///	Read only.
-		/// </remarks>
+		
 
 		public int Left {
 			get {
@@ -299,9 +299,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Location Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Location of the top-left corner of the Rectangle.
-		/// </remarks>
+		
 
 		public Point Location {
 			get {
@@ -317,10 +317,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Right Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The X coordinate of the right edge of the Rectangle.
 		///	Read only.
-		/// </remarks>
+		
 
 		public int Right {
 			get {
@@ -332,9 +332,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Size Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Size of the Rectangle.
-		/// </remarks>
+		
 
 		public Size Size {
 			get {
@@ -350,10 +350,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Top Property
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	The Y coordinate of the top edge of the Rectangle.
 		///	Read only.
-		/// </remarks>
+		
 
 		public int Top {
 			get {
@@ -365,9 +365,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Contains Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks if an x,y coordinate lies within this Rectangle.
-		/// </remarks>
+		
 
 		public bool Contains (int x, int y)
 		{
@@ -379,9 +379,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Contains Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks if a Point lies within this Rectangle.
-		/// </remarks>
+		
 
 		public bool Contains (Point pt)
 		{
@@ -392,10 +392,10 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Contains Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks if a Rectangle lies entirely within this 
 		///	Rectangle.
-		/// </remarks>
+		
 
 		public bool Contains (Rect rect)
 		{
@@ -406,9 +406,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Equals Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks equivalence of this Rectangle and another object.
-		/// </remarks>
+		
 
 		public override bool Equals (object obj)
 		{
@@ -422,9 +422,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	GetHashCode Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Calculates a hashing value.
-		/// </remarks>
+		
 
 		public override int GetHashCode ()
 		{
@@ -435,9 +435,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	IntersectsWith Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Checks if a Rectangle intersects with this one.
-		/// </remarks>
+		
 
 		public bool IntersectsWith (Rect rect)
 		{
@@ -455,9 +455,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Offset Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Moves the Rectangle a specified distance.
-		/// </remarks>
+		
 
 		public void Offset (int x, int y)
 		{
@@ -469,9 +469,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	Offset Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Moves the Rectangle a specified distance.
-		/// </remarks>
+		
 
 		public void Offset (Point pos)
 		{
@@ -483,9 +483,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper
 		///	ToString Method
 		/// </summary>
 		///
-		/// <remarks>
+		
 		///	Formats the Rectangle as a string in (x,y,w,h) notation.
-		/// </remarks>
+		
 
 		public override string ToString ()
 		{

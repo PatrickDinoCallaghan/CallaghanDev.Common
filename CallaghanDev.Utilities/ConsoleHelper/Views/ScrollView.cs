@@ -18,7 +18,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <summary>
 	/// Scrollviews are views that present a window into a virtual space where subviews are added.  Similar to the iOS UIScrollView.
 	/// </summary>
-	/// <remarks>
+	
 	/// <para>
 	///   The subviews that are added to this <see cref="Gui.ScrollView"/> are offset by the
 	///   <see cref="ContentOffset"/> property.  The view itself is a window into the 
@@ -27,7 +27,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 	/// <para>
 	///   Use the 
 	/// </para>
-	/// </remarks>
+	
 	public class ScrollView : View {
 		private class ContentView : View {
 			public ContentView (Rect frame) : base (frame)
@@ -263,8 +263,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Removes all widgets from this container.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public override void RemoveAll ()
 		{
 			contentView.RemoveAll ();

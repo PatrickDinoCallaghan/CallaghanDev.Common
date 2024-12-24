@@ -192,8 +192,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Removes a <see cref="View"/> from this container.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public override void Remove (View view)
 		{
 			if (view == null)
@@ -214,8 +214,8 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <summary>
 		///   Removes all <see cref="View"/>s from this container.
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
+		
+		
 		public override void RemoveAll ()
 		{
 			contentView.RemoveAll ();

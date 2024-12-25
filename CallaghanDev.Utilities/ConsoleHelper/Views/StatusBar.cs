@@ -82,11 +82,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			return CanExecute == null ? true : CanExecute ();
 		}
 
-		/// <summary>
-		/// Gets or sets arbitrary data for the status item.
-		/// </summary>
-		This property is not used internally.</remarks>
-		public object Data { get; set; }
+        /// <summary>
+        /// Gets or sets arbitrary data for the status item.
+        /// </summary>
+        ///<remarks> 	This property is not used internally.</remarks>
+        public object Data { get; set; }
 	};
 
 	/// <summary>

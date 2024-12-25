@@ -240,9 +240,9 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				);
 		}
 
-		/// <inheritdoc/>
-		Also ensures that cursor is invisible after entering the <see cref="GraphView"/>.</remarks>
-		public override bool OnEnter (View view)
+        /// <inheritdoc/>
+        ///<remarks> Also ensures that cursor is invisible after entering the <see cref="GraphView"/>.</remarks>
+        public override bool OnEnter (View view)
 		{
 			Driver.SetCursorVisibility (CursorVisibility.Invisible);
 			return base.OnEnter (view);

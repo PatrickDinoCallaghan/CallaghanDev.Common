@@ -589,69 +589,81 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		public static Dictionary<string, ColorScheme> ColorSchemes { get; private set; }
 	}
 
-	/// <summary>
-	/// Cursors Visibility that are displayed
-	/// </summary>
-	// 
-	// Hexa value are set as 0xAABBCCDD where :
-	//
-	//     AA stand for the TERMINFO DECSUSR parameter value to be used under Linux & MacOS
-	//     BB stand for the NCurses curs_set parameter value to be used under Linux & MacOS
-	//     CC stand for the CONSOLE_CURSOR_INFO.bVisible parameter value to be used under Windows
-	//     DD stand for the CONSOLE_CURSOR_INFO.dwSize parameter value to be used under Windows
-	//
-	public enum CursorVisibility {
-		/// <summary>
-		///	Cursor caret has default
-		/// </summary>
-		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/>. This default directly depends of the XTerm user configuration settings so it could be Block, I-Beam, Underline with possible blinking.</remarks>
-		Default = 0x00010119,
+    /// <summary>
+    /// Cursors Visibility that are displayed
+    /// </summary>
+    // 
+    // Hexa value are set as 0xAABBCCDD where :
+    //
+    //     AA stand for the TERMINFO DECSUSR parameter value to be used under Linux & MacOS
+    //     BB stand for the NCurses curs_set parameter value to be used under Linux & MacOS
+    //     CC stand for the CONSOLE_CURSOR_INFO.bVisible parameter value to be used under Windows
+    //     DD stand for the CONSOLE_CURSOR_INFO.dwSize parameter value to be used under Windows
+    //
+    public enum CursorVisibility
+    {
+        /// <summary>
+        /// Cursor caret has the default appearance.
+        /// </summary>
+        /// <remarks>
+        /// Works under Xterm-like terminals; otherwise, this is equivalent to <see cref="Underline"/>.
+        /// The default depends on the XTerm user configuration settings, so it could be Block, I-Beam, or Underline, possibly blinking.
+        /// </remarks>
+        Default = 0x00010119,
 
-		/// <summary>
-		///	Cursor caret is hidden
-		/// </summary>
-		Invisible = 0x03000019,
+        /// <summary>
+        /// Cursor caret is hidden.
+        /// </summary>
+        Invisible = 0x03000019,
 
-		/// <summary>
-		///	Cursor caret is normally shown as a blinking underline bar _
-		/// </summary>
-		Underline = 0x03010119,
+        /// <summary>
+        /// Cursor caret is normally shown as a blinking underline bar (_).
+        /// </summary>
+        Underline = 0x03010119,
 
-		/// <summary>
-		///	Cursor caret is normally shown as a underline bar _
-		/// </summary>
-		Under Windows, this is equivalent to <see ref="UnderscoreBlinking"/></remarks>
-		UnderlineFix = 0x04010119,
+        /// <summary>
+        /// Cursor caret is normally shown as an underline bar (_).
+        /// </summary>
+        /// <remarks>
+        /// Under Windows, this is equivalent to <see cref="Underline"/>.
+        /// </remarks>
+        UnderlineFix = 0x04010119,
 
-		/// <summary>
-		///	Cursor caret is displayed a blinking vertical bar |
-		/// </summary>
-		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
-		Vertical = 0x05010119,
+        /// <summary>
+        /// Cursor caret is displayed as a blinking vertical bar (|).
+        /// </summary>
+        /// <remarks>
+        /// Works under Xterm-like terminals; otherwise, this is equivalent to <see cref="Underline"/>.
+        /// </remarks>
+        Vertical = 0x05010119,
 
-		/// <summary>
-		///	Cursor caret is displayed a blinking vertical bar |
-		/// </summary>
-		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Underscore"/></remarks>
-		VerticalFix = 0x06010119,
+        /// <summary>
+        /// Cursor caret is displayed as a blinking vertical bar (|).
+        /// </summary>
+        /// <remarks>
+        /// Works under Xterm-like terminals; otherwise, this is equivalent to <see cref="Underline"/>.
+        /// </remarks>
+        VerticalFix = 0x06010119,
 
-		/// <summary>
-		///	Cursor caret is displayed as a blinking block ▉
-		/// </summary>
-		Box = 0x01020164,
+        /// <summary>
+        /// Cursor caret is displayed as a blinking block (▉).
+        /// </summary>
+        Box = 0x01020164,
 
-		/// <summary>
-		///	Cursor caret is displayed a block ▉
-		/// </summary>
-		Works under Xterm-like terminal otherwise this is equivalent to <see ref="Block"/></remarks>
-		BoxFix = 0x02020164,
-	}
-	
-	/// <summary>
-	/// ConsoleDriver is an abstract class that defines the requirements for a console driver.  
-	/// There are currently three implementations: <see cref="CursesDriver"/> (for Unix and Mac), <see cref="WindowsDriver"/>, and <see cref="NetDriver"/> that uses the .NET Console API.
-	/// </summary>
-	public abstract class ConsoleDriver {
+        /// <summary>
+        /// Cursor caret is displayed as a block (▉).
+        /// </summary>
+        /// <remarks>
+        /// Works under Xterm-like terminals; otherwise, this is equivalent to <see cref="Box"/>.
+        /// </remarks>
+        BoxFix = 0x02020164
+    }
+
+    /// <summary>
+    /// ConsoleDriver is an abstract class that defines the requirements for a console driver.  
+    /// There are currently three implementations: <see cref="CursesDriver"/> (for Unix and Mac), <see cref="WindowsDriver"/>, and <see cref="NetDriver"/> that uses the .NET Console API.
+    /// </summary>
+    public abstract class ConsoleDriver {
 		/// <summary>
 		/// The handler fired when the terminal is resized.
 		/// </summary>
@@ -895,18 +907,18 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			TerminalResized = terminalResized;
 		}
 
-		/// <summary>
-		/// Draws the title for a Window-style view incorporating padding. 
-		/// </summary>
-		/// <param name="region">Screen relative region where the frame will be drawn.</param>
-		/// <param name="title">The title for the window. The title will only be drawn if <c>title</c> is not null or empty and paddingTop is greater than 0.</param>
-		/// <param name="paddingLeft">Number of columns to pad on the left (if 0 the border will not appear on the left).</param>
-		/// <param name="paddingTop">Number of rows to pad on the top (if 0 the border and title will not appear on the top).</param>
-		/// <param name="paddingRight">Number of columns to pad on the right (if 0 the border will not appear on the right).</param>
-		/// <param name="paddingBottom">Number of rows to pad on the bottom (if 0 the border will not appear on the bottom).</param>
-		/// <param name="textAlignment">Not yet implemented.</param>
-		</remarks>
-		public virtual void DrawWindowTitle (Rect region, ustring title, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom, TextAlignment textAlignment = TextAlignment.Left)
+        /// <summary>
+        /// Draws the title for a Window-style view incorporating padding. 
+        /// </summary>
+        /// <param name="region">Screen relative region where the frame will be drawn.</param>
+        /// <param name="title">The title for the window. The title will only be drawn if <c>title</c> is not null or empty and paddingTop is greater than 0.</param>
+        /// <param name="paddingLeft">Number of columns to pad on the left (if 0 the border will not appear on the left).</param>
+        /// <param name="paddingTop">Number of rows to pad on the top (if 0 the border and title will not appear on the top).</param>
+        /// <param name="paddingRight">Number of columns to pad on the right (if 0 the border will not appear on the right).</param>
+        /// <param name="paddingBottom">Number of rows to pad on the bottom (if 0 the border will not appear on the bottom).</param>
+        /// <param name="textAlignment">Not yet implemented.</param>
+        ///<remarks> </remarks>
+        public virtual void DrawWindowTitle (Rect region, ustring title, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom, TextAlignment textAlignment = TextAlignment.Left)
 		{
 			var width = region.Width - (paddingLeft + 2) * 2;
 			if (!ustring.IsNullOrEmpty (title) && width > 4 && region.Y + paddingTop <= region.Y + paddingBottom) {
@@ -1138,17 +1150,19 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			}
 		}
 
-		/// <summary>
-		/// Draws a frame on the specified region with the specified padding around the frame.
-		/// </summary>
-		/// <param name="region">Screen relative region where the frame will be drawn.</param>
-		/// <param name="padding">Padding to add on the sides.</param>
-		/// <param name="fill">If set to <c>true</c> it will clear the contents with the current color, otherwise the contents will be left untouched.</param>
-		This API has been superseded by <see cref="DrawWindowFrame(Rect, int, int, int, int, bool, bool, Border)"/>.</remarks>
-		This API is equivalent to calling <c>DrawWindowFrame(Rect, p - 1, p - 1, p - 1, p - 1)</c>. In other words,
-		/// A padding value of 0 means there is actually a one cell border.
-		
-		public virtual void DrawFrame (Rect region, int padding, bool fill)
+        /// <summary>
+        /// Draws a frame on the specified region with the specified padding around the frame.
+        /// </summary>
+        /// <param name="region">Screen relative region where the frame will be drawn.</param>
+        /// <param name="padding">Padding to add on the sides.</param>
+        /// <param name="fill">If set to <c>true</c> it will clear the contents with the current color, otherwise the contents will be left untouched.</param>
+
+        /// <remarks>
+        ///  This API has been superseded by <see cref="DrawWindowFrame(Rect, int, int, int, int, bool, bool, Border)"/>.</remarks>
+        /// This API is equivalent to calling <c>DrawWindowFrame(Rect, p - 1, p - 1, p - 1, p - 1)</c>. In other words,
+        /// A padding value of 0 means there is actually a one cell border.
+        /// </remarks>
+        public virtual void DrawFrame (Rect region, int padding, bool fill)
 		{
 			// DrawFrame assumes the border is always at least one row/col thick
 			// DrawWindowFrame assumes a padding of 0 means NO padding and no frame

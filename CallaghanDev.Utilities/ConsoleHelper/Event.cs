@@ -766,14 +766,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		AllEvents = unchecked((int)0x7ffffff),
 	}
 
-	/// <summary>
-	/// Low-level construct that conveys the details of mouse events, such
-	/// as coordinates and button state, from ConsoleDrivers up to <see cref="Application"/> and
-	/// Views.
-	/// </summary>
-	The <see cref="Application"/> class includes the <see cref="Application.RootMouseEvent"/>
-	/// Action which takes a MouseEvent argument.</remarks>
-	public class MouseEvent {
+    /// <summary>
+    /// Low-level construct that conveys the details of mouse events, such
+    /// as coordinates and button state, from ConsoleDrivers up to <see cref="Application"/> and
+    /// Views.
+    /// </summary>
+    ///<remarks> The <see cref="Application"/> class includes the <see cref="Application.RootMouseEvent"/>
+    /// Action which takes a MouseEvent argument.</remarks>
+    public class MouseEvent {
 		/// <summary>
 		/// The X (column) location for the mouse event.
 		/// </summary>

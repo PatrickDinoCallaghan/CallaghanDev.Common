@@ -35,11 +35,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		ShortcutHelper shortcutHelper;
 		internal int TitleLength => GetMenuBarItemLength (Title);
 
-		/// <summary>
-		/// Gets or sets arbitrary data for the menu item.
-		/// </summary>
-		This property is not used internally.</remarks>
-		public object Data { get; set; }
+        /// <summary>
+        /// Gets or sets arbitrary data for the menu item.
+        /// </summary>
+        ///<remarks> This property is not used internally.</remarks>
+        public object Data { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="MenuItem"/>

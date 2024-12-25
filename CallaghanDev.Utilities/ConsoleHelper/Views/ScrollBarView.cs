@@ -187,13 +187,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 		}
 
-		/// <summary>
-		/// The size of content the scrollbar represents.
-		/// </summary>
-		/// <value>The size.</value>
-		The <see cref="Size"/> is typically the size of the virtual content. E.g. when a Scrollbar is
-		/// part of a <see cref="View"/> the Size is set to the appropriate dimension of <see cref="Host"/>.</remarks>
-		public int Size {
+        /// <summary>
+        /// The size of content the scrollbar represents.
+        /// </summary>
+        /// <value>The size.</value>
+        ///<remarks> The <see cref="Size"/> is typically the size of the virtual content. E.g. when a Scrollbar is
+        /// part of a <see cref="View"/> the Size is set to the appropriate dimension of <see cref="Host"/>.</remarks>
+        public int Size {
 			get => size;
 			set {
 				size = value;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using ILGPU.IR.Analyses;
 using NStack;
 
 namespace CallaghanDev.Utilities.ConsoleHelper{
@@ -219,7 +220,7 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		/// <summary>
 		/// Gets or sets arbitrary data for the view.
 		/// </summary>
-		This property is not used internally.</remarks>
+		///<remarks>This property is not used internally.</remarks>
 		public object Data { get; set; }
 
 		internal Direction FocusDirection {
@@ -406,12 +407,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		// The frame for the object. Superview relative.
 		Rect frame;
 
-		/// <summary>
-		/// Gets or sets an identifier for the view;
-		/// </summary>
-		/// <value>The identifier.</value>
-		The id should be unique across all Views that share a SuperView.</remarks>
-		public ustring Id { get; set; } = "";
+        /// <summary>
+        /// Gets or sets an identifier for the view;
+        /// </summary>
+        /// <value>The identifier.</value>
+        ///<remarks>The id should be unique across all Views that share a SuperView.</remarks>
+        public ustring Id { get; set; } = "";
 
 		/// <summary>
 		/// Returns a value indicating if this View is currently on Top (Active)
@@ -1764,20 +1765,20 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 		}
 
 
-		/// <summary>
-		/// <para>Adds a new key combination that will trigger the given <paramref name="command"/>
-		/// (if supported by the View - see <see cref="GetSupportedCommands"/>)
-		/// </para>
-		/// <para>If the key is already bound to a different <see cref="Command"/> it will be
-		/// rebound to this one</para>
-		Commands are only ever applied to the current <see cref="View"/>(i.e. this feature
-		/// cannot be used to switch focus to another view and perform multiple commands there) </remarks>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="command">The command(s) to run on the <see cref="View"/> when <paramref name="key"/> is pressed.
-		/// When specifying multiple commands, all commands will be applied in sequence. The bound <paramref name="key"/> strike
-		/// will be consumed if any took effect.</param>
-		public void AddKeyBinding (Key key, params Command [] command)
+        /// <summary>
+        /// <para>Adds a new key combination that will trigger the given <paramref name="command"/>
+        /// (if supported by the View - see <see cref="GetSupportedCommands"/>)
+        /// </para>
+        /// <para>If the key is already bound to a different <see cref="Command"/> it will be
+        /// rebound to this one</para>
+        ///<remarks> Commands are only ever applied to the current <see cref="View"/>(i.e. this feature
+        /// cannot be used to switch focus to another view and perform multiple commands there) </remarks>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="command">The command(s) to run on the <see cref="View"/> when <paramref name="key"/> is pressed.
+        /// When specifying multiple commands, all commands will be applied in sequence. The bound <paramref name="key"/> strike
+        /// will be consumed if any took effect.</param>
+        public void AddKeyBinding (Key key, params Command [] command)
 		{
 			if (command.Length == 0) {
 				throw new ArgumentException ("At least one command must be specified", nameof (command));
@@ -2833,13 +2834,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper{
 			/// </summary>
 			public MouseEvent MouseEvent { get; set; }
 
-			/// <summary>
-			/// Indicates if the current mouse event has already been processed and the driver should stop notifying any other event subscriber.
-			/// Its important to set this value to true specially when updating any View's layout from inside the subscriber method.
-			/// </summary>
-			This property forwards to the <see cref="MouseEvent.Handled"/> property and is provided as a convenience and for
-			/// backwards compatibility</remarks>
-			public bool Handled {
+            /// <summary>
+            /// Indicates if the current mouse event has already been processed and the driver should stop notifying any other event subscriber.
+            /// Its important to set this value to true specially when updating any View's layout from inside the subscriber method.
+            /// </summary>
+            ///<remarks> This property forwards to the <see cref="MouseEvent.Handled"/> property and is provided as a convenience and for
+            /// backwards compatibility</remarks>
+            public bool Handled {
 				get => MouseEvent.Handled;
 				set => MouseEvent.Handled = value;
 			}

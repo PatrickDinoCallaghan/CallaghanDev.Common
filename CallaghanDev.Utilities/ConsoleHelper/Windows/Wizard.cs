@@ -73,11 +73,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// 
 		
 		public class WizardStep : FrameView {
-			/// <summary>
-			/// The title of the <see cref="WizardStep"/>. 
-			/// </summary>
-			The Title is only displayed when the <see cref="Wizard"/> is used as a modal pop-up (see <see cref="Wizard.Modal"/>.</remarks>
-			public new ustring Title {
+            /// <summary>
+            /// The title of the <see cref="WizardStep"/>. 
+            /// </summary>
+            ///<remarks> The Title is only displayed when the <see cref="Wizard"/> is used as a modal pop-up (see <see cref="Wizard.Modal"/>.</remarks>
+            public new ustring Title {
 				get => title;
 				set {
 					if (!OnTitleChanging (title, value)) {
@@ -167,12 +167,12 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			private WizardContentView contentView = new WizardContentView ();
 
-			/// <summary>
-			/// Sets or gets help text for the <see cref="WizardStep"/>.If <see cref="WizardStep.HelpText"/> is empty
-			/// the help pane will not be visible and the content will fill the entire WizardStep.
-			/// </summary>
-			The help text is displayed using a read-only <see cref="TextView"/>.</remarks>
-			public ustring HelpText {
+            /// <summary>
+            /// Sets or gets help text for the <see cref="WizardStep"/>.If <see cref="WizardStep.HelpText"/> is empty
+            /// the help pane will not be visible and the content will fill the entire WizardStep.
+            /// </summary>
+            ///<remarks> The help text is displayed using a read-only <see cref="TextView"/>.</remarks>
+            public ustring HelpText {
 				get => helpTextView.Text;
 				set {
 					helpTextView.Text = value;
@@ -182,18 +182,18 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 			private TextView helpTextView = new TextView ();
 
-			/// <summary>
-			/// Sets or gets the text for the back button. The back button will only be visible on 
-			/// steps after the first step.
-			/// </summary>
-			The default text is "Back"</remarks>
-			public ustring BackButtonText { get; set; } = ustring.Empty;
+            /// <summary>
+            /// Sets or gets the text for the back button. The back button will only be visible on 
+            /// steps after the first step.
+            /// </summary>
+            ///<remarks> The default text is "Back"</remarks>
+            public ustring BackButtonText { get; set; } = ustring.Empty;
 
-			/// <summary>
-			/// Sets or gets the text for the next/finish button.
-			/// </summary>
-			The default text is "Next..." if the Pane is not the last pane. Otherwise it is "Finish"</remarks>
-			public ustring NextButtonText { get; set; } = ustring.Empty;
+            /// <summary>
+            /// Sets or gets the text for the next/finish button.
+            /// </summary>
+            ///<remarks> The default text is "Next..." if the Pane is not the last pane. Otherwise it is "Finish"</remarks>
+            public ustring NextButtonText { get; set; } = ustring.Empty;
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="Wizard"/> class using <see cref="LayoutStyle.Computed"/> positioning.
@@ -591,13 +591,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		public Button NextFinishButton { get => nextfinishBtn; }
 		private Button nextfinishBtn;
 
-		/// <summary>
-		/// Adds a step to the wizard. The Next and Back buttons navigate through the added steps in the
-		/// order they were added.
-		/// </summary>
-		/// <param name="newStep"></param>
-		The "Next..." button of the last step added will read "Finish" (unless changed from default).</remarks>
-		public void AddStep (WizardStep newStep)
+        /// <summary>
+        /// Adds a step to the wizard. The Next and Back buttons navigate through the added steps in the
+        /// order they were added.
+        /// </summary>
+        /// <param name="newStep"></param>
+        ///<remarks> The "Next..." button of the last step added will read "Finish" (unless changed from default).</remarks>
+        public void AddStep (WizardStep newStep)
 		{
 			SizeStep (newStep);
 

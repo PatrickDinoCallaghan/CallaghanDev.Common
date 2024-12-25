@@ -176,25 +176,25 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// </summary>
 		internal Dictionary<T, Branch<T>> roots { get; set; } = new Dictionary<T, Branch<T>> ();
 
-		/// <summary>
-		/// The amount of tree view that has been scrolled off the top of the screen (by the user 
-		/// scrolling down).
-		/// </summary>
-		Setting a value of less than 0 will result in a offset of 0. To see changes 
-		/// in the UI call <see cref="View.SetNeedsDisplay()"/>.</remarks>
-		public int ScrollOffsetVertical {
+        /// <summary>
+        /// The amount of tree view that has been scrolled off the top of the screen (by the user 
+        /// scrolling down).
+        /// </summary>
+        ///<remarks> Setting a value of less than 0 will result in a offset of 0. To see changes 
+        /// in the UI call <see cref="View.SetNeedsDisplay()"/>.</remarks>
+        public int ScrollOffsetVertical {
 			get => scrollOffsetVertical;
 			set {
 				scrollOffsetVertical = System.Math.Max (0, value);
 			}
 		}
 
-		/// <summary>
-		/// The amount of tree view that has been scrolled to the right (horizontally).
-		/// </summary>
-		Setting a value of less than 0 will result in a offset of 0. To see changes 
-		/// in the UI call <see cref="View.SetNeedsDisplay()"/>.</remarks>
-		public int ScrollOffsetHorizontal {
+        /// <summary>
+        /// The amount of tree view that has been scrolled to the right (horizontally).
+        /// </summary>
+        ///<remarks> Setting a value of less than 0 will result in a offset of 0. To see changes 
+        /// in the UI call <see cref="View.SetNeedsDisplay()"/>.</remarks>
+        public int ScrollOffsetHorizontal {
 			get => scrollOffsetHorizontal;
 			set {
 				scrollOffsetHorizontal = System.Math.Max (0, value);
@@ -342,13 +342,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			SetNeedsDisplay ();
 		}
 
-		/// <summary>
-		/// Removes the given root object from the tree
-		/// </summary>
-		If <paramref name="o"/> is the currently <see cref="SelectedObject"/> then the
-		/// selection is cleared</remarks>.
-		/// <param name="o"></param>
-		public void Remove (T o)
+        /// <summary>
+        /// Removes the given root object from the tree
+        /// </summary>
+        ///<remarks> If <paramref name="o"/> is the currently <see cref="SelectedObject"/> then the
+        /// selection is cleared</remarks>.
+        /// <param name="o"></param>
+        public void Remove (T o)
 		{
 			if (roots.ContainsKey (o)) {
 				roots.Remove (o);
@@ -382,15 +382,15 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 		}
 
-		/// <summary>
-		/// Refreshes the state of the object <paramref name="o"/> in the tree. This will 
-		/// recompute children, string representation etc.
-		/// </summary>
-		This has no effect if the object is not exposed in the tree.</remarks>
-		/// <param name="o"></param>
-		/// <param name="startAtTop">True to also refresh all ancestors of the objects branch 
-		/// (starting with the root). False to refresh only the passed node.</param>
-		public void RefreshObject (T o, bool startAtTop = false)
+        /// <summary>
+        /// Refreshes the state of the object <paramref name="o"/> in the tree. This will 
+        /// recompute children, string representation etc.
+        /// </summary>
+        ///<remarks> This has no effect if the object is not exposed in the tree.</remarks>
+        /// <param name="o"></param>
+        /// <param name="startAtTop">True to also refresh all ancestors of the objects branch 
+        /// (starting with the root). False to refresh only the passed node.</param>
+        public void RefreshObject (T o, bool startAtTop = false)
 		{
 			var branch = ObjectToBranch (o);
 			if (branch != null) {
@@ -476,17 +476,17 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 		}
 
-		/// <summary>
-		/// Returns the index of the object <paramref name="o"/> if it is currently exposed (it's 
-		/// parent(s) have been expanded). This can be used with <see cref="ScrollOffsetVertical"/>
-		/// and <see cref="View.SetNeedsDisplay()"/> to scroll to a specific object.
-		/// </summary>
-		Uses the Equals method and returns the first index at which the object is found
-		/// or -1 if it is not found.</remarks>
-		/// <param name="o">An object that appears in your tree and is currently exposed.</param>
-		/// <returns>The index the object was found at or -1 if it is not currently revealed or
-		/// not in the tree at all.</returns>
-		public int GetScrollOffsetOf (T o)
+        /// <summary>
+        /// Returns the index of the object <paramref name="o"/> if it is currently exposed (it's 
+        /// parent(s) have been expanded). This can be used with <see cref="ScrollOffsetVertical"/>
+        /// and <see cref="View.SetNeedsDisplay()"/> to scroll to a specific object.
+        /// </summary>
+        ///<remarks> Uses the Equals method and returns the first index at which the object is found
+        /// or -1 if it is not found.</remarks>
+        /// <param name="o">An object that appears in your tree and is currently exposed.</param>
+        /// <returns>The index the object was found at or -1 if it is not currently revealed or
+        /// not in the tree at all.</returns>
+        public int GetScrollOffsetOf (T o)
 		{
 			var map = BuildLineMap ();
 			for (int i = 0; i < map.Count; i++) {
@@ -533,14 +533,14 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			}
 		}
 
-		/// <summary>
-		/// Calculates all currently visible/expanded branches (including leafs) and outputs them 
-		/// by index from the top of the screen.
-		/// </summary>
-		Index 0 of the returned array is the first item that should be visible in the
-		/// top of the control, index 1 is the next etc.</remarks>
-		/// <returns></returns>
-		private IReadOnlyCollection<Branch<T>> BuildLineMap ()
+        /// <summary>
+        /// Calculates all currently visible/expanded branches (including leafs) and outputs them 
+        /// by index from the top of the screen.
+        /// </summary>
+        ///<remarks> Index 0 of the returned array is the first item that should be visible in the
+        /// top of the control, index 1 is the next etc.</remarks>
+        /// <returns></returns>
+        private IReadOnlyCollection<Branch<T>> BuildLineMap ()
 		{
 			if (cachedLineMap != null) {
 				return cachedLineMap;
@@ -986,16 +986,16 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			SetNeedsDisplay ();
 		}
 
-		/// <summary>
-		/// The number of screen lines to move the currently selected object by. Supports negative values.
-		/// <paramref name="offset"/>. Each branch occupies 1 line on screen.
-		/// </summary>
-		If nothing is currently selected or the selected object is no longer in the tree
-		/// then the first object in the tree is selected instead.</remarks>
-		/// <param name="offset">Positive to move the selection down the screen, negative to move it up</param>
-		/// <param name="expandSelection">True to expand the selection (assuming 
-		/// <see cref="MultiSelect"/> is enabled). False to replace.</param>
-		public void AdjustSelection (int offset, bool expandSelection = false)
+        /// <summary>
+        /// The number of screen lines to move the currently selected object by. Supports negative values.
+        /// <paramref name="offset"/>. Each branch occupies 1 line on screen.
+        /// </summary>
+        ///<remarks> If nothing is currently selected or the selected object is no longer in the tree
+        /// then the first object in the tree is selected instead.</remarks>
+        /// <param name="offset">Positive to move the selection down the screen, negative to move it up</param>
+        /// <param name="expandSelection">True to expand the selection (assuming 
+        /// <see cref="MultiSelect"/> is enabled). False to replace.</param>
+        public void AdjustSelection (int offset, bool expandSelection = false)
 		{
 			// if it is not a shift click or we don't allow multi select
 			if (!expandSelection || !MultiSelect) {

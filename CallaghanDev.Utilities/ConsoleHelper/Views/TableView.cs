@@ -101,11 +101,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		/// <returns></returns>
 		public Stack<TableSelection> MultiSelectedRegions { get; } = new Stack<TableSelection> ();
 
-		/// <summary>
-		/// Horizontal scroll offset.  The index of the first column in <see cref="Table"/> to display when when rendering the view.
-		/// </summary>
-		This property allows very wide tables to be rendered with horizontal scrolling</remarks>
-		public int ColumnOffset {
+        /// <summary>
+        /// Horizontal scroll offset.  The index of the first column in <see cref="Table"/> to display when when rendering the view.
+        /// </summary>
+        ///<remarks> This property allows very wide tables to be rendered with horizontal scrolling</remarks>
+        public int ColumnOffset {
 			get => columnOffset;
 
 			//try to prevent this being set to an out of bounds column
@@ -890,13 +890,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			Update ();
 		}
 
-		/// <summary>
-		/// Returns all cells in any <see cref="MultiSelectedRegions"/> (if <see cref="MultiSelect"/> is enabled) and the selected cell
-		/// </summary>
-		Return value is not affected by <see cref="FullRowSelect"/> (i.e. returned <see cref="Point"/>s are not expanded to 
-		/// include all points on row).</remarks>
-		/// <returns></returns>
-		public IEnumerable<Point> GetAllSelectedCells ()
+        /// <summary>
+        /// Returns all cells in any <see cref="MultiSelectedRegions"/> (if <see cref="MultiSelect"/> is enabled) and the selected cell
+        /// </summary>
+        ///<remarks> Return value is not affected by <see cref="FullRowSelect"/> (i.e. returned <see cref="Point"/>s are not expanded to 
+        /// include all points on row).</remarks>
+        /// <returns></returns>
+        public IEnumerable<Point> GetAllSelectedCells ()
 		{
 			if (TableIsNullOrInvisible () || Table.Rows.Count == 0)
 				yield break;
@@ -967,16 +967,16 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		{
 			return CreateTableSelection (x, y, x, y);
 		}
-		/// <summary>
-		/// <para>
-		/// Returns true if the given cell is selected either because it is the active cell or part of a multi cell selection (e.g. <see cref="FullRowSelect"/>).
-		/// </para>
-		Returns <see langword="false"/> if <see cref="ColumnStyle.Visible"/> is <see langword="false"/>.</remarks>
-		/// </summary>
-		/// <param name="col"></param>
-		/// <param name="row"></param>
-		/// <returns></returns>
-		public bool IsSelected (int col, int row)
+        /// <summary>
+        /// <para>
+        /// Returns true if the given cell is selected either because it is the active cell or part of a multi cell selection (e.g. <see cref="FullRowSelect"/>).
+        /// </para>
+        ///<remarks> Returns <see langword="false"/> if <see cref="ColumnStyle.Visible"/> is <see langword="false"/>.</remarks>
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public bool IsSelected (int col, int row)
 		{
 			if(!IsColumnVisible(col)) {
 				return false;
@@ -1202,11 +1202,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 
 			return new Point (colHit.X, tableRow + headerHeight - RowOffset);
 		}
-		/// <summary>
-		/// Updates the view to reflect changes to <see cref="Table"/> and to (<see cref="ColumnOffset"/> / <see cref="RowOffset"/>) etc
-		/// </summary>
-		This always calls <see cref="View.SetNeedsDisplay()"/></remarks>
-		public void Update ()
+        /// <summary>
+        /// Updates the view to reflect changes to <see cref="Table"/> and to (<see cref="ColumnOffset"/> / <see cref="RowOffset"/>) etc
+        /// </summary>
+        ///<remarks> This always calls <see cref="View.SetNeedsDisplay()"/></remarks>
+        public void Update ()
 		{
 			if (TableIsNullOrInvisible ()) {
 				SetNeedsDisplay ();
@@ -1221,11 +1221,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			SetNeedsDisplay ();
 		}
 
-		/// <summary>
-		/// Updates <see cref="ColumnOffset"/> and <see cref="RowOffset"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
-		/// </summary>
-		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
-		public void EnsureValidScrollOffsets ()
+        /// <summary>
+        /// Updates <see cref="ColumnOffset"/> and <see cref="RowOffset"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
+        /// </summary>
+        ///<remarks> Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+        public void EnsureValidScrollOffsets ()
 		{
 			if (TableIsNullOrInvisible ()) {
 				return;
@@ -1236,11 +1236,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 		}
 
 
-		/// <summary>
-		/// Updates <see cref="SelectedColumn"/>, <see cref="SelectedRow"/> and <see cref="MultiSelectedRegions"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
-		/// </summary>
-		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
-		public void EnsureValidSelection ()
+        /// <summary>
+        /// Updates <see cref="SelectedColumn"/>, <see cref="SelectedRow"/> and <see cref="MultiSelectedRegions"/> where they are outside the bounds of the table (by adjusting them to the nearest existing cell).  Has no effect if <see cref="Table"/> has not been set.
+        /// </summary>
+        ///<remarks> Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+        public void EnsureValidSelection ()
 		{
 			if (TableIsNullOrInvisible()) {
 
@@ -1300,20 +1300,20 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 				c => (Style.GetColumnStyleIfAny (c)?.Visible ?? true) == false);
 		}
 
-		/// <summary>
-		/// Returns <paramref name="columnIndex"/> unless the <see cref="ColumnStyle.Visible"/> is false for
-		/// the indexed <see cref="DataColumn"/>.  If so then the index returned is nudged to the nearest visible
-		/// column.
-		/// </summary>
-		Returns <paramref name="columnIndex"/> unchanged if it is invalid (e.g. out of bounds).</remarks>
-		/// <param name="columnIndex">The input column index.</param>
-		/// <param name="lookRight">When nudging invisible selections look right first.
-		/// <see langword="true"/> to look right, <see langword="false"/> to look left.</param>
-		/// <param name="allowBumpingInOppositeDirection">If we cannot find anything visible when
-		/// looking in direction of <paramref name="lookRight"/> then should we look in the opposite
-		/// direction instead? Use true if you want to push a selection to a valid index no matter what.
-		/// Use false if you are primarily interested in learning about directional column visibility.</param>
-		private int GetNearestVisibleColumn (int columnIndex, bool lookRight, bool allowBumpingInOppositeDirection)
+        /// <summary>
+        /// Returns <paramref name="columnIndex"/> unless the <see cref="ColumnStyle.Visible"/> is false for
+        /// the indexed <see cref="DataColumn"/>.  If so then the index returned is nudged to the nearest visible
+        /// column.
+        /// </summary>
+        ///<remarks> Returns <paramref name="columnIndex"/> unchanged if it is invalid (e.g. out of bounds).</remarks>
+        /// <param name="columnIndex">The input column index.</param>
+        /// <param name="lookRight">When nudging invisible selections look right first.
+        /// <see langword="true"/> to look right, <see langword="false"/> to look left.</param>
+        /// <param name="allowBumpingInOppositeDirection">If we cannot find anything visible when
+        /// looking in direction of <paramref name="lookRight"/> then should we look in the opposite
+        /// direction instead? Use true if you want to push a selection to a valid index no matter what.
+        /// Use false if you are primarily interested in learning about directional column visibility.</param>
+        private int GetNearestVisibleColumn (int columnIndex, bool lookRight, bool allowBumpingInOppositeDirection)
 		{
 			if(TryGetNearestVisibleColumn(columnIndex,lookRight,allowBumpingInOppositeDirection, out var answer))
 			{
@@ -1379,11 +1379,11 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			return false;
 		}
 
-		/// <summary>
-		/// Updates scroll offsets to ensure that the selected cell is visible.  Has no effect if <see cref="Table"/> has not been set.
-		/// </summary>
-		Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
-		public void EnsureSelectedCellIsVisible ()
+        /// <summary>
+        /// Updates scroll offsets to ensure that the selected cell is visible.  Has no effect if <see cref="Table"/> has not been set.
+        /// </summary>
+        ///<remarks> Changes will not be immediately visible in the display until you call <see cref="View.SetNeedsDisplay()"/></remarks>
+        public void EnsureSelectedCellIsVisible ()
 		{
 			if (Table == null || Table.Columns.Count <= 0) {
 				return;
@@ -1673,13 +1673,13 @@ namespace CallaghanDev.Utilities.ConsoleHelper {
 			/// </summary>
 			public int MinAcceptableWidth { get; set; } = DefaultMinAcceptableWidth;
 
-			/// <summary>
-			/// Gets or Sets a value indicating whether the column should be visible to the user.
-			/// This affects both whether it is rendered and whether it can be selected. Defaults to
-			/// true.
-			/// </summary>
-			If <see cref="MaxWidth"/> is 0 then <see cref="Visible"/> will always return false.</remarks>
-			public bool Visible { get => MaxWidth >= 0 && visible; set => visible = value; }
+            /// <summary>
+            /// Gets or Sets a value indicating whether the column should be visible to the user.
+            /// This affects both whether it is rendered and whether it can be selected. Defaults to
+            /// true.
+            /// </summary>
+            ///<remarks> If <see cref="MaxWidth"/> is 0 then <see cref="Visible"/> will always return false.</remarks>
+            public bool Visible { get => MaxWidth >= 0 && visible; set => visible = value; }
 
 
 			/// <summary>

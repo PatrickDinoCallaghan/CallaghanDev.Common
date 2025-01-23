@@ -21,6 +21,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## Acknowledgments
-
-- [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui) for the console UI utilities.
 - [ClosedXML](https://github.com/ClosedXML/ClosedXML) for the Excel file manipulation functionalities.

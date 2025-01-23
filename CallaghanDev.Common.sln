@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallaghanDev.Utilities", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallaghanDev.XML", "CallaghanDev.XML\CallaghanDev.XML.csproj", "{D38FA27E-7FA5-44A9-90A5-CC201A9479ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallaghanDev.SeleniumWithJSON", "CallaghanDev.SeleniumWithJSON\CallaghanDev.SeleniumWithJSON.csproj", "{CB008F4C-030A-4BA0-8CAD-BBDAF4C72F32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallaghanDev.BrowserAutomation", "CallaghanDev.SeleniumWithJSON\CallaghanDev.BrowserAutomation.csproj", "{CB008F4C-030A-4BA0-8CAD-BBDAF4C72F32}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallaghanDev.Common.Math", "CallaghanDev.Common.Math\CallaghanDev.Common.Math.csproj", "{E69DD3D1-33E9-40C7-927D-5654637C45C6}"
 EndProject

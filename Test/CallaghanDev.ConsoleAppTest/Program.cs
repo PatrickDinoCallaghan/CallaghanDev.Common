@@ -1,5 +1,4 @@
-﻿using CallaghanDev.Utilities.ConsoleHelper;
-using CallaghanDev.XML.Extensions;
+﻿using CallaghanDev.XML.Extensions;
 using CallaghanDev.ConsoleAppTest.TestClasses;
 using CallaghanDev.Utilities.Math;
 using CallaghanDev.Common.Math;
@@ -18,7 +17,7 @@ namespace CallaghanDev.ConsoleAppTest
 
             Console.WriteLine(polynomial* polynomial2);
 
-            cnsl.Exit();
+
         }
 
         public static void Main(string[] args)
@@ -33,7 +32,7 @@ namespace CallaghanDev.ConsoleAppTest
 
             Console.WriteLine(PolynomialFunction.GenerateLagrangePolynomial(points));
 
-            cnsl.Exit();
+
         }
         public static void TestFractions()
         {

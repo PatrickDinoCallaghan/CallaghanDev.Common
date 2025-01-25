@@ -14,7 +14,7 @@ namespace CallaghanDev.Utilities
         public void WriteLine(string message);
         public void Info(string message);
         public void Warning(string message);
-        public void Error(string message);
+        public void Error(string message, bool Email = false);
     }
     public class Logger: ILogger
     {
@@ -39,10 +39,13 @@ namespace CallaghanDev.Utilities
             WriteToConsole("WARNING", message, ConsoleColor.Yellow);
         }
 
-        public void Error(string message)
+        public void Error(string message, bool SendEmail = false)
         {
             WriteToConsole("ERROR", message, ConsoleColor.Red);
-            _email?.SendEmail("patrick@callaghandev.com", "Error Notification", message);
+            if (SendEmail)
+            {
+                _email?.SendEmail("patrick@callaghandev.com", "Error Notification", message);
+            }
         }
 
         private void WriteToConsole(string logType, string message, ConsoleColor color)

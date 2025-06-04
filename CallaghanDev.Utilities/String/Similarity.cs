@@ -1,248 +1,259 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using static CallaghanDev.Utilities.String.StringTools;
 
 namespace CallaghanDev.Utilities.String
 {
     /// <summary>
+    /// Enumeration of supported string similarity algorithms
+    ///
+    /// JaroWinkler  Good for short strings prefix sensitive
+    ///   Fast for short texts such as names
+    ///   Accounts for character transpositions
+    ///   Not suitable for long texts or documents
+    ///
+    /// Levenshtein  Edit distance insert delete replace
+    ///   Measures true character level edits
+    ///   Works well on typos and small mutations
+    ///   Costly for long strings
+    ///
+    /// Jaccard  Set based similarity character level
+    ///   Lightweight and intuitive
+    ///   Good for quick comparisons
+    ///   Ignores character order or duplicates
+    ///
+    /// DiceCoefficient  Bigram based comparison
+    ///   Good balance of accuracy and performance
+    ///   Sensitive to character order
+    ///   Affected by string length skew
+    ///
+    /// LongestCommonSubsequence  Measures shared subsequences
+    ///   Preserves order without requiring contiguity
+    ///   Great for similarity over sequence structure
+    ///   Expensive for very long strings
+    ///
+    /// Cosine  Vector based similarity using character frequency
+    ///   Powerful for vectorized NLP inputs
+    ///   Captures density and overlap
+    ///   Not order sensitive may miss structure
+    /// </summary>
+    public enum StringSimilarityType
+    {
+        JaroWinkler,
+        Levenshtein,
+        Jaccard,
+        DiceCoefficient,
+        LongestCommonSubsequence,
+        Cosine
+    }
+
+    public interface ISimilarityAlgorithm
+    {
+        public double Calculate(string aString1, string aString2);
+    }
+
+    /// <summary>
     /// String Similarity index
     /// </summary>
-    public class Similarity
+    public class Similarity : ISimilarityAlgorithm
     {
-        JaroWinklerDistanceCalc _jwd;
-        public Similarity()
+        private JaroWinklerSimilarity _jwd = new JaroWinklerSimilarity();
+        private LevenshteinSimilarity _ldc = new LevenshteinSimilarity();
+        private JaccardSimilarity _js = new JaccardSimilarity();
+        private DiceCoefficientSimilarity _dcs = new DiceCoefficientSimilarity();
+        private LongestCommonSubsequenceSimilarity _lcss = new LongestCommonSubsequenceSimilarity();
+        private CosineSimilarity _cs = new CosineSimilarity();
+
+        private ISimilarityAlgorithm similarityAlgorithm;
+
+        public Similarity(StringSimilarityType stringSimilarityType = StringSimilarityType.Levenshtein)
         {
-            _jwd = new JaroWinklerDistanceCalc();
-        }
-        public bool StringsAreVerySimilar(string InStr1, string InStr2)
-        {
-
-            if (System.Text.RegularExpressions.Regex.Replace(InStr1.ToLower(), @"\s+", "") == System.Text.RegularExpressions.Regex.Replace(InStr2.ToLower(), @"\s+", ""))
+            similarityAlgorithm = stringSimilarityType switch
             {
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool StringsAreSimilar(string InStr1, string InStr2, double JWD = 0.15) // First actual good thing ive done in weeks
-        {
-            InStr1 = InStr1.Trim(); // Trim out any stupid whitespace. The user didnt mean to do this....
-            InStr2 = InStr2.Trim();
-
-            // First you need to check if an abbrivation has been used GSK is similar to glaxosmithkline
-            char[] InStr1_CharArray = InStr1.ToCharArray();
-            char[] InStr2_CharArray = InStr2.ToCharArray();
-
-            string InStr1a_Abr = ""; string InStr2a_Abr = ""; // You are now comparing 4 strings moron, great idea, your CPU hates you.
-            string InStr1b_Abr = ""; string InStr2b_Abr = ""; // 6 now, well done. Hope its worth it.
-
-            //We do this so we dont keep comparing two non blank lists
-            List<string> InStr1_List = new List<string>();    // This will be the non blank emtpy list of strings from InStr1
-            List<string> InStr2_List = new List<string>();    // This will be the non blank emtpy list of strings from InStr2
-
-            #region Loads Lists with possible abbreviations
-
-            //Check all uppcase letters in a string.
-            foreach (char item in InStr1_CharArray) // Makes an abbreviation from the first string input
-            {
-                if (char.IsUpper(item) == true)
-                {
-                    InStr1a_Abr = InStr1a_Abr + item;
-                }
-            }
-            if (InStr1a_Abr != "")
-            {
-                InStr1_List.Add(InStr1a_Abr);
-            }
-
-            foreach (char item in InStr2_CharArray) // Makes an abbreviation from the second string input
-            {
-                if (char.IsUpper(item) == true)
-                {
-                    InStr2a_Abr = InStr2a_Abr + item;
-                }
-            }
-            if (InStr1b_Abr != "")
-            {
-                InStr2_List.Add(InStr2a_Abr);
-            }
-
-            if (InStr1.Contains(" ") == true)
-            {
-                string[] Str_Arr_Temp1 = InStr1.Split(' ');
-                foreach (string item in Str_Arr_Temp1)
-                {
-                    InStr1b_Abr = InStr1b_Abr + item.Substring(0, 1);
-                }
-            }
-            if (InStr1b_Abr != "")
-            {
-                InStr1_List.Add(InStr1b_Abr);
-            }
-
-            if (InStr2.Contains(" ") == true)
-            {
-                string[] Str_Arr_Temp2 = InStr2.Split(' ');
-
-                foreach (string item in Str_Arr_Temp2)
-                {
-                    InStr2b_Abr = InStr2b_Abr + item.Substring(0, 1);
-                }
-            }
-            if (InStr2b_Abr != "")
-            {
-                InStr2_List.Add(InStr2b_Abr);
-            }
-            #endregion
-
-            InStr1_List.Add(InStr1);
-            InStr2_List.Add(InStr2);
-            foreach (string item1 in InStr1_List)
-            {
-                foreach (string item2 in InStr2_List)
-                {
-                    if (item1.ToLower() == item2.ToLower()) // Keeping it static will improve performace
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            if (_jwd.distance(InStr1, InStr2) < JWD) // Keeping it static will improve performace
-            {
-                return true;
-            }
-
-            return false;
+                StringSimilarityType.JaroWinkler => _jwd,
+                StringSimilarityType.Levenshtein => _ldc,
+                StringSimilarityType.Jaccard => _js,
+                StringSimilarityType.DiceCoefficient => _dcs,
+                StringSimilarityType.LongestCommonSubsequence => _lcss,
+                StringSimilarityType.Cosine => _cs,
+                _ => throw new ArgumentOutOfRangeException(nameof(stringSimilarityType), "Unsupported similarity type")
+            };
         }
 
-        public double JaroWinklerDistance(string aString1, string aString2)
-        {
-            return _jwd.distance(aString1, aString2);
-        }
 
+
+        public double Calculate(string aString1, string aString2)
+        {
+            return similarityAlgorithm.Calculate(aString1, aString2);
+        }
         public string StringMostSimilar(string aString1, List<string> ListOfStrings)
         {
-            if (ListOfStrings.Count() == 0)
+            if (ListOfStrings.Count == 0)
                 return string.Empty;
 
-            ListOfStrings.OrderByDescending(r => JaroWinklerDistance(aString1, r));
-           
-            return (string)ListOfStrings.FirstOrDefault();
+            var MostSimilarString = ListOfStrings
+                .OrderByDescending(r => similarityAlgorithm.Calculate(aString1, r))
+                .FirstOrDefault();
 
+            return MostSimilarString;
         }
 
-        private class JaroWinklerDistanceCalc
+        public class JaroWinklerSimilarity : ISimilarityAlgorithm
         {
-            /* The Winkler modification will not be applied unless the 
-             * percent match was at or above the mWeightThreshold percent 
-             * without the modification. 
-             * Winkler's paper used a default value of 0.7
-             */
-            private  readonly double mWeightThreshold = 0.7;
+            private readonly double threshold = 0.7;
+            private readonly int prefixSize = 4;
 
-            /* Size of the prefix to be concidered by the Winkler modification. 
-             * Winkler's paper used a default value of 4
-             */
-            private  readonly int mNumChars = 4;
-
-            /// <summary>
-            /// Returns the Jaro-Winkler distance between the specified  
-            /// strings. The distance is symmetric and will fall in the 
-            /// range 0 (perfect match) to 1 (no match). 
-            /// </summary>
-            /// <param name="aString1">First String</param>
-            /// <param name="aString2">Second String</param>
-            /// <returns></returns>
-            public double distance(string aString1, string aString2)
+            public double Calculate(string s1, string s2)
             {
-                return 1.0 - proximity(aString1, aString2);
-            }
+                if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2)) return 0.0;
+                if (s1 == s2) return 1.0;
 
-            /// <summary>
-            /// Returns the Jaro-Winkler distance between the specified  
-            /// strings. The distance is symmetric and will fall in the 
-            /// range 0 (no match) to 1 (perfect match). 
-            /// </summary>
-            /// <param name="aString1">First String</param>
-            /// <param name="aString2">Second String</param>
-            /// <returns></returns>
-            public double proximity(string aString1, string aString2)
-            {
-                if (string.IsNullOrEmpty(aString1))
+                int len1 = s1.Length, len2 = s2.Length;
+                int matchDistance = Math.Max(len1, len2) / 2 - 1;
+
+                bool[] s1Matches = new bool[len1];
+                bool[] s2Matches = new bool[len2];
+
+                int matches = 0, transpositions = 0;
+
+                for (int i = 0; i < len1; i++)
                 {
-                    return 0;
-                }
-                int lLen1 = aString1.Length;
-                int lLen2 = aString2.Length;
-                if (lLen1 == 0)
-                    return lLen2 == 0 ? 1.0 : 0.0;
+                    int start = Math.Max(0, i - matchDistance);
+                    int end = Math.Min(i + matchDistance + 1, len2);
 
-                int lSearchRange = System.Math.Max(0, System.Math.Max(lLen1, lLen2) / 2 - 1);
-
-                // default initialized to false
-                bool[] lMatched1 = new bool[lLen1];
-                bool[] lMatched2 = new bool[lLen2];
-
-                int lNumCommon = 0;
-                for (int i = 0; i < lLen1; ++i)
-                {
-                    int lStart = System.Math.Max(0, i - lSearchRange);
-                    int lEnd = System.Math.Min(i + lSearchRange + 1, lLen2);
-                    for (int j = lStart; j < lEnd; ++j)
+                    for (int j = start; j < end; j++)
                     {
-                        if (lMatched2[j]) continue;
-                        if (aString1[i] != aString2[j])
-                            continue;
-                        lMatched1[i] = true;
-                        lMatched2[j] = true;
-                        ++lNumCommon;
+                        if (s2Matches[j]) continue;
+                        if (s1[i] != s2[j]) continue;
+                        s1Matches[i] = s2Matches[j] = true;
+                        matches++;
                         break;
                     }
                 }
-                if (lNumCommon == 0) return 0.0;
 
-                int lNumHalfTransposed = 0;
-                int k = 0;
-                for (int i = 0; i < lLen1; ++i)
+                if (matches == 0) return 0.0;
+
+                for (int i = 0, k = 0; i < len1; i++)
                 {
-                    if (!lMatched1[i]) continue;
-                    while (!lMatched2[k]) ++k;
-                    if (aString1[i] != aString2[k])
-                        ++lNumHalfTransposed;
-                    ++k;
+                    if (!s1Matches[i]) continue;
+                    while (!s2Matches[k]) k++;
+                    if (s1[i] != s2[k]) transpositions++;
+                    k++;
                 }
-                // System.Diagnostics.Debug.WriteLine("numHalfTransposed=" + numHalfTransposed);
-                int lNumTransposed = lNumHalfTransposed / 2;
 
-                // System.Diagnostics.Debug.WriteLine("numCommon=" + numCommon + " numTransposed=" + numTransposed);
-                double lNumCommonD = lNumCommon;
-                double lWeight = (lNumCommonD / lLen1
-                                 + lNumCommonD / lLen2
-                                 + (lNumCommon - lNumTransposed) / lNumCommonD) / 3.0;
+                double m = matches;
+                double jaro = (m / len1 + m / len2 + (m - transpositions / 2.0) / m) / 3.0;
 
-                if (lWeight <= mWeightThreshold) return lWeight;
-                int lMax = System.Math.Min(mNumChars, System.Math.Min(aString1.Length, aString2.Length));
-                int lPos = 0;
-                while (lPos < lMax && aString1[lPos] == aString2[lPos])
-                    ++lPos;
-                if (lPos == 0) return lWeight;
-                return lWeight + 0.1 * lPos * (1.0 - lWeight);
+                int prefix = 0;
+                for (int i = 0; i < Math.Min(prefixSize, Math.Min(len1, len2)); i++)
+                {
+                    if (s1[i] == s2[i]) prefix++;
+                    else break;
+                }
 
+                return jaro < threshold ? jaro : jaro + 0.1 * prefix * (1 - jaro);
             }
-
-            public static double Similarities(string value, string aString1)
-            {
-                return new JaroWinklerDistanceCalc().distance(value, aString1);
-            }
-
         }
-        // Allows you to take the jarowiklerDistance of a string through an extension method
 
+        public class LevenshteinSimilarity : ISimilarityAlgorithm
+        {
+            public double Calculate(string s1, string s2)
+            {
+                int[,] dp = new int[s1.Length + 1, s2.Length + 1];
+                for (int i = 0; i <= s1.Length; i++) dp[i, 0] = i;
+                for (int j = 0; j <= s2.Length; j++) dp[0, j] = j;
+
+                for (int i = 1; i <= s1.Length; i++)
+                {
+                    for (int j = 1; j <= s2.Length; j++)
+                    {
+                        int cost = s1[i - 1] == s2[j - 1] ? 0 : 1;
+                        dp[i, j] = Math.Min(Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1), dp[i - 1, j - 1] + cost);
+                    }
+                }
+
+                return 1.0 - (double)dp[s1.Length, s2.Length] / Math.Max(s1.Length, s2.Length);
+            }
+        }
+
+        public class JaccardSimilarity : ISimilarityAlgorithm
+        {
+            public double Calculate(string s1, string s2)
+            {
+                var set1 = new HashSet<char>(s1);
+                var set2 = new HashSet<char>(s2);
+
+                var intersection = new HashSet<char>(set1);
+                intersection.IntersectWith(set2);
+
+                var union = new HashSet<char>(set1);
+                union.UnionWith(set2);
+
+                return union.Count == 0 ? 0.0 : (double)intersection.Count / union.Count;
+            }
+        }
+
+        public class DiceCoefficientSimilarity : ISimilarityAlgorithm
+        {
+            public double Calculate(string s1, string s2)
+            {
+                var bigrams1 = GetBigrams(s1);
+                var bigrams2 = GetBigrams(s2);
+
+                int intersection = bigrams1.Intersect(bigrams2).Count();
+                return (2.0 * intersection) / (bigrams1.Count + bigrams2.Count);
+            }
+
+            private List<string> GetBigrams(string input)
+            {
+                var list = new List<string>();
+                for (int i = 0; i < input.Length - 1; i++)
+                    list.Add(input.Substring(i, 2));
+                return list;
+            }
+        }
+
+        public class LongestCommonSubsequenceSimilarity : ISimilarityAlgorithm
+        {
+            public double Calculate(string s1, string s2)
+            {
+                int[,] dp = new int[s1.Length + 1, s2.Length + 1];
+                for (int i = 1; i <= s1.Length; i++)
+                {
+                    for (int j = 1; j <= s2.Length; j++)
+                    {
+                        if (s1[i - 1] == s2[j - 1])
+                            dp[i, j] = dp[i - 1, j - 1] + 1;
+                        else
+                            dp[i, j] = Math.Max(dp[i - 1, j], dp[i, j - 1]);
+                    }
+                }
+                return (double)dp[s1.Length, s2.Length] / Math.Max(s1.Length, s2.Length);
+            }
+        }
+
+        public class CosineSimilarity : ISimilarityAlgorithm
+        {
+            public double Calculate(string s1, string s2)
+            {
+                var vec1 = GetCharFreq(s1);
+                var vec2 = GetCharFreq(s2);
+
+                var allKeys = vec1.Keys.Union(vec2.Keys);
+                double dotProduct = allKeys.Sum(k => vec1.GetValueOrDefault(k) * vec2.GetValueOrDefault(k));
+                double magnitude1 = Math.Sqrt(vec1.Values.Sum(v => v * v));
+                double magnitude2 = Math.Sqrt(vec2.Values.Sum(v => v * v));
+
+                return (magnitude1 * magnitude2) == 0 ? 0.0 : dotProduct / (magnitude1 * magnitude2);
+            }
+
+            private Dictionary<char, int> GetCharFreq(string input)
+            {
+                return input.GroupBy(c => c).ToDictionary(g => g.Key, g => g.Count());
+            }
+        }
     }
+
 }

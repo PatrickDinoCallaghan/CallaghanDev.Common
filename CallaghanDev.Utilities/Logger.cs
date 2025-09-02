@@ -12,7 +12,7 @@ namespace CallaghanDev.Utilities
     public interface ILogger
     {
         public void WriteLine(string message);
-        public void Info(string message, bool SendEmail = false);
+        public void Info(string message, ConsoleColor consoleColor = ConsoleColor.White, bool SendEmail = false);
         public void Warning(string message, bool SendEmail = false);
         public void Error(string message, bool SendEmail = false);
     }
@@ -30,9 +30,9 @@ namespace CallaghanDev.Utilities
             _outputDirectory = OutputDirectory;
         }
 
-        public void Info(string message,bool SendEmail = false)
+        public void Info(string message, ConsoleColor consoleColor = ConsoleColor.White, bool SendEmail = false)
         {
-            WriteToConsole("INFO", message, ConsoleColor.White);
+            WriteToConsole("INFO", message, consoleColor);
 
             if (SendEmail)
             {
@@ -76,6 +76,7 @@ namespace CallaghanDev.Utilities
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"[ERROR] Failed to write log to file: {ex.Message}");
                 Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ResetColor();
             }
         }
         private void WriteToConsole(string logType, string message, ConsoleColor color)
@@ -94,7 +95,7 @@ namespace CallaghanDev.Utilities
             finally
             {
                 // Restore the original color
-                Console.ForegroundColor = originalColor;
+                Console.ResetColor();
             }
         }
 

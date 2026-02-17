@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CallaghanDev.Utilities\CallaghanDev.Utilities.csproj" />
+    <ProjectReference Include="..\CallaghanDev.XML\CallaghanDev.XML.csproj" />
   </ItemGroup>
 
 </Project>
